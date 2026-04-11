@@ -1,28 +1,25 @@
 import "server-only";
 
-const MERCHANT_ID = process.env.NEXT_PUBLIC_OPENPAY_MERCHANT_ID ?? "";
-const PRIVATE_KEY = process.env.OPENPAY_PRIVATE_KEY ?? "";
-const SANDBOX     = process.env.NEXT_PUBLIC_OPENPAY_SANDBOX !== "false";
+const SANDBOX = process.env.NEXT_PUBLIC_OPENPAY_SANDBOX !== "false";
 
-if (!PRIVATE_KEY) {
-  throw new Error(
-    "[openpay-server] OPENPAY_PRIVATE_KEY is not set. Add it to .env.local (server-only, never NEXT_PUBLIC_)."
-  );
-}
-if (!MERCHANT_ID) {
-  throw new Error(
-    "[openpay-server] NEXT_PUBLIC_OPENPAY_MERCHANT_ID is not set."
-  );
-}
-
-const BASE_URL = SANDBOX
-  ? `https://sandbox-api.openpay.mx/v1/${MERCHANT_ID}`
-  : `https://api.openpay.mx/v1/${MERCHANT_ID}`;
-
-// HTTP Basic Auth: base64(private_key + ":")
-function authHeader(): string {
-  const creds = Buffer.from(`${PRIVATE_KEY}:`).toString("base64");
-  return `Basic ${creds}`;
+function getConfig() {
+  const merchantId = process.env.NEXT_PUBLIC_OPENPAY_MERCHANT_ID ?? "";
+  const privateKey = process.env.OPENPAY_PRIVATE_KEY ?? "";
+  if (!privateKey) {
+    throw new Error(
+      "[openpay-server] OPENPAY_PRIVATE_KEY is not set. Add it to .env.local (server-only, never NEXT_PUBLIC_)."
+    );
+  }
+  if (!merchantId) {
+    throw new Error(
+      "[openpay-server] NEXT_PUBLIC_OPENPAY_MERCHANT_ID is not set."
+    );
+  }
+  const baseUrl = SANDBOX
+    ? `https://sandbox-api.openpay.mx/v1/${merchantId}`
+    : `https://api.openpay.mx/v1/${merchantId}`;
+  const authHeader = `Basic ${Buffer.from(`${privateKey}:`).toString("base64")}`;
+  return { baseUrl, authHeader };
 }
 
 // ─── Error Handling ───────────────────────────────────────────────────────────
@@ -39,11 +36,12 @@ export class OpenpayApiError extends Error {
 }
 
 async function openpayPost<T>(path: string, body: object): Promise<T> {
-  const res = await fetch(`${BASE_URL}${path}`, {
+  const { baseUrl, authHeader } = getConfig();
+  const res = await fetch(`${baseUrl}${path}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: authHeader(),
+      Authorization: authHeader,
     },
     body: JSON.stringify(body),
   });
@@ -59,8 +57,9 @@ async function openpayPost<T>(path: string, body: object): Promise<T> {
 }
 
 async function openpayGet<T>(path: string): Promise<T> {
-  const res = await fetch(`${BASE_URL}${path}`, {
-    headers: { Authorization: authHeader() },
+  const { baseUrl, authHeader } = getConfig();
+  const res = await fetch(`${baseUrl}${path}`, {
+    headers: { Authorization: authHeader },
   });
 
   const data = await res.json();
