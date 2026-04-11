@@ -35,6 +35,8 @@ import {
   ChevronDown,
   XCircle,
 } from "lucide-react";
+import { PaymentMethodSelector } from "@/components/PaymentMethodSelector";
+import { PendingPaymentModal } from "@/components/PendingPaymentModal";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
@@ -45,6 +47,12 @@ function fmt(n: number) {
     minimumFractionDigits: 0,
   }).format(n);
 }
+
+type OxxoResult = { reference: string; due_date: string; charge_id: string };
+type SpeiResult = { clabe: string; bank: string; beneficiary: string; charge_id: string };
+type PendingPayment =
+  | { method: "oxxo"; data: OxxoResult }
+  | { method: "spei"; data: SpeiResult };
 
 // ─── Sub-components ──────────────────────────────────────────────────────────
 
@@ -352,6 +360,8 @@ export default function CheckoutPage() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [paymentStep, setPaymentStep] = useState<number>(0); // 0=idle, 1-4=processing
+  const [paymentMethod, setPaymentMethod] = useState<"card" | "oxxo" | "spei">("card");
+  const [pendingPayment, setPendingPayment] = useState<PendingPayment | null>(null);
 
   // ── Pre-carga: carrito + catálogo + customer sync al montar ───
   const [preloadedCartId, setPreloadedCartId] = useState<string | null>(null);
@@ -511,12 +521,14 @@ export default function CheckoutPage() {
     if (!resolvedState.trim()) e.state = "Requerido";
     if (!address.zip.trim() || !/^\d{5}$/.test(address.zip))
       e.zip = "5 dígitos";
-    if (!card.number.replace(/\s/g, "") || card.number.replace(/\s/g, "").length < 15)
-      e.cardNumber = "Número inválido";
-    if (!card.name.trim()) e.cardName = "Requerido";
-    if (!card.expiry.trim() || !/^\d{2}\/\d{2}$/.test(card.expiry))
-      e.expiry = "MM/AA";
-    if (!card.cvv.trim() || card.cvv.length < 3) e.cvv = "Requerido";
+    if (paymentMethod === "card") {
+      if (!card.number.replace(/\s/g, "") || card.number.replace(/\s/g, "").length < 15)
+        e.cardNumber = "Número inválido";
+      if (!card.name.trim()) e.cardName = "Requerido";
+      if (!card.expiry.trim() || !/^\d{2}\/\d{2}$/.test(card.expiry))
+        e.expiry = "MM/AA";
+      if (!card.cvv.trim() || card.cvv.length < 3) e.cvv = "Requerido";
+    }
     return e;
   }
 
@@ -534,24 +546,27 @@ export default function CheckoutPage() {
     try {
       console.time("[Checkout] total");
 
-      // ── Paso 1: Verificando tarjeta ──────────────────────────────────────
-      setPaymentStep(1);
-      const device_session_id = getDeviceSessionId("checkout-form") ?? "dev_session";
+      // ── Paso 1: Verificando tarjeta (solo si método es tarjeta) ──────────────────────────────────────
+      let openpay_token_id: string = "";
+      let device_session_id: string = "dev_session";
 
-      let openpay_token_id: string;
-      try {
-        openpay_token_id = await tokenizeCard(
-          parseCardForm(card.number, card.name, card.expiry, card.cvv)
-        );
-      } catch (err) {
-        const msg = err instanceof Error ? err.message : "Error en tarjeta";
-        if (process.env.NODE_ENV === "development") {
-          console.warn("[Checkout] Openpay en modo dev, usando token mock");
-          openpay_token_id = "tok_dev_mock";
-        } else {
-          setSubmitError(msg);
-          setSubmitting(false);
-          return;
+      if (paymentMethod === "card") {
+        setPaymentStep(1);
+        device_session_id = getDeviceSessionId("checkout-form") ?? "dev_session";
+        try {
+          openpay_token_id = await tokenizeCard(
+            parseCardForm(card.number, card.name, card.expiry, card.cvv)
+          );
+        } catch (err) {
+          const msg = err instanceof Error ? err.message : "Error en tarjeta";
+          if (process.env.NODE_ENV === "development") {
+            console.warn("[Checkout] Openpay en modo dev, usando token mock");
+            openpay_token_id = "tok_dev_mock";
+          } else {
+            setSubmitError(msg);
+            setSubmitting(false);
+            return;
+          }
         }
       }
 
@@ -610,7 +625,46 @@ export default function CheckoutPage() {
 
         // ── Paso 4: Procesando cobro ────────────────────────────────────────
         setPaymentStep(4);
-        await medusa.checkout.completeCart(cart_id, openpay_token_id, contact.email, device_session_id);
+
+        if (paymentMethod === "card") {
+          await medusa.checkout.completeCart(cart_id, openpay_token_id, contact.email, device_session_id);
+        } else if (paymentMethod === "oxxo") {
+          const res = await fetch("/api/openpay/oxxo", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              cart_id: cart_id!,
+              amount: finalTotal,
+              customer: { name: contact.name, email: contact.email },
+            }),
+          });
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error((err as { error?: string }).error ?? "Error al generar referencia OXXO");
+          }
+          const oxxoData: OxxoResult = await res.json();
+          setPendingPayment({ method: "oxxo", data: oxxoData });
+          setSubmitting(false);
+          return; // No limpiar carrito — webhook confirmará el pago
+        } else if (paymentMethod === "spei") {
+          const res = await fetch("/api/openpay/spei", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              cart_id: cart_id!,
+              amount: finalTotal,
+              customer: { name: contact.name, email: contact.email },
+            }),
+          });
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error((err as { error?: string }).error ?? "Error al generar CLABE SPEI");
+          }
+          const speiData: SpeiResult = await res.json();
+          setPendingPayment({ method: "spei", data: speiData });
+          setSubmitting(false);
+          return; // No limpiar carrito — webhook confirmará el pago
+        }
       } catch (err) {
         if (process.env.NODE_ENV === "development") {
           console.warn("[Checkout] Backend Medusa no disponible, completando en modo demo");
@@ -1036,65 +1090,60 @@ export default function CheckoutPage() {
                     title="Datos de pago"
                   />
 
-                  {/* card brand logos */}
-                  <div className="flex items-center gap-2 mb-5">
-                    {["VISA", "MC", "AMEX"].map((b) => (
-                      <span
-                        key={b}
-                        className="px-2.5 py-1 rounded-md border border-[#E5E7EB] text-[10px] font-black text-[#6B7280] bg-[#F9FAFB]"
-                      >
-                        {b}
-                      </span>
-                    ))}
-                    <span className="text-[11px] text-[#9CA3AF] ml-1">Vía Openpay</span>
-                  </div>
+                  <PaymentMethodSelector
+                    value={paymentMethod}
+                    onChange={setPaymentMethod}
+                    hasSubscriptionItems={hasSubscriptions}
+                  />
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="sm:col-span-2">
+                  {paymentMethod === "card" && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="sm:col-span-2">
+                        <Field
+                          id="cardNumber"
+                          label="Número de tarjeta"
+                          placeholder="1234 5678 9012 3456"
+                          value={card.number}
+                          onChange={(v) => { setCard((c) => ({ ...c, number: formatCardNumber(v) })); clearErr("cardNumber"); }}
+                          required
+                          error={errors.cardNumber}
+                          autoComplete="cc-number"
+                        />
+                      </div>
+                      <div className="sm:col-span-2">
+                        <Field
+                          id="cardName"
+                          label="Nombre en la tarjeta"
+                          placeholder="MARIA GARCIA"
+                          value={card.name}
+                          onChange={(v) => { setCard((c) => ({ ...c, name: v.toUpperCase() })); clearErr("cardName"); }}
+                          required
+                          error={errors.cardName}
+                          autoComplete="cc-name"
+                        />
+                      </div>
                       <Field
-                        id="cardNumber"
-                        label="Número de tarjeta"
-                        placeholder="1234 5678 9012 3456"
-                        value={card.number}
-                        onChange={(v) => { setCard((c) => ({ ...c, number: formatCardNumber(v) })); clearErr("cardNumber"); }}
+                        id="expiry"
+                        label="Vencimiento"
+                        placeholder="MM/AA"
+                        value={card.expiry}
+                        onChange={(v) => { setCard((c) => ({ ...c, expiry: formatExpiry(v) })); clearErr("expiry"); }}
                         required
-                        error={errors.cardNumber}
-                        autoComplete="cc-number"
+                        error={errors.expiry}
+                        autoComplete="cc-exp"
+                      />
+                      <Field
+                        id="cvv"
+                        label="CVV"
+                        placeholder="123"
+                        value={card.cvv}
+                        onChange={(v) => { setCard((c) => ({ ...c, cvv: v.replace(/\D/g, "").slice(0, 4) })); clearErr("cvv"); }}
+                        required
+                        error={errors.cvv}
+                        autoComplete="cc-csc"
                       />
                     </div>
-                    <div className="sm:col-span-2">
-                      <Field
-                        id="cardName"
-                        label="Nombre en la tarjeta"
-                        placeholder="MARIA GARCIA"
-                        value={card.name}
-                        onChange={(v) => { setCard((c) => ({ ...c, name: v.toUpperCase() })); clearErr("cardName"); }}
-                        required
-                        error={errors.cardName}
-                        autoComplete="cc-name"
-                      />
-                    </div>
-                    <Field
-                      id="expiry"
-                      label="Vencimiento"
-                      placeholder="MM/AA"
-                      value={card.expiry}
-                      onChange={(v) => { setCard((c) => ({ ...c, expiry: formatExpiry(v) })); clearErr("expiry"); }}
-                      required
-                      error={errors.expiry}
-                      autoComplete="cc-exp"
-                    />
-                    <Field
-                      id="cvv"
-                      label="CVV"
-                      placeholder="123"
-                      value={card.cvv}
-                      onChange={(v) => { setCard((c) => ({ ...c, cvv: v.replace(/\D/g, "").slice(0, 4) })); clearErr("cvv"); }}
-                      required
-                      error={errors.cvv}
-                      autoComplete="cc-csc"
-                    />
-                  </div>
+                  )}
 
                   {/* Openpay security badge */}
                   <div className="mt-5 flex items-center gap-2 p-3 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB]">
@@ -1292,6 +1341,38 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
+
+      {/* Modal de pago pendiente — OXXO o SPEI */}
+      {pendingPayment !== null && (
+        pendingPayment.method === "oxxo" ? (
+          <PendingPaymentModal
+            open={true}
+            method="oxxo"
+            reference={pendingPayment.data.reference}
+            due_date={pendingPayment.data.due_date}
+            amount={finalTotal}
+            onClose={() => {
+              setPendingPayment(null);
+              clearCart();
+              router.push("/");
+            }}
+          />
+        ) : (
+          <PendingPaymentModal
+            open={true}
+            method="spei"
+            clabe={pendingPayment.data.clabe}
+            bank={pendingPayment.data.bank}
+            beneficiary={pendingPayment.data.beneficiary}
+            amount={finalTotal}
+            onClose={() => {
+              setPendingPayment(null);
+              clearCart();
+              router.push("/");
+            }}
+          />
+        )
+      )}
     </div>
   );
 }
