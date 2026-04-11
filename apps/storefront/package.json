@@ -20,10 +20,13 @@
     "next-mdx-remote": "^6.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "resend": "^6.10.0"
+    "resend": "^6.10.0",
+    "server-only": "^0.0.1"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["@sentry/cli"]
+    "onlyBuiltDependencies": [
+      "@sentry/cli"
+    ]
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

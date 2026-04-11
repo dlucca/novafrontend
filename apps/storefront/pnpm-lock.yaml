@@ -44,6 +44,9 @@ importers:
       resend:
         specifier: ^6.10.0
         version: 6.10.0
+      server-only:
+        specifier: ^0.0.1
+        version: 0.0.1
     devDependencies:
       '@tailwindcss/postcss':
         specifier: ^4

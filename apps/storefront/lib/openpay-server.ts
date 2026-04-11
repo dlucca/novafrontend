@@ -1,6 +1,19 @@
+import "server-only";
+
 const MERCHANT_ID = process.env.NEXT_PUBLIC_OPENPAY_MERCHANT_ID ?? "";
 const PRIVATE_KEY = process.env.OPENPAY_PRIVATE_KEY ?? "";
 const SANDBOX     = process.env.NEXT_PUBLIC_OPENPAY_SANDBOX !== "false";
+
+if (!PRIVATE_KEY) {
+  throw new Error(
+    "[openpay-server] OPENPAY_PRIVATE_KEY is not set. Add it to .env.local (server-only, never NEXT_PUBLIC_)."
+  );
+}
+if (!MERCHANT_ID) {
+  throw new Error(
+    "[openpay-server] NEXT_PUBLIC_OPENPAY_MERCHANT_ID is not set."
+  );
+}
 
 const BASE_URL = SANDBOX
   ? `https://sandbox-api.openpay.mx/v1/${MERCHANT_ID}`
@@ -10,6 +23,19 @@ const BASE_URL = SANDBOX
 function authHeader(): string {
   const creds = Buffer.from(`${PRIVATE_KEY}:`).toString("base64");
   return `Basic ${creds}`;
+}
+
+// ─── Error Handling ───────────────────────────────────────────────────────────
+
+export class OpenpayApiError extends Error {
+  constructor(
+    message: string,
+    public readonly status: number,
+    public readonly errorCode?: string | number
+  ) {
+    super(message);
+    this.name = "OpenpayApiError";
+  }
 }
 
 async function openpayPost<T>(path: string, body: object): Promise<T> {
@@ -26,7 +52,7 @@ async function openpayPost<T>(path: string, body: object): Promise<T> {
 
   if (!res.ok) {
     const msg = data?.description ?? data?.error_code ?? "Error Openpay";
-    throw new Error(String(msg));
+    throw new OpenpayApiError(String(msg), res.status, data?.error_code);
   }
 
   return data as T;
@@ -40,8 +66,8 @@ async function openpayGet<T>(path: string): Promise<T> {
   const data = await res.json();
 
   if (!res.ok) {
-    const msg = data?.description ?? "Error Openpay";
-    throw new Error(String(msg));
+    const msg = data?.description ?? data?.error_code ?? "Error Openpay";
+    throw new OpenpayApiError(String(msg), res.status, data?.error_code);
   }
 
   return data as T;
@@ -62,17 +88,19 @@ export type OpenpaySpeiResult = {
   beneficiary: string;     // nombre del beneficiario registrado en Openpay
 };
 
+export type OpenpayChargeStatus = "in_progress" | "completed" | "failed" | "cancelled";
+
 export type OpenpayCharge = {
   id: string;
-  status: string;          // "in_progress" | "completed" | "failed" | "cancelled"
+  status: OpenpayChargeStatus;
   amount: number;
   order_id: string;
-  method: string;          // "store" | "bank_account"
+  method: string;
 };
 
-// ─── Funciones públicas ───────────────────────────────────────────────────────
+export type ChargeCustomer = { name: string; email: string };
 
-type ChargeCustomer = { name: string; email: string };
+// ─── Funciones públicas ───────────────────────────────────────────────────────
 
 /**
  * Crea un cargo OXXO (método "store").
@@ -146,7 +174,7 @@ export async function createSpeiCharge(params: {
 export async function getCharge(charge_id: string): Promise<OpenpayCharge> {
   const raw = await openpayGet<{
     id: string;
-    status: string;
+    status: OpenpayChargeStatus;
     amount: number;
     order_id: string;
     method: string;
