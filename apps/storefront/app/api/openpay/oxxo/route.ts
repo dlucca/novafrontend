@@ -1,8 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
-import { createOxxoCharge } from "@/lib/openpay-server";
+import { createOxxoCharge, type ChargeCustomer } from "@/lib/openpay-server";
 
 const resend = new Resend(process.env.RESEND_SECRET_KEY);
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -10,10 +18,11 @@ export async function POST(req: NextRequest) {
     const { cart_id, amount, customer } = body as {
       cart_id: string;
       amount: number;
-      customer: { name: string; email: string };
+      customer: ChargeCustomer;
     };
 
-    if (!cart_id || !amount || !customer?.name || !customer?.email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!cart_id || typeof amount !== "number" || amount <= 0 || !Number.isFinite(amount) || !customer?.name || !customer?.email || !emailRegex.test(customer.email)) {
       return NextResponse.json({ error: "Faltan campos requeridos." }, { status: 400 });
     }
 
@@ -25,18 +34,22 @@ export async function POST(req: NextRequest) {
       description: "Pedido Novapatch",
     });
 
-    // 2. Enviar email con la referencia
-    await resend.emails.send({
-      from: "Novapatch <hola@novapatch.care>",
-      to: customer.email,
-      subject: "Tu referencia OXXO — Novapatch",
-      html: buildOxxoEmail({
-        name: customer.name,
-        reference: charge.reference,
-        amount,
-        due_date: charge.due_date,
-      }),
-    });
+    // 2. Enviar email — no fatal: si Resend falla, el cargo ya existe y devolvemos igual
+    try {
+      await resend.emails.send({
+        from: "Novapatch <hola@novapatch.care>",
+        to: customer.email,
+        subject: "Tu referencia OXXO — Novapatch",
+        html: buildOxxoEmail({
+          name: customer.name,
+          reference: charge.reference,
+          amount,
+          due_date: charge.due_date,
+        }),
+      });
+    } catch (emailErr) {
+      console.error("[oxxo] Resend falló (no fatal):", emailErr);
+    }
 
     // 3. Devolver datos al frontend
     return NextResponse.json({
@@ -82,7 +95,7 @@ function buildOxxoEmail(params: {
       <div style="background: #FAF7F2; padding: 32px; border-radius: 0 0 12px 12px; border: 1px solid #E5E7EB; border-top: none;">
         <h2 style="margin: 0 0 8px; font-size: 20px; font-weight: 800; color: #0D1B35;">Tu referencia OXXO está lista</h2>
         <p style="margin: 0 0 24px; font-size: 14px; color: #6B7280; line-height: 1.6;">
-          Hola <strong style="color: #0D1B35;">${name}</strong>, tienes hasta el <strong style="color: #0D1B35;">${deadline}</strong> para pagar en cualquier tienda OXXO.
+          Hola <strong style="color: #0D1B35;">${escapeHtml(name)}</strong>, tienes hasta el <strong style="color: #0D1B35;">${deadline}</strong> para pagar en cualquier tienda OXXO.
         </p>
 
         <div style="background: #fff; border: 1px solid #E5E7EB; border-radius: 10px; padding: 20px; text-align: center; margin-bottom: 16px;">
