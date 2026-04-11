@@ -22,32 +22,28 @@ function fmtClabe(clabe: string): string {
   return clabe.replace(/(\d{4})(?=\d)/g, "$1 ");
 }
 
-interface PendingPaymentModalProps {
-  open: boolean;
-  method: "oxxo" | "spei";
-  // OXXO
-  reference?: string;
-  due_date?: string;
-  // SPEI
-  clabe?: string;
-  bank?: string;
-  beneficiary?: string;
-  // Común
-  amount: number;
-  onClose: () => void;
-}
+type PendingPaymentModalProps =
+  | {
+      open: boolean;
+      method: "oxxo";
+      reference: string;
+      due_date?: string;
+      amount: number;
+      onClose: () => void;
+    }
+  | {
+      open: boolean;
+      method: "spei";
+      clabe: string;
+      bank: string;
+      beneficiary: string;
+      amount: number;
+      onClose: () => void;
+    };
 
-export function PendingPaymentModal({
-  open,
-  method,
-  reference,
-  due_date,
-  clabe,
-  bank,
-  beneficiary,
-  amount,
-  onClose,
-}: PendingPaymentModalProps) {
+export function PendingPaymentModal(props: PendingPaymentModalProps) {
+  const { open, method, amount, onClose } = props;
+
   return (
     <AnimatePresence>
       {open && (
@@ -78,9 +74,9 @@ export function PendingPaymentModal({
 
             <div className="p-6 pt-10">
               {method === "oxxo" ? (
-                <OxxoContent reference={reference!} amount={amount} due_date={due_date} />
+                <OxxoContent reference={props.reference} amount={amount} due_date={props.due_date} />
               ) : (
-                <SpeiContent clabe={clabe!} bank={bank!} beneficiary={beneficiary!} amount={amount} />
+                <SpeiContent clabe={props.clabe} bank={props.bank} beneficiary={props.beneficiary} amount={amount} />
               )}
 
               <p className="text-[11px] text-[#9CA3AF] text-center mt-4">
