@@ -634,7 +634,7 @@ export default function CheckoutPage() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               cart_id: cart_id!,
-              amount: finalTotal,
+              amount: finalTotal + 85,
               customer: { name: contact.name, email: contact.email },
             }),
           });
@@ -645,6 +645,7 @@ export default function CheckoutPage() {
           const oxxoData: OxxoResult = await res.json();
           setPendingPayment({ method: "oxxo", data: oxxoData });
           setSubmitting(false);
+          setPaymentStep(0);
           return; // No limpiar carrito — webhook confirmará el pago
         } else if (paymentMethod === "spei") {
           const res = await fetch("/api/openpay/spei", {
@@ -652,7 +653,7 @@ export default function CheckoutPage() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               cart_id: cart_id!,
-              amount: finalTotal,
+              amount: finalTotal + 85,
               customer: { name: contact.name, email: contact.email },
             }),
           });
@@ -663,6 +664,7 @@ export default function CheckoutPage() {
           const speiData: SpeiResult = await res.json();
           setPendingPayment({ method: "spei", data: speiData });
           setSubmitting(false);
+          setPaymentStep(0);
           return; // No limpiar carrito — webhook confirmará el pago
         }
       } catch (err) {
@@ -1174,7 +1176,7 @@ export default function CheckoutPage() {
                   {submitting && paymentStep > 0 ? (
                     <div className="mt-6 space-y-3">
                       {[
-                        { step: 1, label: "Verificando tarjeta" },
+                        { step: 1, label: paymentMethod === "card" ? "Verificando tarjeta" : "Preparando pedido" },
                         { step: 2, label: "Guardando dirección" },
                         { step: 3, label: "Preparando pago" },
                         { step: 4, label: "Procesando cobro" },
@@ -1350,7 +1352,7 @@ export default function CheckoutPage() {
             method="oxxo"
             reference={pendingPayment.data.reference}
             due_date={pendingPayment.data.due_date}
-            amount={finalTotal}
+            amount={finalTotal + 85}
             onClose={() => {
               setPendingPayment(null);
               clearCart();
@@ -1364,7 +1366,7 @@ export default function CheckoutPage() {
             clabe={pendingPayment.data.clabe}
             bank={pendingPayment.data.bank}
             beneficiary={pendingPayment.data.beneficiary}
-            amount={finalTotal}
+            amount={finalTotal + 85}
             onClose={() => {
               setPendingPayment(null);
               clearCart();
