@@ -40,6 +40,9 @@ import { PendingPaymentModal } from "@/components/PendingPaymentModal";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
+/** Costo de envío fijo en MXN. Debe coincidir con lo que se cobra en Openpay y en Medusa. */
+const SHIPPING_COST_MXN = 85;
+
 function fmt(n: number) {
   return new Intl.NumberFormat("es-MX", {
     style: "currency",
@@ -552,7 +555,19 @@ export default function CheckoutPage() {
 
       if (paymentMethod === "card") {
         setPaymentStep(1);
-        device_session_id = getDeviceSessionId("checkout-form") ?? "dev_session";
+        const sessionId = getDeviceSessionId("checkout-form");
+        if (!sessionId) {
+          if (process.env.NODE_ENV === "development") {
+            console.warn("[Checkout] Openpay anti-fraude no disponible (scripts no cargados), usando fallback en dev");
+            device_session_id = "dev_session";
+          } else {
+            setSubmitError("Error al inicializar el sistema de pago. Recarga la página e inténtalo de nuevo.");
+            setSubmitting(false);
+            return;
+          }
+        } else {
+          device_session_id = sessionId;
+        }
         try {
           openpay_token_id = await tokenizeCard(
             parseCardForm(card.number, card.name, card.expiry, card.cvv)
@@ -634,7 +649,7 @@ export default function CheckoutPage() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               cart_id: cart_id!,
-              amount: finalTotal + 85,
+              amount: finalTotal + SHIPPING_COST_MXN,
               customer: { name: contact.name, email: contact.email },
             }),
           });
@@ -653,7 +668,7 @@ export default function CheckoutPage() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               cart_id: cart_id!,
-              amount: finalTotal + 85,
+              amount: finalTotal + SHIPPING_COST_MXN,
               customer: { name: contact.name, email: contact.email },
             }),
           });
@@ -1220,7 +1235,7 @@ export default function CheckoutPage() {
                       style={{ background: "#E8503A" }}
                     >
                       <Lock size={16} />
-                      Pagar {fmt(finalTotal + 85)}
+                      Pagar {fmt(finalTotal + SHIPPING_COST_MXN)}
                     </button>
                   )}
                 </motion.div>
@@ -1309,7 +1324,7 @@ export default function CheckoutPage() {
                 <div className="pt-2.5 border-t border-[#E5E7EB] flex justify-between">
                   <span className="text-[15px] font-black text-[#005088]">Total</span>
                   <div className="text-right">
-                    <p className="text-[18px] font-black text-[#005088]">{fmt(finalTotal + 85)}</p>
+                    <p className="text-[18px] font-black text-[#005088]">{fmt(finalTotal + SHIPPING_COST_MXN)}</p>
                     {(totals.savings > 0 || couponDiscount > 0) && (
                       <p className="text-[11px] text-[#6B7280]">
                         antes {fmt(totals.subtotal + 85)}
@@ -1352,7 +1367,7 @@ export default function CheckoutPage() {
             method="oxxo"
             reference={pendingPayment.data.reference}
             due_date={pendingPayment.data.due_date}
-            amount={finalTotal + 85}
+            amount={finalTotal + SHIPPING_COST_MXN}
             onClose={() => {
               setPendingPayment(null);
               clearCart();
@@ -1366,7 +1381,7 @@ export default function CheckoutPage() {
             clabe={pendingPayment.data.clabe}
             bank={pendingPayment.data.bank}
             beneficiary={pendingPayment.data.beneficiary}
-            amount={finalTotal + 85}
+            amount={finalTotal + SHIPPING_COST_MXN}
             onClose={() => {
               setPendingPayment(null);
               clearCart();

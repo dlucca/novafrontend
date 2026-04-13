@@ -26,6 +26,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Faltan campos requeridos." }, { status: 400 });
     }
 
+    // Verificar que el carrito existe en Medusa antes de crear el cargo.
+    // Previene spam de cargos con cart_ids inventados.
+    const medusaUrl = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL ?? "http://localhost:9000";
+    const medusaKey = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY ?? "";
+    const cartRes = await fetch(`${medusaUrl}/store/carts/${cart_id}`, {
+      headers: { "x-publishable-api-key": medusaKey },
+    });
+    if (!cartRes.ok) {
+      console.warn("[oxxo] Carrito inválido:", cart_id, cartRes.status);
+      return NextResponse.json({ error: "Carrito no encontrado." }, { status: 400 });
+    }
+
     // 1. Crear cargo OXXO en Openpay
     const charge = await createOxxoCharge({
       amount,

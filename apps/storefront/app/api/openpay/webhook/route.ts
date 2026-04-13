@@ -42,6 +42,33 @@ export async function POST(req: NextRequest) {
     const medusaUrl = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL ?? "http://localhost:9000";
     const medusaKey = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY ?? "";
 
+    // Verificar que el carrito existe y validar el monto cobrado
+    const cartRes = await fetch(`${medusaUrl}/store/carts/${cart_id}`, {
+      headers: { "x-publishable-api-key": medusaKey },
+    });
+    if (!cartRes.ok) {
+      console.warn("[webhook] Carrito no encontrado:", cart_id, cartRes.status);
+      return NextResponse.json({ ok: true }); // No es nuestro cart, ignorar silenciosamente
+    }
+    const cartBody = await cartRes.json().catch(() => ({})) as { cart?: { total?: number; items?: unknown[] } };
+    const medusaCart = cartBody?.cart;
+
+    if (!medusaCart?.items?.length || (medusaCart.total ?? 0) <= 0) {
+      console.error("[webhook] Carrito vacío o total cero:", cart_id);
+      return NextResponse.json({ ok: true });
+    }
+
+    // Guard de monto: charge.amount (pesos) debe ser ≥ cart.total (centavos) / 100.
+    // Previene que un cargo de $1 complete un carrito de $500.
+    // Nota: cart.total no incluye envío ni cupones aplicados en frontend.
+    const cartMinimumMXN = (medusaCart.total ?? 0) / 100;
+    if (charge.amount < cartMinimumMXN) {
+      console.error(
+        `[webhook] Monto insuficiente: cobrado=${charge.amount} MXN, mínimo_carrito=${cartMinimumMXN} MXN, cart_id=${cart_id}`
+      );
+      return NextResponse.json({ ok: true }); // 200 para evitar reintentos infinitos
+    }
+
     const medusaRes = await fetch(`${medusaUrl}/store/carts/${cart_id}/complete`, {
       method: "POST",
       headers: {
