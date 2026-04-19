@@ -1,0 +1,141 @@
+# Runs every 30 minutes against production. Alerts Slack on any failure.
+name: Production Monitor
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+jobs:
+  health-check:
+    name: Health Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check homepage
+        id: homepage
+        env:
+          PROD_URL: https://www.novapatch.care
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "$PROD_URL")
+          echo "status=$STATUS" >> "$GITHUB_OUTPUT"
+          if [ "$STATUS" != "200" ]; then
+            echo "Homepage returned $STATUS"
+            exit 1
+          fi
+
+      - name: Check /tienda
+        id: tienda
+        env:
+          PROD_URL: https://www.novapatch.care/tienda
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "$PROD_URL")
+          echo "status=$STATUS" >> "$GITHUB_OUTPUT"
+          if [ "$STATUS" != "200" ]; then
+            echo "/tienda returned $STATUS"
+            exit 1
+          fi
+
+      - name: Check response time
+        id: latency
+        env:
+          PROD_URL: https://www.novapatch.care
+        run: |
+          TTFB=$(curl -s -o /dev/null -w "%{time_starttransfer}" --max-time 10 "$PROD_URL")
+          echo "ttfb=$TTFB" >> "$GITHUB_OUTPUT"
+          python3 -c "import sys; sys.exit(1 if float('$TTFB') > 3.0 else 0)"
+
+      - name: Notify Slack on failure
+        if: failure()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          HOMEPAGE_STATUS: ${{ steps.homepage.outputs.status }}
+          TIENDA_STATUS: ${{ steps.tienda.outputs.status }}
+          TTFB: ${{ steps.latency.outputs.ttfb }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          jq -n \
+            --arg homepage "${HOMEPAGE_STATUS:-sin respuesta}" \
+            --arg tienda "${TIENDA_STATUS:-sin respuesta}" \
+            --arg ttfb "${TTFB:-n/a}" \
+            --arg run_url "$RUN_URL" \
+            '{
+              text: ":rotating_light: *Alerta de producción — novapatch.care*",
+              blocks: [
+                {
+                  type: "section",
+                  text: {
+                    type: "mrkdwn",
+                    text: (":rotating_light: *Alerta de producción — novapatch.care*\n• Homepage HTTP: " + $homepage + "\n• /tienda HTTP: " + $tienda + "\n• TTFB: " + $ttfb + "s")
+                  }
+                },
+                {
+                  type: "actions",
+                  elements: [
+                    {
+                      type: "button",
+                      text: { type: "plain_text", text: "Ver detalles" },
+                      url: $run_url,
+                      style: "danger"
+                    }
+                  ]
+                }
+              ]
+            }' \
+          | curl -s -X POST "$SLACK_WEBHOOK_URL" \
+              -H "Content-Type: application/json" \
+              -d @-
+
+  lighthouse:
+    name: Lighthouse Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Solo en dispatch manual o en el cron de las 08:00 UTC (no cada 30 min)
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.event.schedule, '0 8')
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v12
+        id: lhci
+        with:
+          urls: |
+            https://www.novapatch.care
+            https://www.novapatch.care/tienda
+          configPath: lighthouserc.js
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: Notify Slack on Lighthouse failure
+        if: failure()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          jq -n \
+            --arg run_url "$RUN_URL" \
+            '{
+              text: ":warning: *Lighthouse scores por debajo del umbral en producción*",
+              blocks: [
+                {
+                  type: "section",
+                  text: {
+                    type: "mrkdwn",
+                    text: ":warning: *Lighthouse scores por debajo del umbral*\nAlguna métrica de performance, accesibilidad o SEO bajó del mínimo aceptable en novapatch.care"
+                  }
+                },
+                {
+                  type: "actions",
+                  elements: [
+                    {
+                      type: "button",
+                      text: { type: "plain_text", text: "Ver reporte" },
+                      url: $run_url
+                    }
+                  ]
+                }
+              ]
+            }' \
+          | curl -s -X POST "$SLACK_WEBHOOK_URL" \
+              -H "Content-Type: application/json" \
+              -d @-

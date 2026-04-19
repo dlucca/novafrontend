@@ -46,3 +46,43 @@ jobs:
         with:
           name: playwright-smoke-report
           path: apps/storefront/playwright-report/
+
+      - name: Notify Slack on failure
+        if: failure()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          BRANCH: ${{ github.head_ref }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          ACTOR: ${{ github.actor }}
+        run: |
+          jq -n \
+            --arg branch "$BRANCH" \
+            --arg actor "$ACTOR" \
+            --arg run_url "$RUN_URL" \
+            --arg pr_url "$PR_URL" \
+            '{
+              text: ":x: *Smoke tests fallaron*",
+              blocks: [
+                {
+                  type: "section",
+                  text: {
+                    type: "mrkdwn",
+                    text: (":x: *Smoke tests fallaron*\n*Branch:* `" + $branch + "`\n*Autor:* " + $actor + "\n*PR:* <" + $pr_url + "|Ver PR>")
+                  }
+                },
+                {
+                  type: "actions",
+                  elements: [
+                    {
+                      type: "button",
+                      text: { type: "plain_text", text: "Ver ejecución" },
+                      url: $run_url
+                    }
+                  ]
+                }
+              ]
+            }' \
+          | curl -s -X POST "$SLACK_WEBHOOK_URL" \
+              -H "Content-Type: application/json" \
+              -d @-
