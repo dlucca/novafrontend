@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { useUser, useClerk, useAuth } from "@clerk/nextjs";
@@ -40,7 +40,7 @@ import {
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
-function fmt(n: number, region: "mxn" | "ars" | null = "mxn") {
+function fmt(n: number, region: "mxn" | "ars" = "mxn") {
   const isAR = region === "ars";
   return new Intl.NumberFormat(isAR ? "es-AR" : "es-MX", {
     style: "currency",
@@ -51,7 +51,7 @@ function fmt(n: number, region: "mxn" | "ars" | null = "mxn") {
 
 // ─── Sub-components ──────────────────────────────────────────────────────────
 
-function OrderItem({ item, region }: { item: CartItem; region: "mxn" | "ars" | null }) {
+function OrderItem({ item, region }: { item: CartItem; region: "mxn" | "ars" }) {
   const price = itemDisplayPrice(item);
   const isSub = item.mode === "sub";
 
@@ -313,7 +313,11 @@ export default function CheckoutPage() {
 
   const REGION_ID = process.env.NEXT_PUBLIC_MEDUSA_REGION_ID ?? "reg_mx";
 
-  const [cartRegion, setCartRegion] = useState<"mxn" | "ars" | null>(null);
+  const params = useParams();
+  const localeParam = typeof params?.locale === "string" ? params.locale : "";
+  const [cartRegion, setCartRegion] = useState<"mxn" | "ars">(
+    localeParam === "ar" ? "ars" : "mxn"
+  );
 
   const hasSubscriptions = items.some((i) => i.mode === "sub");
   const isSignedIn = !!user;
