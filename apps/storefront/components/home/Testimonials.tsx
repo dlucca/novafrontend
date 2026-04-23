@@ -95,7 +95,7 @@ const HeadingUnderline = () => (
 );
 
 // Single tilt value per card index — keeps re-renders from jittering
-const TILTS = [-0.75, 0.35, -0.25] as const;
+const TILTS = ["-0.75deg", "0.35deg", "-0.25deg"] as const;
 
 export default function Testimonials() {
   const [page, setPage] = useState(0);
@@ -207,8 +207,8 @@ export default function Testimonials() {
         aria-label="Testimonios de clientes"
         aria-live="polite"
         tabIndex={0}
-        className="max-w-[1100px] mx-auto relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-4 rounded-2xl"
-        style={{ outlineColor: "#D8456A" }}
+        className="max-w-[1100px] mx-auto relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D8456A]/40 focus-visible:ring-offset-4 rounded-2xl"
+        style={{ focusVisibleOffset: CREAM } as React.CSSProperties}
         onKeyDown={handleKeyDown}
       >
         {/* Screen-reader page announcement */}
@@ -236,10 +236,10 @@ export default function Testimonials() {
                   role="group"
                   aria-roledescription="slide"
                   aria-label={`Testimonio de ${t.name}`}
-                  initial={shouldReduceMotion ? false : { rotate: tilt }}
-                  animate={{ rotate: shouldReduceMotion ? 0 : tilt }}
+                  initial={{ rotate: 0 }}
                   whileHover={shouldReduceMotion ? {} : { rotate: 0, y: -4, transition: { duration: 0.3 } }}
                   style={{
+                    rotate: shouldReduceMotion ? "0deg" : tilt,
                     background: "white",
                     boxShadow: "0 1px 0 rgba(60, 31, 79, 0.06), 0 18px 40px -24px rgba(60, 31, 79, 0.22)",
                   }}
