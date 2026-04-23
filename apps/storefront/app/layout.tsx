@@ -1,6 +1,6 @@
 // apps/storefront/app/layout.tsx
 import type { Metadata } from 'next'
-import { Outfit, Fraunces, Instrument_Sans } from 'next/font/google'
+import { Outfit } from 'next/font/google'
 import Script from 'next/script'
 import './globals.css'
 
@@ -9,25 +9,6 @@ const outfit = Outfit({
   variable: '--font-outfit',
   display: 'swap',
   weight: ['400', '600', '700'],
-})
-
-// Fonts scoped to the Testimonials section (editorial-pride direction).
-// Loaded globally so other surfaces can opt in later; only Testimonials uses
-// them today.
-const fraunces = Fraunces({
-  subsets: ['latin'],
-  variable: '--font-fraunces',
-  display: 'swap',
-  weight: ['400', '500', '700', '900'],
-  style: ['normal', 'italic'],
-})
-
-const instrumentSans = Instrument_Sans({
-  subsets: ['latin'],
-  variable: '--font-instrument',
-  display: 'swap',
-  weight: ['400', '500', '600'],
-  style: ['normal', 'italic'],
 })
 
 export const metadata: Metadata = {
@@ -54,7 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://js.openpay.mx" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://openpay.s3.amazonaws.com" />
       </head>
-      <body suppressHydrationWarning className={`${outfit.variable} ${fraunces.variable} ${instrumentSans.variable} min-h-screen`}>
+      <body suppressHydrationWarning className={`${outfit.variable} min-h-screen`}>
         {/* Meta Pixel noscript fallback */}
         <noscript>
           {/* eslint-disable-next-line @next/next/no-img-element */}

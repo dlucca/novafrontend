@@ -4,56 +4,46 @@ import { useState, useCallback } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 
-// Editorial-pride palette — queer-coded but not literal rainbow flag.
-// Each testimonial cycles through one accent so the grid feels like a
-// magazine spread rather than a corporate block.
-const ACCENTS = [
-  "#D8456A", // magenta-rosa
-  "#F28B40", // coral-naranja
-  "#EFC149", // azafrán
-  "#7CC27D", // jade
-  "#5B9BD5", // cielo
-  "#A17FC0", // orquídea
-] as const;
-
-const PLUM = "#3C1F4F";
-const CREAM = "#FBF5EC";
-const CREAM_DEEP = "#F1E7D4";
-
 const testimonials = [
   {
     name: "Carlos M.",
     product: "Energy",
+    dot: "#83B5F4",
     img: "/socialproof/testimonial_2_1x.webp",
     text: "Lo pongo en la mañana y siento que llego al final del día sin ese bajón de siempre. Ya no dependo del tercer café.",
   },
   {
     name: "Sofía R.",
     product: "Sleep",
+    dot: "#1EB1BC",
     img: "/socialproof/testimonial_1_1x.webp",
     text: "Me ayuda a desconectar antes de dormir. Llego a la cama más tranquila y eso lo cambia todo.",
   },
   {
     name: "Diego T.",
     product: "Zen",
+    dot: "#4E82BC",
     img: "/socialproof/testimonial_5_1x.webp",
     text: "Días de reuniones seguidas y lo noto. No es que el estrés desaparezca, pero lo manejo diferente.",
   },
   {
     name: "Valentina G.",
     product: "Glow",
+    dot: "#F25C54",
     img: "/socialproof/testimonial_3_1x.webp",
     text: "Llevo dos meses y mi piel se ve diferente. Más uniforme, más luminosa. La gente me pregunta qué estoy haciendo.",
   },
   {
     name: "Andrés P.",
     product: "Shield",
+    dot: "#FFA849",
     img: "/socialproof/testimonial_9_1x.webp",
     text: "Entreno fuerte y necesito que mi cuerpo responda bien. Desde que lo uso me enfermo mucho menos. Simple así.",
   },
   {
     name: "Mariana L.",
     product: "Woman",
+    dot: "#C693C4",
     img: "/socialproof/testimonial_8_1x.webp",
     text: "Sentía que mis ciclos me manejaban a mí. Ahora lo vivo diferente — más estable, con menos altibajos emocionales.",
   },
@@ -61,41 +51,19 @@ const testimonials = [
 
 const PAGE_SIZE = 3;
 
-function StarIcon({ color }: { color: string }) {
+function StarIcon() {
   return (
-    <svg viewBox="0 0 20 20" fill={color} width="14" height="14" aria-hidden="true">
+    <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18" aria-hidden="true" style={{ color: "var(--color-teal)" }}>
       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
     </svg>
   );
 }
 
-const Stars = ({ color }: { color: string }) => (
-  <div role="img" aria-label="Calificación: 5 de 5 estrellas" className="flex gap-[3px] mb-5">
-    {[...Array(5)].map((_, i) => <StarIcon key={i} color={color} />)}
+const Stars = () => (
+  <div role="img" aria-label="Calificación: 5 de 5 estrellas" className="flex gap-0.5 mb-3.5">
+    {[...Array(5)].map((_, i) => <StarIcon key={i} />)}
   </div>
 );
-
-// Hand-drawn wavy underline used to swipe across the heading.
-// Rendered as SVG so it scales cleanly with font size.
-const HeadingUnderline = () => (
-  <svg
-    aria-hidden="true"
-    viewBox="0 0 420 14"
-    preserveAspectRatio="none"
-    className="absolute left-0 -bottom-3 w-full h-[10px]"
-  >
-    <path
-      d="M2 8 C 70 1, 140 14, 210 7 S 380 1, 418 9"
-      fill="none"
-      stroke="#D8456A"
-      strokeWidth="3"
-      strokeLinecap="round"
-    />
-  </svg>
-);
-
-// Single tilt value per card index — keeps re-renders from jittering
-const TILTS = ["-0.75deg", "0.35deg", "-0.25deg"] as const;
 
 export default function Testimonials() {
   const [page, setPage] = useState(0);
@@ -107,288 +75,170 @@ export default function Testimonials() {
     setPage((p) => (p + dir + totalPages) % totalPages);
   };
 
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        go(-1);
-      } else if (e.key === "ArrowRight") {
-        e.preventDefault();
-        go(1);
-      }
-    },
-    [go] // eslint-disable-line react-hooks/exhaustive-deps
-  );
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      go(-1);
+    } else if (e.key === "ArrowRight") {
+      e.preventDefault();
+      go(1);
+    }
+  }, [go]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <section
-      className="relative py-20 sm:py-28 px-5 sm:px-8 lg:px-12"
-      style={{
-        background: CREAM,
-        fontFamily: "var(--font-instrument), ui-sans-serif, system-ui",
-        color: PLUM,
-      }}
-    >
-      {/* Header — editorial, left-aligned, with hand-drawn underline */}
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className="max-w-[1100px] mx-auto mb-16 sm:mb-20 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6"
+    <div style={{ background: "var(--color-teal-pale)" }}>
+      {/* Wave top */}
+      <svg
+        viewBox="0 0 1440 60"
+        xmlns="http://www.w3.org/2000/svg"
+        preserveAspectRatio="none"
+        className="block w-full"
+        style={{ height: "60px", transform: "scaleY(-1)", background: "white", marginBottom: "-1px" }}
       >
-        <div className="flex-1">
-          <p
-            className="text-[11px] uppercase mb-5 inline-flex items-center gap-2"
-            style={{
-              letterSpacing: "0.22em",
-              color: "#D8456A",
-              fontFamily: "var(--font-instrument), ui-sans-serif, system-ui",
-              fontWeight: 600,
-            }}
-          >
-            <span className="inline-block w-8 h-px" style={{ background: "#D8456A" }} />
-            Volumen 01 · Testimonios
-          </p>
-          <h2
-            className="relative inline-block leading-[0.98]"
-            style={{
-              fontFamily: "var(--font-fraunces), Georgia, serif",
-              fontWeight: 900,
-              fontStyle: "italic",
-              fontSize: "clamp(40px, 5.5vw, 68px)",
-              color: PLUM,
-              letterSpacing: "-0.02em",
-              fontFeatureSettings: '"ss01" on',
-            }}
-          >
-            Lo que dicen
-            <br />
-            <span style={{ fontStyle: "normal", fontWeight: 400 }}>quienes ya lo usan.</span>
-            <HeadingUnderline />
-          </h2>
-        </div>
+        <path d="M0,40 C360,80 1080,0 1440,40 L1440,60 L0,60 Z" fill="var(--color-teal-pale)" />
+      </svg>
 
-        {/* Rating pill — right side of header */}
-        <div
-          className="flex items-center gap-3 shrink-0"
-          style={{
-            fontFamily: "var(--font-instrument), ui-sans-serif, system-ui",
-          }}
+      <section className="py-16 sm:py-20 px-5 sm:px-8 lg:px-12 relative" style={{ background: "var(--color-teal-pale)" }}>
+        {/* Header — social proof number instead of standard label */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center max-w-[600px] mx-auto mb-12"
         >
-          <div className="flex items-center gap-[3px]">
+          <div className="flex items-center justify-center gap-1 mb-3" aria-hidden="true">
             {[...Array(5)].map((_, i) => (
-              <StarIcon key={i} color="#EFC149" />
+              <svg key={i} viewBox="0 0 20 20" fill="currentColor" width="24" height="24" style={{ color: "var(--color-teal)" }}>
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
             ))}
           </div>
-          <div>
-            <p
-              style={{
-                fontFamily: "var(--font-fraunces), Georgia, serif",
-                fontWeight: 700,
-                fontSize: 28,
-                lineHeight: 1,
-                color: PLUM,
-              }}
-            >
-              4.8
-            </p>
-            <p className="text-[11px] uppercase tracking-[0.18em] mt-1" style={{ color: PLUM, opacity: 0.55 }}>
-              de 5 estrellas
-            </p>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Cards */}
-      <div
-        role="region"
-        aria-roledescription="carrusel"
-        aria-label="Testimonios de clientes"
-        aria-live="polite"
-        tabIndex={0}
-        className="max-w-[1100px] mx-auto relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D8456A]/40 focus-visible:ring-offset-4 rounded-2xl"
-        style={{ focusVisibleOffset: CREAM } as React.CSSProperties}
-        onKeyDown={handleKeyDown}
-      >
-        {/* Screen-reader page announcement */}
-        <div aria-live="assertive" aria-atomic="true" className="sr-only">
-          Página {page + 1} de {totalPages}
-        </div>
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={page}
-            initial={shouldReduceMotion ? false : { opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={shouldReduceMotion ? {} : { opacity: 0, y: -24 }}
-            transition={{ duration: shouldReduceMotion ? 0 : 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-7"
+          <h2
+            className="font-black text-ocean tracking-[-0.02em]"
+            style={{ fontSize: "clamp(26px,3vw,40px)" }}
           >
-            {visible.map((t, idx) => {
-              // Stable accent per testimonial index so colors don't reshuffle on page change
-              const globalIdx = page * PAGE_SIZE + idx;
-              const accent = ACCENTS[globalIdx % ACCENTS.length];
-              const tilt = TILTS[idx % TILTS.length];
+            Lo que dicen quienes ya lo usan.
+          </h2>
+          <p className="text-[15px] text-ocean/60 mt-2">
+            4.8 de 5 estrellas en promedio
+          </p>
+        </motion.div>
 
-              return (
-                <motion.article
+        {/* Cards */}
+        <div
+          role="region"
+          aria-roledescription="carrusel"
+          aria-label="Testimonios de clientes"
+          aria-live="polite"
+          tabIndex={0}
+          className="max-w-[1100px] mx-auto relative overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/50 focus-visible:ring-offset-4 rounded-2xl"
+          onKeyDown={handleKeyDown}
+        >
+          {/* Screen-reader page announcement */}
+          <div aria-live="assertive" aria-atomic="true" className="sr-only">
+            Página {page + 1} de {totalPages}
+          </div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={page}
+              initial={shouldReduceMotion ? false : { opacity: 0, x: 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={shouldReduceMotion ? {} : { opacity: 0, x: -40 }}
+              transition={{ duration: shouldReduceMotion ? 0 : 0.35, ease: [0.22, 1, 0.36, 1] }}
+              className="grid grid-cols-1 md:grid-cols-3 gap-5"
+            >
+              {visible.map((t) => (
+                <div
                   key={t.name}
                   role="group"
                   aria-roledescription="slide"
                   aria-label={`Testimonio de ${t.name}`}
-                  initial={{ rotate: 0 }}
-                  whileHover={shouldReduceMotion ? {} : { rotate: 0, y: -4, transition: { duration: 0.3 } }}
-                  style={{
-                    rotate: shouldReduceMotion ? "0deg" : tilt,
-                    background: "white",
-                    boxShadow: "0 1px 0 rgba(60, 31, 79, 0.06), 0 18px 40px -24px rgba(60, 31, 79, 0.22)",
-                  }}
-                  className="relative rounded-[28px] p-8 pt-11 flex flex-col overflow-hidden"
+                  className="bg-white rounded-[32px] p-7 shadow-[0_1px_4px_rgba(0,0,0,0.07)] flex flex-col"
                 >
-                  {/* Top colored rule — makes the accent unmistakable */}
-                  <span
-                    aria-hidden="true"
-                    className="absolute top-0 left-0 right-0 h-[6px]"
-                    style={{ background: accent }}
-                  />
-
-                  {/* Oversized decorative opening quote */}
-                  <span
-                    aria-hidden="true"
-                    className="absolute pointer-events-none select-none"
-                    style={{
-                      top: -18,
-                      right: 22,
-                      fontFamily: "var(--font-fraunces), Georgia, serif",
-                      fontWeight: 900,
-                      fontStyle: "italic",
-                      fontSize: 120,
-                      lineHeight: 1,
-                      color: accent,
-                      opacity: 0.18,
-                    }}
-                  >
-                    “
-                  </span>
-
-                  <Stars color={accent} />
-
-                  <p
-                    className="flex-1 mb-7"
-                    style={{
-                      fontFamily: "var(--font-fraunces), Georgia, serif",
-                      fontWeight: 400,
-                      fontSize: 17,
-                      lineHeight: 1.55,
-                      color: PLUM,
-                      letterSpacing: "-0.005em",
-                    }}
-                  >
-                    {t.text}
+                  <Stars />
+                  <p className="text-[15px] text-gray-900 leading-[1.7] flex-1 mb-5">
+                    &ldquo;{t.text}&rdquo;
                   </p>
-
                   <div className="flex items-center gap-3">
-                    <div
-                      className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 p-[2px]"
-                      style={{ background: accent }}
-                    >
-                      <div className="w-full h-full rounded-full overflow-hidden bg-white">
-                        <Image
-                          src={t.img}
-                          alt={`Foto de ${t.name}`}
-                          width={48}
-                          height={48}
-                          loading="lazy"
-                          className="object-cover w-full h-full"
-                        />
-                      </div>
+                    <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                      <Image
+                        src={t.img}
+                        alt={`Foto de ${t.name}`}
+                        width={48}
+                        height={48}
+                        loading="lazy"
+                        className="object-cover w-full h-full"
+                      />
                     </div>
                     <div>
-                      <p
-                        className="text-[14px]"
-                        style={{
-                          fontFamily: "var(--font-instrument), ui-sans-serif, system-ui",
-                          fontWeight: 600,
-                          color: PLUM,
-                        }}
-                      >
-                        {t.name}
-                      </p>
-                      <p
-                        className="text-[12px] mt-0.5"
-                        style={{
-                          fontFamily: "var(--font-fraunces), Georgia, serif",
-                          fontStyle: "italic",
-                          color: accent,
-                        }}
-                      >
-                        Novapatch {t.product}
-                      </p>
+                      <p className="font-bold text-[14px] text-gray-900">{t.name}</p>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <span
+                          className="w-2 h-2 rounded-full inline-block flex-shrink-0"
+                          style={{ background: t.dot }}
+                        />
+                        <span className="text-[12px] text-gray-500">Novapatch {t.product}</span>
+                      </div>
                     </div>
                   </div>
-                </motion.article>
-              );
-            })}
-          </motion.div>
-        </AnimatePresence>
-      </div>
-
-      {/* Nav */}
-      <div className="max-w-[1100px] mx-auto flex justify-between items-center mt-12">
-        {/* Dots */}
-        <div className="flex items-center gap-2">
-          {Array.from({ length: totalPages }).map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setPage(i)}
-              className="flex items-center justify-center w-8 h-8 border-none cursor-pointer bg-transparent"
-              aria-label={`Página ${i + 1}`}
-              aria-current={i === page ? "true" : undefined}
-            >
-              <span
-                className="block rounded-full transition-all duration-300"
-                style={{
-                  width: i === page ? 28 : 8,
-                  height: 8,
-                  background: i === page ? PLUM : "rgba(60, 31, 79, 0.22)",
-                }}
-              />
-            </button>
-          ))}
+                </div>
+              ))}
+            </motion.div>
+          </AnimatePresence>
         </div>
 
-        {/* Prev / next */}
-        <div className="flex items-center gap-2">
+        {/* Nav */}
+        <div className="flex justify-center items-center gap-4 mt-9">
           <button
             onClick={() => go(-1)}
-            className="w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer"
-            style={{
-              border: `1.5px solid ${PLUM}22`,
-              color: PLUM,
-              background: CREAM_DEEP,
-            }}
+            className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 bg-black/[0.08] text-gray-900 cursor-pointer border-none"
             aria-label="Anterior"
           >
-            <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
               <path d="M15 18l-6-6 6-6" />
             </svg>
           </button>
+
+          {/* Dots */}
+          <div className="flex items-center">
+            {Array.from({ length: totalPages }).map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setPage(i)}
+                className="flex items-center justify-center w-11 h-11 border-none cursor-pointer bg-transparent"
+                aria-label={`Página ${i + 1}`}
+                aria-current={i === page ? "true" : undefined}
+              >
+                <span
+                  className={`rounded-full block transition-all duration-300 h-2 ${i === page ? "w-5 bg-teal" : "w-2 bg-black/20"}`}
+                />
+              </button>
+            ))}
+          </div>
+
           <button
             onClick={() => go(1)}
-            className="w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer"
-            style={{
-              border: "none",
-              color: "white",
-              background: PLUM,
-            }}
+            className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 bg-black/[0.08] text-gray-900 cursor-pointer border-none"
             aria-label="Siguiente"
           >
-            <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
               <path d="M9 18l6-6-6-6" />
             </svg>
           </button>
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* Wave bottom */}
+      <svg
+        viewBox="0 0 1440 60"
+        xmlns="http://www.w3.org/2000/svg"
+        preserveAspectRatio="none"
+        className="block w-full"
+        style={{ height: "60px", background: "var(--color-teal-pale)", marginTop: "-1px" }}
+      >
+        <path d="M0,20 C480,60 960,0 1440,20 L1440,60 L0,60 Z" fill="white" />
+      </svg>
+    </div>
   );
 }
