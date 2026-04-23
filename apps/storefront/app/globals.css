@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Editorial fonts — scoped to Testimonials section today, available for reuse */
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,700;1,9..144,900&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap");
+
 @theme {
   /* Brand — Novapatch */
   --color-coral:       #E8503A;
