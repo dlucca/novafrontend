@@ -32,7 +32,6 @@ const META: Record<string, {
     taglineColor: "#C94030",
     quote: '"La piel también refleja cómo te cuidas."',
     tags: ["Bienestar desde adentro", "Constancia"],
-    popular: true,
   },
   sleep: {
     color: "#138A75",
@@ -47,6 +46,7 @@ const META: Record<string, {
     taglineColor: "#2B7CC1",
     quote: '"Tu día no para. Tu energía tampoco."',
     tags: ["Energía sostenida", "Sin picos ni caídas"],
+    popular: true,
   },
   zen: {
     color: "#3A6FA8",
@@ -194,7 +194,7 @@ function ProductCard({
 
       {/* Imagen */}
       <div
-        className="relative flex items-center justify-center py-10 px-6"
+        className="relative flex items-center justify-center py-6 px-4"
         style={{ background: meta.bg }}
       >
         {meta.popular && (
@@ -217,12 +217,12 @@ function ProductCard({
             </motion.span>
           )}
         </AnimatePresence>
-        <Link href={`/${locale}/tienda/${product.slug}`} className="relative block w-36 h-36">
+        <Link href={`/${locale}/tienda/${product.slug}`} className="relative block w-[246px] h-[246px]">
           <Image
             src={product.image}
             alt={`Novapatch ${product.title}`}
             fill
-            sizes="144px"
+            sizes="246px"
             loading="lazy"
             className="object-contain drop-shadow-md"
           />

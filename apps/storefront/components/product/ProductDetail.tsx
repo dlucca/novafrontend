@@ -27,7 +27,7 @@ function Gallery({ images, title, bg }: { images: string[]; title: string; bg: s
   return (
     <div>
       <div
-        className="relative aspect-square w-full overflow-hidden rounded-[24px]"
+        className="relative aspect-[4/5] w-full overflow-hidden rounded-[24px]"
         style={{ background: bg }}
       >
         <AnimatePresence mode="wait">
@@ -45,7 +45,7 @@ function Gallery({ images, title, bg }: { images: string[]; title: string; bg: s
               fill
               priority={active === 0}
               sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-contain p-6"
+              className="object-contain"
             />
           </motion.div>
         </AnimatePresence>

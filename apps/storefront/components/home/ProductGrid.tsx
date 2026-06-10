@@ -130,7 +130,7 @@ function ProductCard({
         {/* Image area */}
         <div
           className="relative flex items-center justify-center"
-          style={{ background: p.bg, padding: "36px 24px" }}
+          style={{ background: p.bg, padding: "20px 16px" }}
         >
           {p.popular && (
             <span
@@ -140,12 +140,12 @@ function ProductCard({
               Más popular
             </span>
           )}
-          <div className="relative w-36 h-36">
+          <div className="relative w-[264px] h-[264px]">
             <Image
               src={p.image}
               alt={`NovaPatch ${p.name}`}
               fill
-              sizes="144px"
+              sizes="264px"
               loading="lazy"
               className="object-contain group-hover:scale-[1.06] transition-transform duration-300"
             />
