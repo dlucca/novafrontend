@@ -101,3 +101,118 @@ export async function getProducts(regionId?: string, currencyCode?: string): Pro
 export async function getOrderedProducts(): Promise<Product[]> {
   return getProducts();
 }
+
+// ─── Detalle de producto (PDP) ────────────────────────────────────────────────
+
+export type PurchaseTier = "once" | "monthly" | "bimonthly" | "quarterly";
+
+export type PurchaseOption = {
+  tier: PurchaseTier;
+  label: string;          // "Compra única" | "Mensual" | ...
+  freq: 30 | 60 | 90 | null; // null = compra única
+  price: number;          // precio final del tier (con descuento)
+  discountPct: number;    // 0 | 20 | 15 | 10
+  variantId?: string;     // variante Medusa del tier
+};
+
+export type ProductDetail = {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  basePrice: number;      // precio regular (compra única)
+  images: string[];       // galería; [0] es la principal
+  options: PurchaseOption[];
+};
+
+const TIER_DEFS: { tier: PurchaseTier; label: string; freq: 30 | 60 | 90 | null; discountPct: number }[] = [
+  { tier: "once", label: "Compra única", freq: null, discountPct: 0 },
+  { tier: "monthly", label: "Mensual", freq: 30, discountPct: 20 },
+  { tier: "bimonthly", label: "Bimestral", freq: 60, discountPct: 15 },
+  { tier: "quarterly", label: "Trimestral", freq: 90, discountPct: 10 },
+];
+
+function fallbackDetail(slug: string): ProductDetail | null {
+  const meta = PRODUCT_META[slug];
+  if (!meta) return null;
+  const basePrice = 750;
+  return {
+    id: slug,
+    slug,
+    title: meta.name,
+    description: meta.description,
+    basePrice,
+    images: [meta.imgSrc],
+    options: TIER_DEFS.map((t) => ({
+      tier: t.tier,
+      label: t.label,
+      freq: t.freq,
+      price: Math.round(basePrice * (1 - t.discountPct / 100)),
+      discountPct: t.discountPct,
+      variantId: undefined,
+    })),
+  };
+}
+
+/**
+ * Detalle de producto para la PDP. Intenta Medusa (por handle, con metadata
+ * de variantes para mapear tiers); si falla, usa fallback local.
+ * Devuelve null si el handle no existe en ningún lado.
+ */
+export async function getProductDetail(
+  handle: string,
+  regionId?: string,
+  currencyCode?: string
+): Promise<ProductDetail | null> {
+  const resolvedRegionId = regionId || REGION_ID;
+  const currency = (currencyCode ?? "mxn").toLowerCase();
+  try {
+    const p = await medusa.catalog.getProductByHandle(
+      handle,
+      resolvedRegionId || undefined
+    );
+    if (!p) return fallbackDetail(handle);
+
+    const meta = PRODUCT_META[handle];
+
+    const variantPrice = (v: (typeof p.variants)[number] | undefined): number | undefined => {
+      if (!v) return undefined;
+      const calculated = v.calculated_price?.calculated_amount;
+      const listed = v.prices?.find((pr) => pr.currency_code === currency)?.amount;
+      const raw = calculated ?? listed;
+      return raw !== undefined && raw !== null ? Math.round(raw) : undefined;
+    };
+
+    const onceVariant = p.variants?.find((v) => v.metadata?.is_subscription === false);
+    const basePrice = variantPrice(onceVariant) ?? 750;
+
+    const options: PurchaseOption[] = TIER_DEFS.map((t) => {
+      const variant =
+        t.freq === null
+          ? onceVariant
+          : p.variants?.find((v) => v.metadata?.interval_days === t.freq);
+      return {
+        tier: t.tier,
+        label: t.label,
+        freq: t.freq,
+        price: variantPrice(variant) ?? Math.round(basePrice * (1 - t.discountPct / 100)),
+        discountPct: t.discountPct,
+        variantId: variant?.id,
+      };
+    });
+
+    const images = (p.images ?? []).map((i) => i.url).filter(Boolean);
+
+    return {
+      id: p.id,
+      slug: handle,
+      title: p.title,
+      description: meta?.description ?? p.description ?? "",
+      basePrice,
+      images: images.length > 0 ? images : [p.thumbnail ?? meta?.imgSrc ?? `/products/${handle}_thumb.webp`],
+      options,
+    };
+  } catch {
+    return fallbackDetail(handle);
+  }
+}
