@@ -14,6 +14,11 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'img.clerk.com',
       },
+      {
+        // Cloudflare R2 public bucket (imágenes de producto vía Medusa)
+        protocol: 'https',
+        hostname: '*.r2.dev',
+      },
     ],
   },
 }
