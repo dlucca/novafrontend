@@ -10,6 +10,11 @@ import type { Locale } from "@/i18n/routing"
 
 export const revalidate = 300 // ISR: 5 minutos
 
+// Conjunto cerrado de handles: cualquier otro 404ea en la capa de routing,
+// con status HTTP 404 real (notFound() dentro de la página respondería 200
+// porque el loading boundary ya comprometió el status).
+export const dynamicParams = false
+
 export function generateStaticParams() {
   return PRODUCT_ORDER.map((handle) => ({ handle }))
 }
