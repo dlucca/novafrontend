@@ -2,6 +2,8 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 import { useCart } from "@/contexts/CartContext";
 import { formatPrice } from "@/lib/format";
 
@@ -97,6 +99,8 @@ function HeroProductCard({
 }) {
   const subPrice = Math.round(basePrice * (1 - SUB_DISCOUNT));
   const p = product;
+  const params = useParams();
+  const locale = typeof params?.locale === "string" ? params.locale : "mx";
   return (
     <motion.div
       initial={{ opacity: 0, y: 32 }}
@@ -110,7 +114,7 @@ function HeroProductCard({
       >
         {/* Image */}
         <div className="relative flex items-center justify-center py-12 px-8 md:py-16 md:px-12">
-          <div className="relative w-[clamp(180px,22vw,288px)] h-[clamp(180px,22vw,288px)]">
+          <Link href={`/${locale}/tienda/${p.slug}`} className="relative block w-[clamp(180px,22vw,288px)] h-[clamp(180px,22vw,288px)]">
             <Image
               src={p.imgSrc}
               alt={`NovaPatch ${p.name}`}
@@ -118,7 +122,7 @@ function HeroProductCard({
               sizes="(max-width: 640px) 180px, (max-width: 1280px) 22vw, 288px"
               className="object-contain group-hover:scale-[1.04] transition-transform duration-500"
             />
-          </div>
+          </Link>
           <span
             className="absolute top-5 left-5 text-white text-[11px] font-extrabold uppercase tracking-[0.08em] px-3.5 py-1.5 rounded-full"
             style={{ background: p.color }}
@@ -133,7 +137,7 @@ function HeroProductCard({
             className="text-[28px] md:text-[36px] font-black tracking-[-0.02em] leading-tight"
             style={{ color: p.taglineColor }}
           >
-            {p.name}
+            <Link href={`/${locale}/tienda/${p.slug}`}>{p.name}</Link>
           </p>
           <p
             className="text-[15px] font-semibold leading-[1.5] mt-1 opacity-80"
@@ -208,6 +212,8 @@ function ProductCard({
 }) {
   const subPrice = Math.round(basePrice * (1 - SUB_DISCOUNT));
   const p = product;
+  const params = useParams();
+  const locale = typeof params?.locale === "string" ? params.locale : "mx";
   return (
     <motion.div
       initial={{ opacity: 0, y: 32 }}
@@ -226,7 +232,7 @@ function ProductCard({
           className="relative flex items-center justify-center"
           style={{ background: p.bg, padding: "36px 24px" }}
         >
-          <div className="relative w-36 h-36">
+          <Link href={`/${locale}/tienda/${p.slug}`} className="relative block w-36 h-36">
             <Image
               src={p.imgSrc}
               alt={`NovaPatch ${p.name}`}
@@ -235,7 +241,7 @@ function ProductCard({
               loading="lazy"
               className="object-contain group-hover:scale-[1.06] transition-transform duration-300"
             />
-          </div>
+          </Link>
         </div>
 
         {/* Body */}
@@ -245,7 +251,7 @@ function ProductCard({
               className="text-[20px] font-black tracking-[-0.01em]"
               style={{ color: p.taglineColor }}
             >
-              {p.name}
+              <Link href={`/${locale}/tienda/${p.slug}`}>{p.name}</Link>
             </p>
             <p
               className="text-[13px] font-semibold leading-[1.45] mt-0.5 opacity-75"

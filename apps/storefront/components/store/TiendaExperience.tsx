@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 import type { Product } from "@/lib/commerce";
 import { useCart } from "@/contexts/CartContext";
 import { formatPrice } from "@/lib/format";
@@ -166,6 +168,8 @@ function ProductCard({
 }) {
   const meta = META[product.slug];
   const { addToCart } = useCart();
+  const params = useParams();
+  const locale = typeof params?.locale === "string" ? params.locale : "mx";
   if (!meta) return null;
 
   const displayPrice =
@@ -213,7 +217,7 @@ function ProductCard({
             </motion.span>
           )}
         </AnimatePresence>
-        <div className="relative w-36 h-36">
+        <Link href={`/${locale}/tienda/${product.slug}`} className="relative block w-36 h-36">
           <Image
             src={product.image}
             alt={`Novapatch ${product.title}`}
@@ -222,14 +226,14 @@ function ProductCard({
             loading="lazy"
             className="object-contain drop-shadow-md"
           />
-        </div>
+        </Link>
       </div>
 
       {/* Cuerpo */}
       <div className="p-5 flex flex-col gap-3 flex-1">
         <div>
           <h3 className="text-[22px] font-black tracking-tight leading-none text-navy-light">
-            {product.title}
+            <Link href={`/${locale}/tienda/${product.slug}`}>{product.title}</Link>
           </h3>
           <p
             className="text-[13px] font-semibold leading-snug mt-1"
