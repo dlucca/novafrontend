@@ -48,6 +48,12 @@ export type MedusaVariant = {
   id: string;
   title: string;
   prices: { amount: number; currency_code: string }[];
+  calculated_price?: { calculated_amount: number } | null;
+  metadata?: {
+    is_subscription?: boolean;
+    interval_days?: number | null;
+    discount_percentage?: number | null;
+  } | null;
 };
 
 export type MedusaCart = {
@@ -223,6 +229,24 @@ const catalog = {
       `/store/variants/${id}`
     );
     return data.variant;
+  },
+
+  /**
+   * GET /store/products?handle=...&fields=+variants.metadata
+   * Producto individual para la PDP — incluye metadata de variantes
+   * (is_subscription / interval_days) para mapear los tiers de suscripción.
+   */
+  async getProductByHandle(
+    handle: string,
+    region_id?: string
+  ): Promise<MedusaProduct | null> {
+    const params = new URLSearchParams({ handle });
+    if (region_id) params.set("region_id", region_id);
+    params.set("fields", "+variants.metadata");
+    const data = await medusaFetch<{ products: MedusaProduct[] }>(
+      `/store/products?${params.toString()}`
+    );
+    return data.products[0] ?? null;
   },
 };
 
