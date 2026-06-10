@@ -22,7 +22,17 @@ const sectionReveal = {
   transition: { duration: 0.5, ease: "easeOut" as const },
 };
 
-function Gallery({ images, title, bg }: { images: string[]; title: string; bg: string }) {
+function Gallery({
+  images,
+  title,
+  bg,
+  accent,
+}: {
+  images: string[];
+  title: string;
+  bg: string;
+  accent: string;
+}) {
   const [active, setActive] = useState(0);
   return (
     <div>
@@ -61,7 +71,7 @@ function Gallery({ images, title, bg }: { images: string[]; title: string; bg: s
               className="relative h-16 w-16 overflow-hidden rounded-xl border-2 transition"
               style={{
                 background: bg,
-                borderColor: i === active ? "var(--color-navy)" : "rgba(13,27,53,0.10)",
+                borderColor: i === active ? accent : "rgba(13,27,53,0.10)",
               }}
             >
               <Image src={src} alt="" fill sizes="64px" className="object-contain p-1" />
@@ -79,12 +89,14 @@ function TierSelector({
   onSelect,
   currency,
   color,
+  bg,
 }: {
   options: PurchaseOption[];
   selected: PurchaseOption;
   onSelect: (o: PurchaseOption) => void;
   currency: string;
   color: string;
+  bg: string;
 }) {
   return (
     <div>
@@ -99,8 +111,9 @@ function TierSelector({
               aria-pressed={isActive}
               className="rounded-2xl border-2 px-3 py-3 text-left transition"
               style={{
-                borderColor: isActive ? color : "#E5E7EB",
-                background: isActive ? "#fff" : "#FAFAFA",
+                // Neutros cálidos (cream) en reposo; el tier activo toma un velo del tint del producto
+                borderColor: isActive ? color : "#E7E1D6",
+                background: isActive ? `color-mix(in srgb, ${bg} 45%, #fff)` : "#FCFAF6",
                 boxShadow: isActive ? "0 4px 16px rgba(13,27,53,0.08)" : "none",
               }}
             >
@@ -132,7 +145,7 @@ function Eyebrow({ children, color }: { children: React.ReactNode; color: string
   );
 }
 
-function FaqAccordion({ faq }: { faq: PdpMeta["faq"] }) {
+function FaqAccordion({ faq, accent }: { faq: PdpMeta["faq"]; accent: string }) {
   const [open, setOpen] = useState<number | null>(0);
   return (
     <div className="space-y-3">
@@ -146,8 +159,11 @@ function FaqAccordion({ faq }: { faq: PdpMeta["faq"] }) {
           >
             <span className="text-sm font-bold text-[#0D1B35]">{item.q}</span>
             <span
-              className="ml-4 text-xl leading-none text-[#0D1B35] transition-transform"
-              style={{ transform: open === i ? "rotate(45deg)" : "none" }}
+              className="ml-4 text-xl leading-none transition-transform"
+              style={{
+                transform: open === i ? "rotate(45deg)" : "none",
+                color: open === i ? accent : "rgba(13,27,53,0.45)",
+              }}
             >
               +
             </span>
@@ -216,7 +232,7 @@ export default function ProductDetail({
     <main className="min-h-screen bg-[#FAF7F2]">
       {/* ── Hero: galería + info ── */}
       <section className="mx-auto grid max-w-6xl gap-10 px-6 pt-28 pb-16 lg:grid-cols-2">
-        <Gallery images={product.images} title={product.title} bg={bg} />
+        <Gallery images={product.images} title={product.title} bg={bg} accent={accent} />
 
         <div className="flex flex-col justify-center">
           <h1 className="text-5xl font-black" style={{ color }}>
@@ -250,6 +266,7 @@ export default function ProductDetail({
               onSelect={setSelected}
               currency={currency}
               color={color}
+              bg={bg}
             />
           </div>
 
@@ -260,14 +277,22 @@ export default function ProductDetail({
           >
             {ctaLabel}
           </button>
-          <p className="mt-3 text-center text-xs text-[#0D1B35]/55">
+          {selected.discountPct > 0 && (
+            <p className="mt-3 text-center text-xs font-bold text-[#1E7D4F]">
+              Ahorras {formatPrice(product.basePrice - selected.price, currency)} en cada entrega
+            </p>
+          )}
+          <p className={`text-center text-xs text-[#0D1B35]/55 ${selected.discountPct > 0 ? "mt-1" : "mt-3"}`}>
             Pausa, cambia o cancela cuando quieras · Sin penalizaciones
           </p>
         </div>
       </section>
 
       {/* ── Perks de suscripción ── */}
-      <section className="border-y border-[#E8E2D8] bg-white/60">
+      <section
+        className="border-y border-[#E8E2D8]"
+        style={{ background: `color-mix(in srgb, ${bg} 30%, #fff)` }}
+      >
         <div className="mx-auto grid max-w-6xl gap-8 px-6 py-10 sm:grid-cols-3">
           {SUBSCRIPTION_PERKS.map((perk) => (
             <div key={perk.title}>
@@ -300,7 +325,8 @@ export default function ProductDetail({
                 {pdp.accompaniment.map((item, i) => (
                   <div
                     key={item}
-                    className="flex items-baseline gap-5 border-b border-[#0D1B35]/10 py-5 first:pt-1"
+                    className="flex items-baseline gap-5 border-b py-5 first:pt-1"
+                    style={{ borderColor: `color-mix(in srgb, ${accent} 22%, transparent)` }}
                   >
                     <span className="text-xs font-black tabular-nums" style={{ color: accent }}>
                       {String(i + 1).padStart(2, "0")}
@@ -358,7 +384,7 @@ export default function ProductDetail({
                     Ingredientes clave
                   </h2>
                 </div>
-                <p className="text-sm font-semibold text-[#0D1B35]/60">
+                <p className="text-sm font-semibold" style={{ color: accent }}>
                   {pdp.ingredientDetails.length} activos seleccionados
                 </p>
               </div>
@@ -422,7 +448,7 @@ export default function ProductDetail({
                 )}
               </div>
               <div className="lg:col-span-8">
-                <FaqAccordion faq={pdp.faq} />
+                <FaqAccordion faq={pdp.faq} accent={accent} />
               </div>
             </div>
           </motion.section>
