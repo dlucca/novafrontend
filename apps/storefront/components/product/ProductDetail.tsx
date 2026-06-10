@@ -233,8 +233,8 @@ export default function ProductDetail({
   // inferiores usan imágenes propias si existen (06 = Cómo funciona,
   // 07 = FAQ); si no, caen a las lifestyle de la galería (04 y 03).
   const galleryImages = product.images.slice(0, 5);
-  const lifestyleA = product.images[5] ?? product.images[3];
-  const lifestyleB = product.images[6] ?? product.images[2];
+  const lifestyleA = meta?.howItWorksImage || product.images[5] || product.images[3];         // Imagen seccion Como funciona
+  const lifestyleB = "/productusers/FAQ_image.webp";                   // Imagen FIJA para FAQ
 
   // Default: Mensual (igual que el mockup)
   const [selected, setSelected] = useState<PurchaseOption>(
@@ -456,7 +456,7 @@ export default function ProductDetail({
             </div>
           </motion.section>
 
-          {/* ── FAQ — heading lateral + accordion ── */}
+                    {/* ── FAQ — heading lateral + accordion ── */}
           <motion.section {...sectionReveal} className="mx-auto max-w-6xl px-6 py-20">
             <div className="grid gap-10 lg:grid-cols-12">
               <div className="lg:col-span-4">
@@ -464,20 +464,17 @@ export default function ProductDetail({
                 <h2 className="mt-3 text-[clamp(28px,3vw,40px)] font-black leading-tight text-[#0D1B35]">
                   Preguntas frecuentes
                 </h2>
-                {lifestyleB && (
-                  <div
-                    className="relative mt-8 hidden aspect-square overflow-hidden rounded-[24px] lg:block"
-                    style={{ background: bg }}
-                  >
-                    <Image
-                      src={lifestyleB}
-                      alt={`${product.title} en la vida real`}
-                      fill
-                      sizes="30vw"
-                      className="object-cover"
-                    />
-                  </div>
-                )}
+                
+                {/* Imagen fija para FAQ */}
+                <div className="relative mt-8 w-full aspect-[2/1] overflow-hidden rounded-[24px] shadow-lg">
+                  <Image
+                    src="/productusers/FAQ_image.webp"
+                    alt="Preguntas frecuentes Novapatch"
+                    fill
+                    sizes="30vw"
+                    className="object-cover"
+                  />
+                </div>
               </div>
               <div className="lg:col-span-8">
                 <FaqAccordion faq={pdp.faq} accent={accent} />

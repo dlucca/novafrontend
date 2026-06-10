@@ -9,6 +9,7 @@ export type ProductMeta = {
   description: string;
   ingredients: string[];
   imgSrc: string;
+  howItWorksImage: string;
   color: string;
   bg: string;
   taglineColor: string;
@@ -33,6 +34,7 @@ export const PRODUCT_META: Record<string, ProductMeta> = {
       "Vitamin E",
     ],
     imgSrc: "/products/Energy_thumb.webp",
+    howItWorksImage: "/products/Energy_patch.webp",
     color: "#2B7CC1",
     bg: "#EBF4FB",
     taglineColor: "#1A5C9A",
@@ -55,6 +57,7 @@ export const PRODUCT_META: Record<string, ProductMeta> = {
       "Vitamin E",
     ],
     imgSrc: "/products/Glow_thumb.webp",
+    howItWorksImage: "/products/Glow_patch.webp",
     color: "#C94030",
     bg: "#FAF0EE",
     taglineColor: "#B83525",
@@ -74,6 +77,7 @@ export const PRODUCT_META: Record<string, ProductMeta> = {
       "Glycine",
     ],
     imgSrc: "/products/Sleep_thumb.webp",
+    howItWorksImage: "/products/Sleep_patch.webp",
     color: "#138A75",
     bg: "#EBF7F5",
     taglineColor: "#0F6B5C",
@@ -93,6 +97,7 @@ export const PRODUCT_META: Record<string, ProductMeta> = {
       "Vitamin B6",
     ],
     imgSrc: "/products/Zen_thumb.webp",
+    howItWorksImage: "/products/Zen_patch.webp",
     color: "#3A6FA8",
     bg: "#EBF0F9",
     taglineColor: "#2A5490",
@@ -112,6 +117,7 @@ export const PRODUCT_META: Record<string, ProductMeta> = {
       "Niacinamide",
     ],
     imgSrc: "/products/Shield_thumb.webp",
+    howItWorksImage: "/products/Shield_patch.webp",
     color: "#A07000",
     bg: "#FAF6E9",
     taglineColor: "#8C6000",
@@ -131,6 +137,7 @@ export const PRODUCT_META: Record<string, ProductMeta> = {
       "Iron (Bisglycinate)",
     ],
     imgSrc: "/products/Woman_thumb.webp",
+    howItWorksImage: "/products/Woman_patch.webp",
     color: "#8A3EBE",
     bg: "#F3EBF9",
     taglineColor: "#6B3080",
