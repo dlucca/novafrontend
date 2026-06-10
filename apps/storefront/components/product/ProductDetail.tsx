@@ -230,8 +230,9 @@ export default function ProductDetail({
   // Shade del producto para texto/acentos sobre fondos claros (mejor contraste que el base)
   const accent = meta?.taglineColor ?? color;
   // Fotos lifestyle de la galería (solo existen cuando Medusa tiene las 5 imágenes)
-  const lifestyleA = product.images[2];
-  const lifestyleB = product.images[3];
+  // images[3] = "fácil de utilizar" en todas las carpetas → sección Cómo funciona
+  const lifestyleA = product.images[3];
+  const lifestyleB = product.images[2];
 
   // Default: Mensual (igual que el mockup)
   const [selected, setSelected] = useState<PurchaseOption>(
@@ -315,22 +316,24 @@ export default function ProductDetail({
         </div>
       </section>
 
-      {/* ── Perks de suscripción ── */}
-      <section
-        className="border-y border-[#E8E2D8]"
-        style={{ background: `color-mix(in srgb, ${bg} 30%, #fff)` }}
-      >
-        <div className="mx-auto grid max-w-6xl gap-8 px-6 py-10 sm:grid-cols-3">
-          {SUBSCRIPTION_PERKS.map((perk) => (
-            <div key={perk.title}>
-              <p className="text-sm font-bold" style={{ color }}>
-                {perk.title}
-              </p>
-              <p className="mt-1 text-xs leading-5 text-[#425066]">{perk.description}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* ── Perks de suscripción — solo si hay un tier de suscripción elegido ── */}
+      {selected.freq !== null && (
+        <section
+          className="border-y border-[#E8E2D8]"
+          style={{ background: `color-mix(in srgb, ${bg} 30%, #fff)` }}
+        >
+          <div className="mx-auto grid max-w-6xl gap-8 px-6 py-10 sm:grid-cols-3">
+            {SUBSCRIPTION_PERKS.map((perk) => (
+              <div key={perk.title}>
+                <p className="text-sm font-bold" style={{ color }}>
+                  {perk.title}
+                </p>
+                <p className="mt-1 text-xs leading-5 text-[#425066]">{perk.description}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {pdp && (
         <>
