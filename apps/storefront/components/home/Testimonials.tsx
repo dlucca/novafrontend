@@ -118,7 +118,7 @@ export default function Testimonials() {
             className="font-black text-ocean tracking-[-0.02em]"
             style={{ fontSize: "clamp(26px,3vw,40px)" }}
           >
-            Lo que dicen quienes ya lo usan.
+            Lo que nos cuentan nuestros Novapatchers
           </h2>
           <p className="text-[15px] text-ocean/60 mt-2">
             4.8 de 5 estrellas en promedio
