@@ -6,10 +6,11 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useCart } from "@/contexts/CartContext";
 import { formatPrice } from "@/lib/format";
+import type { Product } from "@/lib/commerce";
 
 const SUB_DISCOUNT = 0.2;
 
-const products = [
+const PRODUCT_UI = [
   {
     name: "Energy",
     slug: "energy",
@@ -19,7 +20,7 @@ const products = [
     tags: ["Energía sostenida", "Sin picos ni caídas"],
     color: "#2B7CC1",
     bg: "#EBF4FB",
-    popular: false,
+    popular: true,
     imgSrc: "/products/Energy_thumb.webp",
   },
   {
@@ -43,7 +44,7 @@ const products = [
     tags: ["Bienestar desde adentro", "Constancia"],
     color: "#C94030",
     bg: "#FAF0EE",
-    popular: true,
+    popular: false,
     imgSrc: "/products/Glow_thumb.webp",
   },
   {
@@ -84,134 +85,26 @@ const products = [
   },
 ];
 
-/* ── Hero card — featured product (Glow) ──────────────────────────────── */
+type CardProduct = (typeof PRODUCT_UI)[number] & {
+  image: string;
+  price: number;
+  variantId?: string;
+};
 
-function HeroProductCard({
-  product,
-  onAdd,
-  basePrice,
-  currency,
-}: {
-  product: (typeof products)[0];
-  onAdd: () => void;
-  basePrice: number;
-  currency: string;
-}) {
-  const subPrice = Math.round(basePrice * (1 - SUB_DISCOUNT));
-  const p = product;
-  const params = useParams();
-  const locale = typeof params?.locale === "string" ? params.locale : "mx";
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 32 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-    >
-      <div
-        className="group relative grid grid-cols-1 md:grid-cols-2 gap-0 rounded-[28px] overflow-hidden border border-black/[0.06] shadow-[0_8px_40px_rgba(0,0,0,0.08)]"
-        style={{ background: p.bg }}
-      >
-        {/* Image */}
-        <div className="relative flex items-center justify-center py-12 px-8 md:py-16 md:px-12">
-          <Link href={`/${locale}/tienda/${p.slug}`} className="relative block w-[clamp(180px,22vw,288px)] h-[clamp(180px,22vw,288px)]">
-            <Image
-              src={p.imgSrc}
-              alt={`NovaPatch ${p.name}`}
-              fill
-              sizes="(max-width: 640px) 180px, (max-width: 1280px) 22vw, 288px"
-              className="object-contain group-hover:scale-[1.04] transition-transform duration-500"
-            />
-          </Link>
-          <span
-            className="absolute top-5 left-5 text-white text-[11px] font-extrabold uppercase tracking-[0.08em] px-3.5 py-1.5 rounded-full"
-            style={{ background: p.color }}
-          >
-            Más popular
-          </span>
-        </div>
-
-        {/* Content */}
-        <div className="flex flex-col justify-center px-8 py-10 md:px-12 md:py-16 bg-white">
-          <p
-            className="text-[28px] md:text-[36px] font-black tracking-[-0.02em] leading-tight"
-            style={{ color: p.taglineColor }}
-          >
-            <Link href={`/${locale}/tienda/${p.slug}`}>{p.name}</Link>
-          </p>
-          <p
-            className="text-[15px] font-semibold leading-[1.5] mt-1 opacity-80"
-            style={{ color: p.taglineColor }}
-          >
-            {p.tagline}
-          </p>
-          <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-gray-400 mt-3">
-            Pack de 30 parches
-          </p>
-          <ul className="mt-1.5 space-y-0.5">
-            {p.ingredients.map((ing) => (
-              <li key={ing} className="text-[13px] text-gray-600 flex items-center gap-1.5">
-                <span className="w-1 h-1 rounded-full flex-shrink-0 inline-block" style={{ background: p.color }} />
-                {ing}
-              </li>
-            ))}
-          </ul>
-
-          <div className="flex flex-wrap gap-1.5 mt-5">
-            {p.tags.map((tag) => (
-              <span
-                key={tag}
-                className="text-[11px] font-bold px-3 py-1 rounded-full border-[1.5px]"
-                style={{ borderColor: p.color, color: p.color }}
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-
-          {/* Pricing */}
-          <div className="mt-6 flex items-baseline gap-3 flex-wrap">
-            <span
-              className="text-[28px] font-black"
-              style={{ color: p.taglineColor }}
-            >
-              {formatPrice(basePrice, currency)}
-            </span>
-            <span className="text-[13px] text-green-600 font-bold bg-green-50 px-2.5 py-1 rounded-lg">
-              Desde {formatPrice(subPrice, currency)} con suscripción
-            </span>
-          </div>
-
-          <button
-            onClick={onAdd}
-            className="mt-5 w-full md:w-auto md:px-10 py-3.5 rounded-xl text-[15px] font-bold text-white transition-all duration-200 active:scale-[0.97] hover:brightness-110 hover:-translate-y-0.5 hover:shadow-lg"
-            style={{ background: p.color }}
-          >
-            Agregar al carrito
-          </button>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
-/* ── Standard product card ────────────────────────────────────────────── */
+/* ── Product card ─────────────────────────────────────────────────────── */
 
 function ProductCard({
-  product,
+  product: p,
   index,
   onAdd,
-  basePrice,
   currency,
 }: {
-  product: (typeof products)[0];
+  product: CardProduct;
   index: number;
   onAdd: () => void;
-  basePrice: number;
   currency: string;
 }) {
-  const subPrice = Math.round(basePrice * (1 - SUB_DISCOUNT));
-  const p = product;
+  const subPrice = Math.round(p.price * (1 - SUB_DISCOUNT));
   const params = useParams();
   const locale = typeof params?.locale === "string" ? params.locale : "mx";
   return (
@@ -226,22 +119,37 @@ function ProductCard({
       }}
       className="h-full"
     >
-      <div className="group flex flex-col bg-white rounded-[20px] overflow-hidden border border-black/[0.06] shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.12)] hover:-translate-y-[5px] transition-all duration-300 h-full">
+      <div className="group relative flex flex-col bg-white rounded-[20px] overflow-hidden border border-black/[0.06] shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.12)] hover:-translate-y-[5px] transition-all duration-300 h-full">
+        {/* Overlay: toda la card navega a la PDP; el CTA queda por encima (z-[2]) */}
+        <Link
+          href={`/${locale}/tienda/${p.slug}`}
+          aria-label={`Ver ${p.name}`}
+          className="absolute inset-0 z-[1]"
+        />
+
         {/* Image area */}
         <div
           className="relative flex items-center justify-center"
           style={{ background: p.bg, padding: "36px 24px" }}
         >
-          <Link href={`/${locale}/tienda/${p.slug}`} className="relative block w-36 h-36">
+          {p.popular && (
+            <span
+              className="absolute top-4 left-4 text-white text-[11px] font-extrabold uppercase tracking-[0.08em] px-3.5 py-1.5 rounded-full"
+              style={{ background: p.color }}
+            >
+              Más popular
+            </span>
+          )}
+          <div className="relative w-36 h-36">
             <Image
-              src={p.imgSrc}
+              src={p.image}
               alt={`NovaPatch ${p.name}`}
               fill
               sizes="144px"
               loading="lazy"
               className="object-contain group-hover:scale-[1.06] transition-transform duration-300"
             />
-          </Link>
+          </div>
         </div>
 
         {/* Body */}
@@ -251,7 +159,7 @@ function ProductCard({
               className="text-[20px] font-black tracking-[-0.01em]"
               style={{ color: p.taglineColor }}
             >
-              <Link href={`/${locale}/tienda/${p.slug}`}>{p.name}</Link>
+              {p.name}
             </p>
             <p
               className="text-[13px] font-semibold leading-[1.45] mt-0.5 opacity-75"
@@ -288,7 +196,7 @@ function ProductCard({
               className="text-[22px] font-black"
               style={{ color: p.taglineColor }}
             >
-              {formatPrice(basePrice, currency)}
+              {formatPrice(p.price, currency)}
             </span>
           </div>
           <p className="text-[11px] text-green-600 font-semibold -mt-1">
@@ -297,7 +205,7 @@ function ProductCard({
 
           <button
             onClick={onAdd}
-            className="product-card-btn mt-2 w-full py-3 rounded-xl border-2 text-[14px] font-bold transition-all duration-200 active:scale-[0.97]"
+            className="product-card-btn relative z-[2] mt-2 w-full py-3 rounded-xl border-2 text-[14px] font-bold transition-all duration-200 active:scale-[0.97]"
             style={
               {
                 "--btn-accent": p.color,
@@ -315,22 +223,39 @@ function ProductCard({
 
 /* ── Main grid ────────────────────────────────────────────────────────── */
 
-export default function ProductGrid({ basePrice = 750, currency = "MXN" }: { basePrice?: number; currency?: string }) {
+export default function ProductGrid({
+  products: catalog,
+  basePrice = 750,
+  currency = "MXN",
+}: {
+  products?: Product[];
+  basePrice?: number;
+  currency?: string;
+}) {
   const { addToCart } = useCart();
 
-  const heroProduct = products.find((p) => p.popular)!;
-  const rest = products.filter((p) => !p.popular);
+  // Merge: UI metadata local + datos de Medusa (imagen R2, precio, variantId)
+  const cards: CardProduct[] = PRODUCT_UI.map((ui) => {
+    const fromCatalog = catalog?.find((c) => c.slug === ui.slug);
+    return {
+      ...ui,
+      image: fromCatalog?.image ?? ui.imgSrc,
+      price: fromCatalog?.price ?? basePrice,
+      variantId: fromCatalog?.variantId,
+    };
+  });
 
-  const handleAdd = (p: (typeof products)[0]) => {
+  const handleAdd = (p: CardProduct) => {
     addToCart({
       slug: p.slug,
       title: p.name,
-      image: p.imgSrc,
-      price: basePrice,
+      image: p.image,
+      price: p.price,
       color: p.color,
       bg: p.bg,
       mode: "once",
       freq: 30,
+      variantId: p.variantId,
     });
   };
 
@@ -356,23 +281,14 @@ export default function ProductGrid({ basePrice = 750, currency = "MXN" }: { bas
           </p>
         </motion.div>
 
-        {/* Featured product — Glow */}
-        <HeroProductCard
-          product={heroProduct}
-          onAdd={() => handleAdd(heroProduct)}
-          basePrice={basePrice}
-          currency={currency}
-        />
-
-        {/* Remaining products */}
-        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
-          {rest.map((p, i) => (
+        {/* 6 productos — 2 filas de 3 en desktop */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {cards.map((p, i) => (
             <ProductCard
               key={p.slug}
               product={p}
               index={i}
               onAdd={() => handleAdd(p)}
-              basePrice={basePrice}
               currency={currency}
             />
           ))}

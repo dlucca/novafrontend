@@ -32,15 +32,15 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <main>
         {/* 1. Hero + Features Bar — shared carousel state */}
         <HeroWithBar />
+        {/* 2. Cards de Producto — grilla 2×3, debajo del AttributeBar */}
+        <ProductGrid products={products} basePrice={basePrice} currency={currency} />
         {/* 3. Cómo Funciona — how it works, 3 steps */}
         <HowItWorks />
         {/* 4. Absorción — science section, dark blue bg */}
         <AbsorptionSection />
         {/* 5. Comparativo — comparison table */}
         <ComparisonTable />
-        {/* 6. Cards de Producto — product grid */}
-        <ProductGrid basePrice={basePrice} currency={currency} />
-        {/* 7. Suscripciones — subscription plans */}
+        {/* 6. Suscripciones — subscription plans */}
         <CTABanner basePrice={basePrice} currency={currency} />
         {/* 8. Social Proof — testimonials */}
         <Testimonials />
