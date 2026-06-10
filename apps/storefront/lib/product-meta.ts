@@ -198,22 +198,22 @@ export const PDP_META: Record<string, PdpMeta> = {
     howItWorks:
       "Novapatch Energy libera sus ingredientes de forma gradual durante el día, acompañando los niveles naturales de energía sin los picos y caídas asociados al exceso de café.",
     ingredientDetails: [
-      { name: "Green Tea Extract (20% Caffeine)", description: "Asociado con la energía y el estado de alerta, con liberación gradual de cafeína." },
-      { name: "L-Carnitine", description: "Asociada con el metabolismo energético celular." },
-      { name: "Ginseng Extract", description: "Asociado con la vitalidad y la resistencia a la fatiga." },
-      { name: "Vitamin C (Ascorbyl Palmitate)", description: "Asociada con la reducción del cansancio y el apoyo antioxidante." },
-      { name: "Vitamin B2 (Riboflavin)", description: "Asociada con el metabolismo energético normal." },
-      { name: "Folic Acid (L-Methylfolate)", description: "Asociado con la función cognitiva y la reducción de la fatiga." },
-      { name: "Vitamin E", description: "Asociada con la protección antioxidante." },
+      { name: "Extracto de Té Verde (20% cafeína)", description: "Asociado con la energía y el estado de alerta, con liberación gradual de cafeína." },
+      { name: "L-Carnitina", description: "Asociada con el metabolismo energético celular." },
+      { name: "Extracto de Ginseng", description: "Asociado con la vitalidad y la resistencia a la fatiga." },
+      { name: "Vitamina C (palmitato de ascorbilo)", description: "Asociada con la reducción del cansancio y el apoyo antioxidante." },
+      { name: "Vitamina B2 (riboflavina)", description: "Asociada con el metabolismo energético normal." },
+      { name: "Ácido Fólico (L-metilfolato)", description: "Asociado con la función cognitiva y la reducción de la fatiga." },
+      { name: "Vitamina E", description: "Asociada con la protección antioxidante." },
     ],
     usageSteps: [
       "Aplica 1 parche por la mañana en el brazo, abdomen o parte superior de la espalda. Elige una zona cómoda y con poco vello.",
-      "Déjalo actuar durante el día. El parche libera los ingredientes de forma controlada mientras seguís con tu rutina.",
+      "Déjalo actuar durante el día. El parche libera los ingredientes de forma controlada mientras sigues con tu rutina.",
       "Retíralo por la noche y desecha. Lava suavemente el área. Úsalo todos los días para obtener mejores resultados.",
     ],
     faq: [
       { q: "¿Me va a quitar el sueño?", a: "Está pensado para acompañar tu energía durante el día. Al retirarlo por la noche, la liberación se corta y no interfiere con tu descanso." },
-      { q: "¿Reemplaza al café?", a: "Muchas personas lo usan para reducir el café sin resignar foco. Podés combinarlo o usarlo como alternativa, según tu rutina." },
+      { q: "¿Reemplaza al café?", a: "Muchas personas lo usan para reducir el café sin resignar foco. Puedes combinarlo o usarlo como alternativa, según tu rutina." },
       { q: "¿Voy a sentir un pico de energía?", a: "No. La liberación es gradual: la idea es acompañar tu día parejo, sin picos ni caídas." },
       { q: "¿Puedo usarlo todos los días?", a: "Sí, está pensado para uso diario como parte de tu rutina. La constancia es lo que hace la diferencia." },
     ],
@@ -229,11 +229,11 @@ export const PDP_META: Record<string, PdpMeta> = {
     howItWorks:
       "Novapatch Sleep libera sus ingredientes de forma controlada durante la noche, apoyando los procesos naturales de relajación del cuerpo para favorecer un sueño más profundo y reparador.",
     ingredientDetails: [
-      { name: "Tryptophan", description: "Asociado con el apoyo a la producción natural de melatonina y serotonina." },
-      { name: "Magnesium (Bisglycinate)", description: "Asociado con la relajación muscular y el apoyo para bajar el ritmo." },
+      { name: "Triptófano", description: "Asociado con el apoyo a la producción natural de melatonina y serotonina." },
+      { name: "Magnesio (bisglicinato)", description: "Asociado con la relajación muscular y el apoyo para bajar el ritmo." },
       { name: "Inositol", description: "Asociado con el apoyo al equilibrio emocional y la calidad del descanso." },
-      { name: "Vitamin B6", description: "Asociada con el apoyo al metabolismo de neurotransmisores relacionados con el sueño." },
-      { name: "Glycine", description: "Asociada con la mejora de la calidad del sueño y la sensación de descanso reparador." },
+      { name: "Vitamina B6", description: "Asociada con el apoyo al metabolismo de neurotransmisores relacionados con el sueño." },
+      { name: "Glicina", description: "Asociada con la mejora de la calidad del sueño y la sensación de descanso reparador." },
     ],
     usageSteps: [
       "Aplica 1 parche 1 hora antes de acostarte en el brazo, abdomen o parte superior de la espalda. Elige una zona cómoda donde no interfiera con tu sueño.",
@@ -258,15 +258,15 @@ export const PDP_META: Record<string, PdpMeta> = {
     howItWorks:
       "Novapatch Zen libera sus ingredientes de forma gradual durante el día, acompañando los procesos naturales de regulación del cuerpo para que la calma no signifique frenar.",
     ingredientDetails: [
-      { name: "Tryptophan", description: "Asociado con el apoyo a la producción natural de serotonina." },
-      { name: "Magnesium (Taurate)", description: "Asociado con la relajación y el equilibrio del sistema nervioso." },
-      { name: "Taurine", description: "Asociada con el apoyo a la regulación del sistema nervioso." },
-      { name: "Chamomile Extract", description: "Asociada tradicionalmente con la calma y la relajación." },
-      { name: "Vitamin B6", description: "Asociada con el metabolismo de neurotransmisores vinculados al estado de ánimo." },
+      { name: "Triptófano", description: "Asociado con el apoyo a la producción natural de serotonina." },
+      { name: "Magnesio (taurato)", description: "Asociado con la relajación y el equilibrio del sistema nervioso." },
+      { name: "Taurina", description: "Asociada con el apoyo a la regulación del sistema nervioso." },
+      { name: "Extracto de Manzanilla", description: "Asociada tradicionalmente con la calma y la relajación." },
+      { name: "Vitamina B6", description: "Asociada con el metabolismo de neurotransmisores vinculados al estado de ánimo." },
     ],
     usageSteps: [
       "Aplica 1 parche por la mañana en el brazo, abdomen o parte superior de la espalda. Elige una zona cómoda y con poco vello.",
-      "Déjalo actuar durante el día. El parche libera los ingredientes de forma controlada mientras seguís presente en lo tuyo.",
+      "Déjalo actuar durante el día. El parche libera los ingredientes de forma controlada mientras sigues presente en lo tuyo.",
       "Retíralo por la noche y desecha. Lava suavemente el área. Úsalo todos los días para obtener mejores resultados.",
     ],
     faq: [
@@ -287,15 +287,15 @@ export const PDP_META: Record<string, PdpMeta> = {
     howItWorks:
       "Novapatch Shield libera sus ingredientes de forma gradual durante el día, acompañando el funcionamiento normal de las defensas como un gesto simple de prevención cotidiana.",
     ingredientDetails: [
-      { name: "Vitamin C (Ascorbyl Palmitate)", description: "Asociada con el funcionamiento normal de las defensas y el apoyo antioxidante." },
-      { name: "Zinc (Picolinate)", description: "Asociado con el apoyo al sistema inmune." },
-      { name: "Vitamin D3", description: "Asociada con el funcionamiento normal del sistema inmune." },
-      { name: "Vitamin E", description: "Asociada con la protección antioxidante." },
-      { name: "Niacinamide", description: "Asociada con el metabolismo energético normal." },
+      { name: "Vitamina C (palmitato de ascorbilo)", description: "Asociada con el funcionamiento normal de las defensas y el apoyo antioxidante." },
+      { name: "Zinc (picolinato)", description: "Asociado con el apoyo al sistema inmune." },
+      { name: "Vitamina D3", description: "Asociada con el funcionamiento normal del sistema inmune." },
+      { name: "Vitamina E", description: "Asociada con la protección antioxidante." },
+      { name: "Niacinamida", description: "Asociada con el metabolismo energético normal." },
     ],
     usageSteps: [
       "Aplica 1 parche por la mañana en el brazo, abdomen o parte superior de la espalda. Elige una zona cómoda y con poco vello.",
-      "Déjalo actuar durante el día. El parche libera los ingredientes de forma controlada mientras hacés tu vida normal.",
+      "Déjalo actuar durante el día. El parche libera los ingredientes de forma controlada mientras haces tu vida normal.",
       "Retíralo por la noche y desecha. Lava suavemente el área. Úsalo todos los días para obtener mejores resultados.",
     ],
     faq: [
@@ -316,17 +316,17 @@ export const PDP_META: Record<string, PdpMeta> = {
     howItWorks:
       "Novapatch Glow libera sus ingredientes de forma gradual durante el día, acompañando desde adentro los procesos naturales de la piel. Glow no es un efecto: es un proceso que se construye con constancia.",
     ingredientDetails: [
-      { name: "Vitamin C (Magnesium Ascorbyl Phosphate)", description: "Asociada con la formación normal de colágeno y el apoyo antioxidante." },
-      { name: "Hyaluronic Acid", description: "Asociado con la hidratación y la elasticidad de la piel." },
-      { name: "Hydrolyzed Collagen", description: "Asociado con el aporte de aminoácidos vinculados a la piel." },
-      { name: "Biotin", description: "Asociada con el mantenimiento normal de la piel y el pelo." },
-      { name: "Niacinamide (Vitamin B3)", description: "Asociada con el mantenimiento normal de la piel." },
-      { name: "Centella Asiatica Extract", description: "Asociada tradicionalmente con el cuidado y la regeneración de la piel." },
-      { name: "Vitamin E", description: "Asociada con la protección antioxidante." },
+      { name: "Vitamina C (ascorbil fosfato de magnesio)", description: "Asociada con la formación normal de colágeno y el apoyo antioxidante." },
+      { name: "Ácido Hialurónico", description: "Asociado con la hidratación y la elasticidad de la piel." },
+      { name: "Colágeno Hidrolizado", description: "Asociado con el aporte de aminoácidos vinculados a la piel." },
+      { name: "Biotina", description: "Asociada con el mantenimiento normal de la piel y el pelo." },
+      { name: "Niacinamida (vitamina B3)", description: "Asociada con el mantenimiento normal de la piel." },
+      { name: "Extracto de Centella Asiática", description: "Asociada tradicionalmente con el cuidado y la regeneración de la piel." },
+      { name: "Vitamina E", description: "Asociada con la protección antioxidante." },
     ],
     usageSteps: [
       "Aplica 1 parche por la mañana en el brazo, abdomen o parte superior de la espalda. Elige una zona cómoda y con poco vello.",
-      "Déjalo actuar durante el día. El parche libera los ingredientes de forma controlada mientras seguís con tu rutina.",
+      "Déjalo actuar durante el día. El parche libera los ingredientes de forma controlada mientras sigues con tu rutina.",
       "Retíralo por la noche y desecha. Lava suavemente el área. Úsalo todos los días para obtener mejores resultados.",
     ],
     faq: [
@@ -347,15 +347,15 @@ export const PDP_META: Record<string, PdpMeta> = {
     howItWorks:
       "Novapatch Woman libera sus ingredientes de forma gradual durante el día, acompañando el equilibrio natural del cuerpo femenino — que no es igual todos los días — sin medicalizar y sin forzar.",
     ingredientDetails: [
-      { name: "Soy Extract", description: "Asociado con el apoyo al equilibrio natural del bienestar femenino." },
-      { name: "Vitamin B6", description: "Asociada con la regulación de la actividad hormonal normal." },
-      { name: "Magnesium (Bisglycinate)", description: "Asociado con la relajación muscular y la reducción del cansancio." },
-      { name: "Folic Acid (L-Methylfolate)", description: "Asociado con la reducción de la fatiga y la función cognitiva." },
-      { name: "Iron (Bisglycinate)", description: "Asociado con el transporte normal de oxígeno y la reducción del cansancio." },
+      { name: "Extracto de Soya", description: "Asociado con el apoyo al equilibrio natural del bienestar femenino." },
+      { name: "Vitamina B6", description: "Asociada con la regulación de la actividad hormonal normal." },
+      { name: "Magnesio (bisglicinato)", description: "Asociado con la relajación muscular y la reducción del cansancio." },
+      { name: "Ácido Fólico (L-metilfolato)", description: "Asociado con la reducción de la fatiga y la función cognitiva." },
+      { name: "Hierro (bisglicinato)", description: "Asociado con el transporte normal de oxígeno y la reducción del cansancio." },
     ],
     usageSteps: [
       "Aplica 1 parche por la mañana en el brazo, abdomen o parte superior de la espalda. Elige una zona cómoda y con poco vello.",
-      "Déjalo actuar durante el día. El parche libera los ingredientes de forma controlada mientras seguís con tu rutina.",
+      "Déjalo actuar durante el día. El parche libera los ingredientes de forma controlada mientras sigues con tu rutina.",
       "Retíralo por la noche y desecha. Lava suavemente el área. Úsalo todos los días para obtener mejores resultados.",
     ],
     faq: [

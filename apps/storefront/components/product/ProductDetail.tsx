@@ -45,7 +45,7 @@ function Gallery({ images, title, bg }: { images: string[]; title: string; bg: s
               fill
               priority={active === 0}
               sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-contain"
+              className="object-contain p-3 sm:p-1"
             />
           </motion.div>
         </AnimatePresence>
@@ -57,10 +57,11 @@ function Gallery({ images, title, bg }: { images: string[]; title: string; bg: s
               key={src}
               onClick={() => setActive(i)}
               aria-label={`Ver imagen ${i + 1}`}
+              aria-current={i === active}
               className="relative h-16 w-16 overflow-hidden rounded-xl border-2 transition"
               style={{
                 background: bg,
-                borderColor: i === active ? "var(--color-navy)" : "transparent",
+                borderColor: i === active ? "var(--color-navy)" : "rgba(13,27,53,0.10)",
               }}
             >
               <Image src={src} alt="" fill sizes="64px" className="object-contain p-1" />
@@ -87,7 +88,7 @@ function TierSelector({
 }) {
   return (
     <div>
-      <p className="mb-3 text-sm font-semibold text-[#0D1B35]">¿Cómo querés recibirlo?</p>
+      <p className="mb-3 text-sm font-semibold text-[#0D1B35]">¿Cómo quieres recibirlo?</p>
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         {options.map((o) => {
           const isActive = o.tier === selected.tier;
@@ -95,6 +96,7 @@ function TierSelector({
             <button
               key={o.tier}
               onClick={() => onSelect(o)}
+              aria-pressed={isActive}
               className="rounded-2xl border-2 px-3 py-3 text-left transition"
               style={{
                 borderColor: isActive ? color : "#E5E7EB",
@@ -139,6 +141,7 @@ function FaqAccordion({ faq }: { faq: PdpMeta["faq"] }) {
           <button
             onClick={() => setOpen(open === i ? null : i)}
             aria-expanded={open === i}
+            aria-controls={`faq-panel-${i}`}
             className="flex w-full items-center justify-between px-6 py-4 text-left"
           >
             <span className="text-sm font-bold text-[#0D1B35]">{item.q}</span>
@@ -152,6 +155,7 @@ function FaqAccordion({ faq }: { faq: PdpMeta["faq"] }) {
           <AnimatePresence initial={false}>
             {open === i && (
               <motion.div
+                id={`faq-panel-${i}`}
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
@@ -206,7 +210,7 @@ export default function ProductDetail({
   };
 
   const ctaLabel =
-    selected.freq === null ? "Agregar al carrito" : `Suscribirme (${selected.freq} días)`;
+    selected.freq === null ? "Agregar al carrito" : `Suscribirme · cada ${selected.freq} días`;
 
   return (
     <main className="min-h-screen bg-[#FAF7F2]">
@@ -256,6 +260,9 @@ export default function ProductDetail({
           >
             {ctaLabel}
           </button>
+          <p className="mt-3 text-center text-xs text-[#0D1B35]/55">
+            Pausa, cambia o cancela cuando quieras · Sin penalizaciones
+          </p>
         </div>
       </section>
 
@@ -441,7 +448,7 @@ export default function ProductDetail({
             className="shrink-0 rounded-full px-10 py-4 text-base font-bold text-white transition hover:opacity-90"
             style={{ background: color }}
           >
-            Agregar al carrito
+            {ctaLabel}
           </button>
         </div>
       </motion.section>
