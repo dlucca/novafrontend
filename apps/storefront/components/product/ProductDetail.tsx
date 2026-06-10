@@ -229,10 +229,12 @@ export default function ProductDetail({
   const bg = meta?.bg ?? "#FFFFFF";
   // Shade del producto para texto/acentos sobre fondos claros (mejor contraste que el base)
   const accent = meta?.taglineColor ?? color;
-  // Fotos lifestyle de la galería (solo existen cuando Medusa tiene las 5 imágenes)
-  // images[3] = "fácil de utilizar" en todas las carpetas → sección Cómo funciona
-  const lifestyleA = product.images[3];
-  const lifestyleB = product.images[2];
+  // La galería muestra solo las primeras 5 imágenes (01-05). Las secciones
+  // inferiores usan imágenes propias si existen (06 = Cómo funciona,
+  // 07 = FAQ); si no, caen a las lifestyle de la galería (04 y 03).
+  const galleryImages = product.images.slice(0, 5);
+  const lifestyleA = product.images[5] ?? product.images[3];
+  const lifestyleB = product.images[6] ?? product.images[2];
 
   // Default: Mensual (igual que el mockup)
   const [selected, setSelected] = useState<PurchaseOption>(
@@ -260,7 +262,7 @@ export default function ProductDetail({
     <main className="min-h-screen bg-[#FAF7F2]">
       {/* ── Hero: galería + info ── */}
       <section className="mx-auto grid max-w-6xl gap-10 px-6 pt-28 pb-16 lg:grid-cols-2">
-        <Gallery images={product.images} title={product.title} bg={bg} accent={accent} />
+        <Gallery images={galleryImages} title={product.title} bg={bg} accent={accent} />
 
         <div className="flex flex-col justify-center">
           <h1 className="text-5xl font-black" style={{ color }}>
