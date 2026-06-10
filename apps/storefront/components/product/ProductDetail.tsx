@@ -119,10 +119,21 @@ function TierSelector({
   );
 }
 
+function Eyebrow({ children, color }: { children: React.ReactNode; color: string }) {
+  return (
+    <p
+      className="text-[11px] font-semibold uppercase tracking-[0.18em]"
+      style={{ color }}
+    >
+      {children}
+    </p>
+  );
+}
+
 function FaqAccordion({ faq }: { faq: PdpMeta["faq"] }) {
   const [open, setOpen] = useState<number | null>(0);
   return (
-    <div className="mx-auto max-w-2xl space-y-3">
+    <div className="space-y-3">
       {faq.map((item, i) => (
         <div key={item.q} className="overflow-hidden rounded-2xl bg-white shadow-sm">
           <button
@@ -169,6 +180,11 @@ export default function ProductDetail({
   const pdp: PdpMeta | undefined = PDP_META[product.slug];
   const color = meta?.color ?? "var(--color-coral)";
   const bg = meta?.bg ?? "#FFFFFF";
+  // Shade del producto para texto/acentos sobre fondos claros (mejor contraste que el base)
+  const accent = meta?.taglineColor ?? color;
+  // Fotos lifestyle de la galería (solo existen cuando Medusa tiene las 5 imágenes)
+  const lifestyleA = product.images[2];
+  const lifestyleB = product.images[3];
 
   // Default: Mensual (igual que el mockup)
   const [selected, setSelected] = useState<PurchaseOption>(
@@ -259,101 +275,175 @@ export default function ProductDetail({
 
       {pdp && (
         <>
-          {/* ── ¿Cómo te acompaña? ── */}
-          <motion.section {...sectionReveal} className="mx-auto max-w-4xl px-6 py-16">
-            <h2 className="text-center text-3xl font-black text-[#0D1B35]">
-              ¿Cómo te acompaña?
-            </h2>
-            <div className="mt-8 grid gap-4 sm:grid-cols-2">
-              {pdp.accompaniment.map((item) => (
-                <div
-                  key={item}
-                  className="flex items-center gap-3 rounded-2xl bg-white px-5 py-4 shadow-sm"
-                >
-                  <span
-                    className="h-2 w-2 shrink-0 rounded-full"
-                    style={{ background: color }}
-                  />
-                  <p className="text-sm font-medium text-[#0D1B35]">{item}</p>
-                </div>
-              ))}
-            </div>
-          </motion.section>
-
-          {/* ── Cómo funciona ── */}
-          <motion.section {...sectionReveal} className="bg-white py-16">
-            <div className="mx-auto max-w-2xl px-6 text-center">
-              <h2 className="text-3xl font-black text-[#0D1B35]">Cómo funciona</h2>
-              <p className="mt-6 text-sm leading-7 text-[#425066]">{HOW_IT_WORKS_INTRO}</p>
-              <p className="mt-4 text-sm leading-7 text-[#425066]">{pdp.howItWorks}</p>
-            </div>
-          </motion.section>
-
-          {/* ── Ingredientes clave ── */}
-          <motion.section {...sectionReveal} className="mx-auto max-w-4xl px-6 py-16">
-            <h2 className="text-center text-3xl font-black text-[#0D1B35]">
-              Ingredientes clave
-            </h2>
-            <div className="mt-8 grid gap-x-10 gap-y-6 sm:grid-cols-2">
-              {pdp.ingredientDetails.map((ing) => (
-                <div key={ing.name} className="flex gap-3">
-                  <span
-                    className="mt-1.5 h-2 w-2 shrink-0 rounded-full"
-                    style={{ background: color }}
-                  />
-                  <div>
-                    <p className="text-sm font-bold text-[#0D1B35]">{ing.name}</p>
-                    <p className="mt-0.5 text-xs leading-5 text-[#425066]">
-                      {ing.description}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </motion.section>
-
-          {/* ── Modo de uso ── */}
-          <motion.section {...sectionReveal} className="bg-white py-16">
-            <div className="mx-auto max-w-4xl px-6">
-              <h2 className="text-center text-3xl font-black text-[#0D1B35]">Modo de uso</h2>
-              <div className="mt-10 grid gap-8 sm:grid-cols-3">
-                {pdp.usageSteps.map((step, i) => (
-                  <div key={step} className="text-center">
-                    <span
-                      className="mx-auto flex h-9 w-9 items-center justify-center rounded-xl border-2 text-sm font-extrabold"
-                      style={{ borderColor: color, color }}
-                    >
-                      {i + 1}
+          {/* ── ¿Cómo te acompaña? — heading lateral + lista con divisores ── */}
+          <motion.section {...sectionReveal} className="mx-auto max-w-6xl px-6 pt-24 pb-20">
+            <div className="grid gap-10 lg:grid-cols-12">
+              <div className="lg:col-span-5">
+                <Eyebrow color={accent}>{product.title} · todos los días</Eyebrow>
+                <h2 className="mt-3 text-[clamp(28px,3vw,40px)] font-black leading-tight text-[#0D1B35]">
+                  ¿Cómo te acompaña?
+                </h2>
+                {meta?.quote && (
+                  <p className="mt-5 max-w-xs text-lg font-medium italic leading-snug" style={{ color: accent }}>
+                    {meta.quote}
+                  </p>
+                )}
+              </div>
+              <div className="lg:col-span-7">
+                {pdp.accompaniment.map((item, i) => (
+                  <div
+                    key={item}
+                    className="flex items-baseline gap-5 border-b border-[#0D1B35]/10 py-5 first:pt-1"
+                  >
+                    <span className="text-xs font-black tabular-nums" style={{ color: accent }}>
+                      {String(i + 1).padStart(2, "0")}
                     </span>
-                    <p className="mt-4 text-xs leading-6 text-[#425066]">{step}</p>
+                    <p className="text-[17px] font-semibold leading-snug text-[#0D1B35]">
+                      {item}
+                    </p>
                   </div>
                 ))}
               </div>
             </div>
           </motion.section>
 
-          {/* ── FAQ ── */}
-          <motion.section {...sectionReveal} className="mx-auto max-w-4xl px-6 py-16">
-            <h2 className="text-center text-3xl font-black text-[#0D1B35]">
-              Preguntas frecuentes
-            </h2>
-            <div className="mt-8">
-              <FaqAccordion faq={pdp.faq} />
+          {/* ── Cómo funciona — foto lifestyle + texto ── */}
+          <motion.section {...sectionReveal} className="bg-white py-20">
+            <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 lg:grid-cols-12">
+              {lifestyleA && (
+                <div className="lg:col-span-5">
+                  <div
+                    className="relative aspect-[4/5] overflow-hidden rounded-[24px]"
+                    style={{ background: bg }}
+                  >
+                    <Image
+                      src={lifestyleA}
+                      alt={`${product.title} en uso`}
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 40vw"
+                      className="object-cover"
+                    />
+                  </div>
+                </div>
+              )}
+              <div className={lifestyleA ? "lg:col-span-7" : "lg:col-span-8"}>
+                <Eyebrow color={accent}>La ciencia del parche</Eyebrow>
+                <h2 className="mt-3 text-[clamp(28px,3vw,40px)] font-black leading-tight text-[#0D1B35]">
+                  Cómo funciona
+                </h2>
+                <p className="mt-6 max-w-xl text-[15px] leading-7 text-[#425066]">
+                  {HOW_IT_WORKS_INTRO}
+                </p>
+                <p className="mt-4 max-w-xl text-[15px] leading-7 text-[#425066]">
+                  {pdp.howItWorks}
+                </p>
+              </div>
+            </div>
+          </motion.section>
+
+          {/* ── Ingredientes clave — banda tint del producto ── */}
+          <motion.section {...sectionReveal} style={{ background: bg }} className="py-20">
+            <div className="mx-auto max-w-6xl px-6">
+              <div className="flex flex-wrap items-end justify-between gap-4">
+                <div>
+                  <Eyebrow color={accent}>Fórmula {product.title}</Eyebrow>
+                  <h2 className="mt-3 text-[clamp(28px,3vw,40px)] font-black leading-tight text-[#0D1B35]">
+                    Ingredientes clave
+                  </h2>
+                </div>
+                <p className="text-sm font-semibold text-[#0D1B35]/60">
+                  {pdp.ingredientDetails.length} activos seleccionados
+                </p>
+              </div>
+              <div className="mt-10 grid gap-x-12 sm:grid-cols-2">
+                {pdp.ingredientDetails.map((ing) => (
+                  <div key={ing.name} className="border-t border-[#0D1B35]/10 py-4">
+                    <p className="text-[15px] font-bold text-[#0D1B35]">{ing.name}</p>
+                    <p className="mt-1 text-[13px] leading-5 text-[#0D1B35]/65">
+                      {ing.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.section>
+
+          {/* ── Modo de uso — numerales grandes ── */}
+          <motion.section {...sectionReveal} className="bg-white py-20">
+            <div className="mx-auto max-w-6xl px-6">
+              <Eyebrow color={accent}>Un gesto simple</Eyebrow>
+              <h2 className="mt-3 text-[clamp(28px,3vw,40px)] font-black leading-tight text-[#0D1B35]">
+                Modo de uso
+              </h2>
+              <div className="mt-12 grid gap-10 sm:grid-cols-3">
+                {pdp.usageSteps.map((step, i) => (
+                  <div key={step} className="border-t-2 pt-5" style={{ borderColor: accent }}>
+                    <span
+                      className="block text-[clamp(40px,4vw,56px)] font-black leading-none"
+                      style={{ color: accent }}
+                    >
+                      {i + 1}
+                    </span>
+                    <p className="mt-4 text-sm leading-6 text-[#425066]">{step}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.section>
+
+          {/* ── FAQ — heading lateral + accordion ── */}
+          <motion.section {...sectionReveal} className="mx-auto max-w-6xl px-6 py-20">
+            <div className="grid gap-10 lg:grid-cols-12">
+              <div className="lg:col-span-4">
+                <Eyebrow color={accent}>Antes de empezar</Eyebrow>
+                <h2 className="mt-3 text-[clamp(28px,3vw,40px)] font-black leading-tight text-[#0D1B35]">
+                  Preguntas frecuentes
+                </h2>
+                {lifestyleB && (
+                  <div
+                    className="relative mt-8 hidden aspect-square overflow-hidden rounded-[24px] lg:block"
+                    style={{ background: bg }}
+                  >
+                    <Image
+                      src={lifestyleB}
+                      alt={`${product.title} en la vida real`}
+                      fill
+                      sizes="30vw"
+                      className="object-cover"
+                    />
+                  </div>
+                )}
+              </div>
+              <div className="lg:col-span-8">
+                <FaqAccordion faq={pdp.faq} />
+              </div>
             </div>
           </motion.section>
         </>
       )}
 
-      {/* ── CTA final ── */}
-      <motion.section {...sectionReveal} className="px-6 pb-24 pt-4 text-center">
-        <h2 className="text-3xl font-black text-[#0D1B35]">¿Listo para probar?</h2>
-        <button
-          onClick={() => handleAdd(selected)}
-          className="mt-6 rounded-full px-10 py-4 text-base font-bold text-white transition hover:opacity-90"
-          style={{ background: color }}
+      {/* ── CTA final — banda tint asimétrica ── */}
+      <motion.section {...sectionReveal} className="px-6 pb-24">
+        <div
+          className="mx-auto flex max-w-6xl flex-col items-start gap-6 rounded-[28px] px-10 py-12 sm:flex-row sm:items-center sm:justify-between"
+          style={{ background: bg }}
         >
-          Agregar {product.title} al carrito
-        </button>
+          <div>
+            <h2 className="text-[clamp(24px,2.5vw,32px)] font-black leading-tight text-[#0D1B35]">
+              ¿Listo para probar {product.title}?
+            </h2>
+            <p className="mt-1 text-sm text-[#0D1B35]/65">
+              Pausa, cambia o cancela cuando quieras.
+            </p>
+          </div>
+          <button
+            onClick={() => handleAdd(selected)}
+            className="shrink-0 rounded-full px-10 py-4 text-base font-bold text-white transition hover:opacity-90"
+            style={{ background: color }}
+          >
+            Agregar al carrito
+          </button>
+        </div>
       </motion.section>
     </main>
   );
