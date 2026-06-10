@@ -86,8 +86,8 @@ function Gallery({
       </div>
       {images.length > 1 && (
         <div
-          className="mt-3 flex gap-2 overflow-x-auto pb-1"
-          style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(13,27,53,0.25) transparent" }}
+          className="mt-3 grid gap-2"
+          style={{ gridTemplateColumns: `repeat(${images.length}, 1fr)` }}
         >
           {images.map((src, i) => (
             <button
@@ -95,7 +95,7 @@ function Gallery({
               onClick={() => setActive(i)}
               aria-label={`Ver imagen ${i + 1}`}
               aria-current={i === active}
-              className="relative h-32 w-32 shrink-0 overflow-hidden rounded-xl border-2 transition"
+              className="relative aspect-square w-full overflow-hidden rounded-xl border-2 transition"
               style={{
                 background: bg,
                 borderColor: i === active ? accent : "rgba(13,27,53,0.10)",
