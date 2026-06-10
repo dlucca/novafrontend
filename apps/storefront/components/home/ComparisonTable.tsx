@@ -45,10 +45,10 @@ export default async function ComparisonTable() {
         {/* Two-column layout: table left, image right */}
         <FadeIn
           delay={0.1}
-          className="mt-14 grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-14 items-start"
+          className="mt-14 grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-14 items-stretch"
         >
           {/* Table */}
-          <div className="rounded-[20px] overflow-hidden shadow-[0_4px_16px_rgba(0,0,0,0.10)] bg-white">
+          <div className="rounded-[20px] overflow-hidden shadow-[0_4px_16px_rgba(0,0,0,0.10)] bg-white h-full flex flex-col">
 
             {/* Header row */}
             <div className="grid border-b-2 border-gray-200 [grid-template-columns:1fr_76px_76px_76px] md:[grid-template-columns:1fr_100px_100px_100px]">
@@ -123,20 +123,19 @@ export default async function ComparisonTable() {
           </div>
 
           {/* Image + bubble */}
-          <div className="relative pb-0 sm:pb-5">
-            <div className="rounded-[32px] overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.14)]">
-              <div className="relative w-full" style={{ height: "380px" }}>
-                <Image
-                  src="/productusers/armpatch.webp"
-                  alt="Novapatch en uso"
-                  fill
-                  loading="lazy"
-                  className="object-cover object-top"
-                  sizes="(max-width: 1024px) 100vw, 45vw"
-                />
-              </div>
+          <div className="relative flex flex-col h-full">
+            <div className="flex-1 rounded-[32px] overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.14)] relative">
+              <Image
+                src="/productusers/armpatch.webp"
+                alt="Novapatch en uso"
+                fill
+                loading="lazy"
+                className="object-cover object-top"
+                sizes="(max-width: 1024px) 100vw, 45vw"
+              />
             </div>
-            {/* Bubble — static below image on mobile, overlapping on sm+ */}
+            
+            {/* Bubble */}
             <div className="mt-4 sm:mt-0 sm:absolute sm:-bottom-5 sm:-left-5 bg-white rounded-[20px] px-5 py-4 shadow-[0_8px_32px_rgba(0,0,0,0.14)]">
               <strong className="block text-[16px] font-extrabold text-ocean">
                 Un parche, todo el día.

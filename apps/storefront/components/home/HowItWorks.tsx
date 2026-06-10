@@ -32,8 +32,11 @@ export default async function HowItWorks() {
           </div>
           {/* Badge — 30-day grid */}
           <div
-            className="absolute top-6 right-6 rounded-[20px] p-4 flex flex-col items-center gap-2.5"
-            style={{ background: "var(--color-gold)", boxShadow: "0 4px 20px rgba(0,0,0,0.15)" }}
+            className="absolute top-7 right-7 rounded-[20px] p-4 flex flex-col items-center gap-2.5 border border-white/40"
+            style={{ 
+              background: "rgba(255, 255, 255, 0.3)", 
+              boxShadow: "0 4px 20px rgba(0,0,0,0.12)" 
+            }}
           >
             {/* 5 × 6 grid — one square per day, number centered */}
             <div className="relative grid gap-[0.25em]" style={{ gridTemplateColumns: "repeat(6, 0.7em)" }}>
@@ -45,9 +48,8 @@ export default async function HowItWorks() {
                 />
               ))}
               {/* Number centered over the grid */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-[30px] font-black leading-none text-gray-900 tracking-tight"
-                  style={{ textShadow: "0 0 12px var(--color-gold), 0 0 4px var(--color-gold)" }}>
+               <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-[30px] font-black leading-none text-gray-900 tracking-tight">
                   30
                 </span>
               </div>
