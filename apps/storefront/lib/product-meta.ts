@@ -38,6 +38,7 @@ export const PRODUCT_META: Record<string, ProductMeta> = {
     taglineColor: "#1A5C9A",
     quote: '"Tu día no para. Tu energía tampoco."',
     tags: ["Energía sostenida", "Sin picos ni caídas"],
+    popular: true,
   },
   glow: {
     slug: "glow",
@@ -59,7 +60,6 @@ export const PRODUCT_META: Record<string, ProductMeta> = {
     taglineColor: "#B83525",
     quote: '"La piel también refleja cómo te cuidas."',
     tags: ["Bienestar desde adentro", "Constancia"],
-    popular: true,
   },
   sleep: {
     slug: "sleep",

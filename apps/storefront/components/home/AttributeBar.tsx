@@ -23,23 +23,9 @@ export default function AttributeBar({ accent }: AttributeBarProps) {
       transition={{ duration: 0.25, ease: "easeOut" }}
       className="w-full"
     >
-      <div className="max-w-[1280px] mx-auto px-8 lg:px-12 py-8 flex items-center gap-6 lg:gap-8">
-        {/* Brand icon — far left */}
-        <div className="flex-shrink-0 hidden lg:block">
-          <Image
-            src="/logos/iconwht.webp"
-            alt="Novapatch"
-            width={56}
-            height={56}
-            className="h-14 w-auto object-contain opacity-90"
-          />
-        </div>
-
-        {/* Divider */}
-        <div className="hidden lg:block h-12 w-px bg-white/30 flex-shrink-0" />
-
-        {/* Attributes */}
-        <div className="flex-1 flex items-start justify-around gap-4 flex-wrap sm:flex-nowrap">
+      <div className="max-w-[1100px] mx-auto px-8 lg:px-12 py-8">
+        {/* Attributes — centrados */}
+        <div className="flex items-start justify-center gap-4 flex-wrap sm:flex-nowrap">
           {attrs.map((a, i) => (
             <motion.div
               key={a.label}
