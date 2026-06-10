@@ -34,6 +34,8 @@ function Gallery({
   accent: string;
 }) {
   const [active, setActive] = useState(0);
+  const prev = () => setActive((a) => (a - 1 + images.length) % images.length);
+  const next = () => setActive((a) => (a + 1) % images.length);
   return (
     <div>
       <div
@@ -59,22 +61,47 @@ function Gallery({
             />
           </motion.div>
         </AnimatePresence>
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={prev}
+              aria-label="Imagen anterior"
+              className="absolute left-3 top-1/2 z-[1] flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-[#0D1B35] shadow-[0_2px_10px_rgba(13,27,53,0.12)] transition hover:bg-white active:scale-95"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M15 5l-7 7 7 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+            <button
+              onClick={next}
+              aria-label="Imagen siguiente"
+              className="absolute right-3 top-1/2 z-[1] flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-[#0D1B35] shadow-[0_2px_10px_rgba(13,27,53,0.12)] transition hover:bg-white active:scale-95"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          </>
+        )}
       </div>
       {images.length > 1 && (
-        <div className="mt-3 flex gap-2">
+        <div
+          className="mt-3 flex gap-2 overflow-x-auto pb-1"
+          style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(13,27,53,0.25) transparent" }}
+        >
           {images.map((src, i) => (
             <button
               key={src}
               onClick={() => setActive(i)}
               aria-label={`Ver imagen ${i + 1}`}
               aria-current={i === active}
-              className="relative h-16 w-16 overflow-hidden rounded-xl border-2 transition"
+              className="relative h-32 w-32 shrink-0 overflow-hidden rounded-xl border-2 transition"
               style={{
                 background: bg,
                 borderColor: i === active ? accent : "rgba(13,27,53,0.10)",
               }}
             >
-              <Image src={src} alt="" fill sizes="64px" className="object-contain p-1" />
+              <Image src={src} alt="" fill sizes="128px" className="object-contain p-1.5" />
             </button>
           ))}
         </div>
