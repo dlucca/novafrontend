@@ -130,22 +130,24 @@ function FrequencyPicker({
   onChange: (f: Freq) => void;
 }) {
   return (
-    <div className="grid grid-cols-3 gap-1.5">
+    <div className="grid grid-cols-3 gap-2">
       {FRECUENCIAS.map((f) => {
-        const active = selected === f.days;
+        const isActive = selected === f.days;
         return (
           <button
             key={f.days}
             onClick={() => onChange(f.days)}
-            className="py-2 px-1 rounded-xl text-center transition-all duration-150 border-2"
+            className="rounded-2xl border-2 px-3 py-3 text-center transition-all"
             style={{
-              borderColor: active ? color : "transparent",
-              background: active ? bg : "#F3F4F6",
-              color: active ? taglineColor : "#6B7280",
+              borderColor: isActive ? color : "#E7E1D6",
+              background: isActive ? `color-mix(in srgb, ${bg} 45%, #fff)` : "#FCFAF6",
+              color: isActive ? taglineColor : "#6B7280",
             }}
           >
-            <span className="block text-[10px] font-black">{f.badge}</span>
-            <span className="block text-[11px] font-semibold">{f.label}</span>
+            <span className="block text-xs font-semibold">{f.label}</span>
+            <span className="block text-[12px] font-black mt-0.5">
+              {f.badge}
+            </span>
           </button>
         );
       })}
@@ -229,21 +231,19 @@ function ProductCard({
         </Link>
       </div>
 
-      {/* Cuerpo */}
+            {/* Cuerpo */}
       <div className="p-5 flex flex-col gap-3 flex-1">
         <div>
-          <h3 className="text-[22px] font-black tracking-tight leading-none text-navy-light">
+          <h3 className="text-[42px] font-black tracking-tight leading-none" 
+              style={{ color: meta.color }}>
             <Link href={`/${locale}/tienda/${product.slug}`}>{product.title}</Link>
           </h3>
-          <p
-            className="text-[13px] font-semibold leading-snug mt-1"
-            style={{ color: meta.taglineColor }}
-          >
+          <p className="text-[13px] leading-snug mt-3 text-[#0e1b34]">
             {product.description}
           </p>
         </div>
 
-        <p className="text-[12.5px] text-[#6B7280] italic leading-relaxed">
+        <p className="text-[14px] text-[#0e1b34] italic leading-relaxed">
           {meta.quote}
         </p>
 
@@ -251,7 +251,7 @@ function ProductCard({
           {meta.tags.map((tag) => (
             <span
               key={tag}
-              className="text-[11px] font-bold px-2.5 py-1 rounded-full border-[1.5px]"
+              className="text-[13px] font-bold px-2.5 py-1 rounded-full border-[1.2px]"
               style={{ borderColor: meta.color, color: meta.color }}
             >
               {tag}
@@ -270,8 +270,8 @@ function ProductCard({
               transition={{ duration: 0.22, ease: "easeInOut" }}
               className="overflow-hidden"
             >
-              <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9CA3AF] mb-2 mt-1">
-                Frecuencia de entrega
+              <p className="text-[12px] font-bold text-[#0e1b34] mb-2 mt-1">
+                ¿Cómo quieres recibirlo?
               </p>
               <FrequencyPicker
                 selected={freq}
@@ -287,7 +287,7 @@ function ProductCard({
         {/* Precio + CTA */}
         <div className="mt-auto pt-3 border-t border-black/[0.05]">
           <div className="flex items-baseline gap-2 mb-3">
-            <span className="text-[26px] font-black tracking-tight text-navy-light">
+            <span className="text-[26px] font-black tracking-tight text-[#0e1b34]">
               {formatPrice(displayPrice, currency)}
             </span>
             <AnimatePresence>
@@ -307,8 +307,8 @@ function ProductCard({
 
           <button
             onClick={handleAddToCart}
-            className="product-card-btn w-full py-3 rounded-xl border-2 text-[14px] font-bold transition-all duration-200 active:scale-[0.97]"
-            style={{ "--btn-accent": meta.color, borderColor: meta.color } as React.CSSProperties}
+            className="mt-2 w-full py-4 rounded-full text-base font-bold text-white transition-all active:scale-[0.97] hover:brightness-105"
+            style={{ background: meta.color }}
           >
             {mode === "sub" ? "Suscribirse" : "Agregar al carrito"}
           </button>
