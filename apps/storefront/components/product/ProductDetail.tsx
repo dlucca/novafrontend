@@ -381,9 +381,25 @@ export default function ProductDetail({
             </div>
           </motion.section>
 
-          {/* ── Cómo funciona — foto lifestyle + texto ── */}
+          {/* ── Cómo funciona — foto lifestyle a la DERECHA + texto ── */}
           <motion.section {...sectionReveal} className="bg-white py-20">
             <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 lg:grid-cols-12">
+              
+              {/* Texto a la izquierda */}
+              <div className={lifestyleA ? "lg:col-span-7" : "lg:col-span-8"}>
+                <Eyebrow color={accent}>La ciencia del parche</Eyebrow>
+                <h2 className="mt-3 text-[clamp(28px,3vw,40px)] font-black leading-tight text-[#0D1B35]">
+                  Cómo funciona
+                </h2>
+                <p className="mt-6 max-w-xl text-[15px] leading-7 text-[#425066]">
+                  {HOW_IT_WORKS_INTRO}
+                </p>
+                <p className="mt-4 max-w-xl text-[15px] leading-7 text-[#425066]">
+                  {pdp.howItWorks}
+                </p>
+              </div>
+
+              {/* Imagen a la derecha */}
               {lifestyleA && (
                 <div className="lg:col-span-5">
                   <div
@@ -400,18 +416,6 @@ export default function ProductDetail({
                   </div>
                 </div>
               )}
-              <div className={lifestyleA ? "lg:col-span-7" : "lg:col-span-8"}>
-                <Eyebrow color={accent}>La ciencia del parche</Eyebrow>
-                <h2 className="mt-3 text-[clamp(28px,3vw,40px)] font-black leading-tight text-[#0D1B35]">
-                  Cómo funciona
-                </h2>
-                <p className="mt-6 max-w-xl text-[15px] leading-7 text-[#425066]">
-                  {HOW_IT_WORKS_INTRO}
-                </p>
-                <p className="mt-4 max-w-xl text-[15px] leading-7 text-[#425066]">
-                  {pdp.howItWorks}
-                </p>
-              </div>
             </div>
           </motion.section>
 
