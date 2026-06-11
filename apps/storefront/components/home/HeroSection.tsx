@@ -155,20 +155,6 @@ export default function HeroSection({ slides, current, onNav, onDot, onPause, on
         <div className="max-w-[1200px] mx-auto px-5 sm:px-8 lg:px-14 w-full">
           <div className="max-w-[560px] mx-auto sm:mx-0">
 
-            {/* Badge */}
-            <div
-              className="inline-flex items-center gap-2 mb-4 sm:mb-5 px-3.5 py-1 sm:px-4 sm:py-1.5 rounded-full text-white font-medium"
-              style={{
-                fontSize: "clamp(11px, 3vw, 13px)",
-                background: "rgba(255,255,255,0.22)",
-                backdropFilter: "blur(8px)",
-                border: "1px solid rgba(255,255,255,0.35)",
-              }}
-            >
-              <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white flex-shrink-0" />
-              {t("badge")}
-            </div>
-
             {/* Headline
                 Mobile: más compacto, sin salto de línea forzado → el texto fluye
                 Desktop: tamaño grande con salto de línea */}
