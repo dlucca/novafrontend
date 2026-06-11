@@ -119,7 +119,10 @@ function ProductCard({
       }}
       className="h-full"
     >
-      <div className="group relative flex flex-col bg-white rounded-[20px] overflow-hidden border border-black/[0.06] shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.12)] hover:-translate-y-[5px] transition-all duration-300 h-full">
+      <div
+        data-testid="product-card"
+        className="group relative flex flex-col bg-white rounded-[20px] overflow-hidden border border-black/[0.06] shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.12)] hover:-translate-y-[5px] transition-all duration-300 h-full"
+      >
         {/* Overlay: toda la card navega a la PDP; el CTA queda por encima (z-[2]) */}
         <Link
           href={`/${locale}/tienda/${p.slug}`}
