@@ -22,10 +22,10 @@ export default function AttributeBar({ accent }: AttributeBarProps) {
       transition={{ duration: 0.25, ease: "easeOut" }}
       className="w-full"
     >
-      <div className="max-w-[1100px] mx-auto px-5 sm:px-8 lg:px-12 py-6 sm:py-8">
+      <div className="max-w-[1100px] mx-auto px-8 lg:px-12 py-8">
         
         {/* Attributes — responsive */}
-        <div className="flex items-start justify-center gap-4 sm:gap-30 lg:gap-40 flex-wrap sm:flex-nowrap">
+        <div className="flex items-start justify-center gap-1 flex-wrap sm:flex-nowrap">
           {attrs.map((a, i) => (
             <motion.div
               key={a.label}
@@ -33,7 +33,7 @@ export default function AttributeBar({ accent }: AttributeBarProps) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.07, duration: 0.45 }}
-              className="flex flex-col items-center gap-2 min-w-[58px] sm:min-w-[68px]"
+              className="flex flex-col items-center gap-2.5 min-w-[64px] flex-1"
             >
               {/* Icono más pequeño en móvil */}
               <div
