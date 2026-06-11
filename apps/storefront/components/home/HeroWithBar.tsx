@@ -89,7 +89,7 @@ export default function HeroWithBar() {
         onPause={handlePause}
         onResume={handleResume}
       />
-      <AttributeBar current={current} accent={slides[current].accent} />
+      <AttributeBar accent={slides[current].accent} />
     </>
   );
 }
