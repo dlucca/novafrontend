@@ -1,18 +1,20 @@
 // novafrontend/apps/storefront/tests/e2e/smoke/critical-paths.spec.ts
 import { test, expect } from "@playwright/test"
 
+// Las cards llevan data-testid="product-card" (ProductGrid y TiendaExperience).
+// El fallback a links de PDP cubre deploys que aún no incluyen el testid.
+const PRODUCT_CARD = "[data-testid='product-card'], a[href*='/tienda/energy'], a[href*='/tienda/sleep']"
+
 test("homepage loads with at least one product visible", async ({ page }) => {
   await page.goto("/mx")
   await page.waitForLoadState("networkidle")
-  const productElements = page.locator("article, [class*='product'], [class*='Product']")
-  await expect(productElements.first()).toBeVisible({ timeout: 10_000 })
+  await expect(page.locator(PRODUCT_CARD).first()).toBeVisible({ timeout: 10_000 })
 })
 
 test("/tienda loads with at least one product visible", async ({ page }) => {
   await page.goto("/mx/tienda")
   await page.waitForLoadState("networkidle")
-  const productElements = page.locator("article, [class*='product'], [class*='Product']")
-  await expect(productElements.first()).toBeVisible({ timeout: 10_000 })
+  await expect(page.locator(PRODUCT_CARD).first()).toBeVisible({ timeout: 10_000 })
 })
 
 test("cart drawer opens", async ({ page }) => {

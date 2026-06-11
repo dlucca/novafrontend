@@ -192,7 +192,10 @@ function ProductCard({
   }
 
   return (
-    <div className="bg-white rounded-[22px] overflow-hidden border border-black/[0.05] shadow-[0_4px_24px_rgba(0,0,0,0.06)] hover:shadow-[0_16px_48px_rgba(0,0,0,0.09)] hover:-translate-y-1 transition-all duration-300 flex flex-col h-full">
+    <div
+      data-testid="product-card"
+      className="bg-white rounded-[22px] overflow-hidden border border-black/[0.05] shadow-[0_4px_24px_rgba(0,0,0,0.06)] hover:shadow-[0_16px_48px_rgba(0,0,0,0.09)] hover:-translate-y-1 transition-all duration-300 flex flex-col h-full"
+    >
 
       {/* Imagen */}
       <div
