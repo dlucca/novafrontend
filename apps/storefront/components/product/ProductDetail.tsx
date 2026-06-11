@@ -95,13 +95,13 @@ function Gallery({
               onClick={() => setActive(i)}
               aria-label={`Ver imagen ${i + 1}`}
               aria-current={i === active}
-              className="relative aspect-square w-full overflow-hidden rounded-xl border-2 transition"
+              className="relative w-20 h-24 w-full overflow-hidden rounded-xl border-2 transition"
               style={{
                 background: bg,
                 borderColor: i === active ? accent : "rgba(13,27,53,0.10)",
               }}
             >
-              <Image src={src} alt="" fill sizes="128px" className="object-contain p-1.5" />
+              <Image src={src} alt="" fill sizes="128px" className="object-cover p-1.5" />
             </button>
           ))}
         </div>
@@ -230,10 +230,9 @@ export default function ProductDetail({
   // Shade del producto para texto/acentos sobre fondos claros (mejor contraste que el base)
   const accent = meta?.taglineColor ?? color;
   // La galería muestra solo las primeras 5 imágenes (01-05). Las secciones
-  // inferiores usan imágenes propias si existen (06 = Cómo funciona,
-  // 07 = FAQ); si no, caen a las lifestyle de la galería (04 y 03).
+  // inferiores usan imágenes propias
   const galleryImages = product.images.slice(0, 5);
-  const lifestyleA = meta?.howItWorksImage || product.images[5] || product.images[3];         // Imagen seccion Como funciona
+  const lifestyleA = meta?.howItWorksImage;         // Imagen seccion Como funciona
   const lifestyleB = "/productusers/FAQ_image.webp";                   // Imagen FIJA para FAQ
 
   // Default: Mensual (igual que el mockup)
