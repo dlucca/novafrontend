@@ -170,48 +170,30 @@ function ProductCard({
           </div>
 
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-gray-400 mb-1">
+            <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#0e1b34] mb-1">
               Pack de 30 parches
             </p>
-            <p className="text-[12px] text-gray-500 leading-[1.5]">
+            <p className="text-[13px] text-gray-800 leading-[1.5]">
               {p.ingredients.join(" · ")}
             </p>
-          </div>
-
-          <div className="flex flex-wrap gap-1.5">
-            {p.tags.map((tag) => (
-              <span
-                key={tag}
-                className="text-[11px] font-bold px-3 py-1 rounded-full border-[1.5px]"
-                style={{ borderColor: p.color, color: p.color }}
-              >
-                {tag}
-              </span>
-            ))}
           </div>
 
           {/* Pricing */}
           <div className="mt-auto pt-3 flex items-baseline gap-2">
             <span
-              className="text-[22px] font-black"
-              style={{ color: p.taglineColor }}
+              className="text-[22px] text-[#0e1b34] font-black"
+              
             >
               {formatPrice(p.price, currency)}
             </span>
           </div>
-          <p className="text-[11px] text-green-600 font-semibold -mt-1">
-            Desde {formatPrice(subPrice, currency)}/caja con suscripción
+          <p className="text-[12px] text-[#0e1b34] font-semibold -mt-1">
+            Desde {formatPrice(subPrice, currency)} con suscripción
           </p>
 
           <button
             onClick={onAdd}
-            className="product-card-btn relative z-[2] mt-2 w-full py-3 rounded-xl border-2 text-[14px] font-bold transition-all duration-200 active:scale-[0.97]"
-            style={
-              {
-                "--btn-accent": p.color,
-                borderColor: p.color,
-              } as React.CSSProperties
-            }
+            className="relative z-[2] mt-3 w-full py-[17px] text-[15px] font-bold text-white rounded-full inline-flex items-center justify-center transition-all duration-200 active:scale-[0.97] hover:-translate-y-0.5 hover:bg-ocean-dark shadow-lg hover:shadow-xl bg-ocean"
           >
             Agregar al carrito
           </button>
