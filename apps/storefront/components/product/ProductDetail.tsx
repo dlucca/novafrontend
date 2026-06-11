@@ -84,10 +84,11 @@ function Gallery({
           </>
         )}
       </div>
+            {/* Miniaturas - Aspect 4/5 + object-cover */}
       {images.length > 1 && (
         <div
-          className="mt-3 grid gap-2"
-          style={{ gridTemplateColumns: `repeat(${images.length}, 1fr)` }}
+          className="mt-4 grid gap-3 justify-center md:justify-start"
+          style={{ gridTemplateColumns: `repeat(${images.length}, minmax(0, 1fr))` }}
         >
           {images.map((src, i) => (
             <button
@@ -95,13 +96,22 @@ function Gallery({
               onClick={() => setActive(i)}
               aria-label={`Ver imagen ${i + 1}`}
               aria-current={i === active}
-              className="relative w-20 h-24 w-full overflow-hidden rounded-xl border-2 transition"
+              className={`relative aspect-[4/5] w-full max-w-[110px] overflow-hidden rounded-2xl border-2 transition-all duration-200 ${
+                i === active 
+                  ? 'border-black scale-105 shadow-md' 
+                  : 'border-transparent hover:border-gray-300'
+              }`}
               style={{
                 background: bg,
-                borderColor: i === active ? accent : "rgba(13,27,53,0.10)",
               }}
             >
-              <Image src={src} alt="" fill sizes="128px" className="object-cover p-1.5" />
+              <Image 
+                src={src} 
+                alt={`${title} vista ${i + 1}`}
+                fill 
+                sizes="120px"
+                className="object-cover" 
+              />
             </button>
           ))}
         </div>
