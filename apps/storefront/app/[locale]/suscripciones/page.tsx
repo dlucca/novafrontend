@@ -89,7 +89,7 @@ export default async function SuscripcionesPage({
               </p>
               <Link
                 href="/tienda"
-                className="mt-8 inline-flex w-full items-center justify-center rounded-full bg-ocean px-8 py-4 text-base font-bold text-white transition hover:bg-ocean-dark sm:w-auto"
+                className="mt-8 inline-flex w-full items-center justify-center rounded-full bg-ocean px-8 py-4 text-base font-bold text-white shadow-[0_4px_20px_rgba(0,80,136,0.18)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-ocean-dark hover:shadow-[0_8px_32px_rgba(0,80,136,0.28)] sm:w-auto"
               >
                 Armar mi plan
               </Link>
@@ -224,7 +224,7 @@ export default async function SuscripcionesPage({
               </div>
               <Link
                 href="/tienda"
-                className="shrink-0 rounded-full bg-ocean px-10 py-4 text-base font-bold text-white transition hover:bg-ocean-dark"
+                className="inline-flex shrink-0 items-center justify-center rounded-full bg-ocean px-10 py-4 text-base font-bold text-white shadow-[0_4px_20px_rgba(0,80,136,0.18)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-ocean-dark hover:shadow-[0_8px_32px_rgba(0,80,136,0.28)]"
               >
                 Ir a la tienda
               </Link>
