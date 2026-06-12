@@ -48,9 +48,9 @@ export default function TerminosPage() {
         {/* Hero */}
         <section className="pt-32 pb-16 px-6 text-center" style={{ background: "#FEF7ED" }}>
           <div className="max-w-2xl mx-auto">
-            <p className="text-[#3CBFAB] font-semibold text-sm uppercase tracking-widest mb-4">Legal</p>
-            <h1 className="text-5xl lg:text-6xl font-bold text-[#005088] mb-4">Términos y Condiciones</h1>
-            <p className="text-[#6B7280] text-sm">Última actualización: enero de 2025 · Ley aplicable: México</p>
+            <p className="home-section-eyebrow">Legal</p>
+            <h1 className="home-section-title text-ocean">Términos y Condiciones</h1>
+            <p className="home-caption">Última actualización: enero de 2025 · Ley aplicable: México</p>
           </div>
         </section>
 
