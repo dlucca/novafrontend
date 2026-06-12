@@ -477,17 +477,6 @@ export default function ProductDetail({
                 <h2 className="mt-3 text-[clamp(28px,3vw,40px)] font-black leading-tight text-[#0D1B35]">
                   Preguntas frecuentes
                 </h2>
-                
-                {/* Imagen fija para FAQ */}
-                <div className="relative mt-8 w-full aspect-[2/1] overflow-hidden rounded-[24px] shadow-lg">
-                  <Image
-                    src="/productusers/FAQ_image.webp"
-                    alt="Preguntas frecuentes Novapatch"
-                    fill
-                    sizes="30vw"
-                    className="object-cover"
-                  />
-                </div>
               </div>
               <div className="lg:col-span-8">
                 <FaqAccordion faq={pdp.faq} accent={accent} />
