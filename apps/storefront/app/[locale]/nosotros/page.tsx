@@ -57,8 +57,7 @@ export default function NosotrosPage() {
                   className="font-light leading-relaxed"
                   style={{ fontSize: "clamp(15px, 1.2vw, 17px)", color: "rgba(13,27,53,0.6)" }}
                 >
-                  Novapatch nació de una pregunta simple: ¿por qué el bienestar
-                  diario sigue siendo tan difícil de sostener?
+                  Comenzó con una frustración, no con una fórmula.
                 </motion.p>
               </div>
 
@@ -151,14 +150,14 @@ export default function NosotrosPage() {
                 >
                   <p>
                     La mayoría de las personas quiere cuidarse. Compra
-                    suplementos, los toma unos días, los olvida, los retoma,
-                    los abandona. No por falta de voluntad — sino porque el
-                    formato no acompaña la vida real.
+                    suplementos, los toma unos días, se le olvida el frasco en
+                    un cajón y los abandona. No por falta de voluntad, sino
+                    porque el formato no acompaña la vida real.
                   </p>
                   <p>
-                    Pastillas que requieren agua. Horarios estrictos. Cápsulas
-                    que irritan el estómago. Rituales que se sienten como
-                    obligaciones.
+                    Pastillas que requieren agua, horarios estrictos, cápsulas
+                    que pueden caer pesadas al estómago, rituales que se sienten
+                    como obligaciones.
                   </p>
                 </motion.div>
 
@@ -211,52 +210,70 @@ export default function NosotrosPage() {
               <div>
                 <motion.h2
                   {...fade(0.1)}
-                  className="font-black leading-[1.02] mb-8 tracking-[-0.02em]"
-                  style={{ fontSize: "clamp(26px, 3vw, 46px)", color: "#005088" }}
+                  className="font-black leading-[1.1] mb-8 tracking-[-0.02em]"
+                  style={{ fontSize: "clamp(22px, 2.4vw, 38px)", color: "#005088" }}
                 >
-                  Un parche.<br />Un gesto.<br />Todo el día.
+                  Comenzó con una frustración, no con una fórmula.
                 </motion.h2>
 
                 <motion.div
                   {...fade(0.2)}
+                  className="flex flex-col gap-5 leading-[1.85] mb-8"
+                  style={{ fontSize: "clamp(14px, 1.1vw, 16px)", color: "rgba(13,27,53,0.6)" }}
+                >
+                  <p>
+                    A Cristian le pasaba lo mismo que a casi todos. Empezaba
+                    motivado y a las dos semanas el frasco terminaba olvidado.
+                    Junto con Esteban, su amigo y socio de toda la vida,
+                    empezaron a darle vueltas a una pregunta:
+                  </p>
+                  <p
+                    className="font-semibold"
+                    style={{ color: "#005088", fontSize: "clamp(16px, 1.3vw, 20px)" }}
+                  >
+                    ¿Y si cuidarse no dependiera de acordarse?
+                  </p>
+                  <p>
+                    Su hijo Ramiro se sumó con el empuje de quien saca las ideas
+                    adelante, y Maia —esposa de Esteban— le dio forma visual y
+                    sensibilidad al proyecto. Entre los cuatro convirtieron esa
+                    duda en algo concreto: un parche.
+                  </p>
+                </motion.div>
+
+                <motion.p
+                  {...fade(0.25)}
+                  className="font-black leading-[1.02] mb-8 tracking-[-0.02em]"
+                  style={{ fontSize: "clamp(26px, 3vw, 46px)", color: "#005088" }}
+                >
+                  Un gesto.<br />Todo el día.
+                </motion.p>
+
+                <motion.div
+                  {...fade(0.3)}
                   className="flex flex-col gap-5 leading-[1.85] mb-12"
                   style={{ fontSize: "clamp(14px, 1.1vw, 16px)", color: "rgba(13,27,53,0.6)" }}
                 >
                   <p>
-                    La absorción a través de la piel no es una novedad — se usa
-                    en medicina desde hace décadas. Lo que hicimos fue aplicar
-                    ese conocimiento al bienestar cotidiano.
-                  </p>
-                  <p>
-                    Formulamos cada parche desde cero para este formato. No
-                    adaptamos suplementos en cápsula: diseñamos ingredientes
-                    seleccionados bajo criterios precisos, pensados para que el
-                    cuerpo los absorba de forma progresiva, sin pasar por el
-                    sistema digestivo, sin interferencias.
+                    La absorción a través de la piel no es nueva, pero la
+                    aplicamos al bienestar cotidiano. Formulamos cada parche
+                    desde cero para este formato, sin pasar por el sistema
+                    digestivo, sin interferencias.
                   </p>
                 </motion.div>
 
-                {/* Inset block */}
+                {/* Pull quote */}
                 <motion.div
-                  {...fade(0.3)}
-                  className="rounded-3xl px-8 py-8 relative overflow-hidden"
-                  style={{
-                    background: "#F8EDEB",
-                    boxShadow: "0 12px 48px rgba(13,27,53,0.1)",
-                    border: "1px solid rgba(13,27,53,0.08)",
-                  }}
+                  {...fade(0.35)}
+                  className="border-l-[3px] pl-7"
+                  style={{ borderColor: "#E8503A" }}
                 >
                   <p
-                    className="font-bold leading-snug relative z-10"
-                    style={{ fontSize: "clamp(16px, 1.5vw, 22px)", color: "#005088" }}
+                    className="font-black leading-tight"
+                    style={{ fontSize: "clamp(20px, 2.2vw, 32px)", color: "#005088" }}
                   >
-                    Bienestar que se integra a tu día.
-                  </p>
-                  <p
-                    className="font-light leading-snug mt-1.5 relative z-10"
-                    style={{ fontSize: "clamp(16px, 1.5vw, 22px)", color: "rgba(13,27,53,0.5)" }}
-                  >
-                    No que lo interrumpe.
+                    Bienestar que se integra a tu día.<br />
+                    <span style={{ color: "rgba(0,80,136,0.3)" }}>No que lo interrumpe.</span>
                   </p>
                 </motion.div>
               </div>
@@ -313,11 +330,10 @@ export default function NosotrosPage() {
                     gana al producto perfecto que se abandona a la semana.
                   </p>
                   <p>
-                    Por eso todo lo que hacemos apunta a lo mismo: eliminar la
-                    fricción. Hacer que cuidarse sea tan fácil que no haya
-                    excusa para no hacerlo. Un solo gesto, integrado a lo que
-                    ya haces, sin rituales que mantener ni horarios que
-                    respetar.
+                    Por eso todo lo que hacemos apunta a eliminar la fricción:
+                    hacer que cuidarse sea tan fácil que no haya excusa para no
+                    hacerlo. Un solo gesto, integrado a lo que ya hacés, sin
+                    rituales complicados ni horarios estrictos.
                   </p>
                 </motion.div>
 
@@ -335,7 +351,7 @@ export default function NosotrosPage() {
         </section>
 
         {/* ── 04 — LO QUE NO SOMOS ─────────────────────────────────── */}
-        <section className="py-24 px-6 relative overflow-hidden" style={{ background: "#FAF7F2" }}>
+        <section className="py-24 px-6 relative overflow-hidden bg-white">
           <div
             className="absolute left-4 top-1/2 -translate-y-1/2 font-black leading-none select-none pointer-events-none"
             style={{ fontSize: "clamp(100px, 14vw, 220px)", color: "rgba(13,27,53,0.06)" }}
@@ -348,7 +364,7 @@ export default function NosotrosPage() {
 
               <motion.div {...fade(0)} className="lg:sticky lg:top-32 self-start">
                 <div className="flex items-center gap-3 mb-3">
-                  <span className="font-black" style={{ fontSize: "clamp(24px, 2.5vw, 34px)", color: "#E8503A" }}>
+                  <span className="font-black" style={{ fontSize: "clamp(24px, 2.5vw, 34px)", color: "#5BA8D5" }}>
                     04
                   </span>
                   <div className="h-px flex-1" style={{ background: "rgba(13,27,53,0.12)" }} />
@@ -376,13 +392,13 @@ export default function NosotrosPage() {
                   style={{ fontSize: "clamp(14px, 1.1vw, 16px)", color: "rgba(13,27,53,0.6)" }}
                 >
                   <p>
-                    No prometemos transformaciones. No vendemos soluciones
+                    No prometemos transformaciones radicales ni soluciones
                     mágicas. No usamos lenguaje clínico para parecer más serios
                     de lo que somos.
                   </p>
                   <p>
-                    Somos una marca de bienestar que cree en la honestidad
-                    sobre la exageración, en la constancia sobre el impacto
+                    Somos una marca de bienestar que cree en la honestidad por
+                    sobre la exageración, en la constancia por sobre el impacto
                     inmediato, y en acompañar — no en prometer.
                   </p>
                 </motion.div>
@@ -395,11 +411,11 @@ export default function NosotrosPage() {
                 >
                   {[
                     {
-                      cond: "Si buscas resultados de un día para el otro,",
+                      cond: "Si buscás resultados de un día para el otro,",
                       result: "no somos lo tuyo.",
                     },
                     {
-                      cond: "Si buscas un hábito que sí puedas sostener,",
+                      cond: "Si buscás un hábito que sí puedas sostener,",
                       result: "bienvenido.",
                     },
                   ].map((item, i) => (
