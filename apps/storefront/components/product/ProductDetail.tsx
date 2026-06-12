@@ -328,23 +328,39 @@ export default function ProductDetail({
       </section>
 
       {/* ── Perks de suscripción — solo si hay un tier de suscripción elegido ── */}
-      {selected.freq !== null && (
-        <section
-          className="border-y border-[#E8E2D8]"
-          style={{ background: `color-mix(in srgb, ${bg} 30%, #fff)` }}
-        >
-          <div className="mx-auto grid max-w-6xl gap-8 px-6 py-10 sm:grid-cols-3">
-            {SUBSCRIPTION_PERKS.map((perk) => (
-              <div key={perk.title}>
-                <p className="text-sm font-bold" style={{ color }}>
-                  {perk.title}
-                </p>
-                <p className="mt-1 text-xs leading-5 text-[#425066]">{perk.description}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+      <AnimatePresence initial={false}>
+        {selected.freq !== null && (
+          <motion.section
+            key="subscription-perks"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{
+              height: { duration: 0.4, ease: [0.4, 0, 0.2, 1] },
+              opacity: { duration: 0.25, ease: "easeOut" },
+            }}
+            className="overflow-hidden border-y border-[#E8E2D8]"
+            style={{ background: `color-mix(in srgb, ${bg} 30%, #fff)` }}
+          >
+            <motion.div
+              initial={{ y: -6 }}
+              animate={{ y: 0 }}
+              exit={{ y: -6 }}
+              transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+              className="mx-auto grid max-w-6xl gap-8 px-6 py-10 sm:grid-cols-3"
+            >
+              {SUBSCRIPTION_PERKS.map((perk) => (
+                <div key={perk.title}>
+                  <p className="text-sm font-bold" style={{ color }}>
+                    {perk.title}
+                  </p>
+                  <p className="mt-1 text-xs leading-5 text-[#425066]">{perk.description}</p>
+                </div>
+              ))}
+            </motion.div>
+          </motion.section>
+        )}
+      </AnimatePresence>
 
       {pdp && (
         <>
