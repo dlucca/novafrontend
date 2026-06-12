@@ -49,8 +49,8 @@ function FAQItem({
         onClick={onToggle}
         aria-expanded={isOpen}
         aria-controls={panelId}
-        className="w-full flex justify-between items-center gap-4 text-left transition-colors duration-150 hover:text-ocean focus-visible:outline-none focus-visible:text-ocean"
-        style={{ padding: "22px 0", fontSize: "16px", fontWeight: 600, color: "var(--color-navy)" }}
+        className="w-full flex justify-between items-center gap-4 text-left transition-colors duration-150 hover:text-ocean focus-visible:outline-none focus-visible:text-ocean home-item-title"
+        style={{ padding: "22px 0" }}
       >
         <span>{faq.q}</span>
         <span
@@ -76,8 +76,8 @@ function FAQItem({
       >
         <div className="overflow-hidden">
           <p
-            className="leading-[1.65] text-gray-500"
-            style={{ fontSize: "16px", paddingBottom: isOpen ? "20px" : "0px", paddingRight: "48px", transition: "padding-bottom 0.35s" }}
+            className="home-body"
+            style={{ paddingBottom: isOpen ? "20px" : "0px", paddingRight: "48px", transition: "padding-bottom 0.35s" }}
           >
             {faq.a}
           </p>
@@ -100,10 +100,7 @@ export default function HomeFAQ() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <p
-            className="inline-block text-sm font-bold uppercase tracking-[0.12em] text-teal mb-3"
-            style={{ color: "var(--color-teal)" }}
-          >
+          <p className="home-section-eyebrow">
             {t("badge")}
           </p>
           <h2 className="home-section-title text-ocean">
@@ -125,7 +122,7 @@ export default function HomeFAQ() {
 
         {/* CTA */}
         <div className="text-center mt-12">
-          <p className="text-[16px] text-gray-500 mb-5">¿No encontraste lo que buscabas?</p>
+          <p className="home-body mb-5">¿No encontraste lo que buscabas?</p>
           <Link
             href="/contacto"
             className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-white font-bold text-[15px] transition-all duration-200 hover:-translate-y-0.5 bg-ocean hover:bg-ocean-dark shadow-[0_4px_16px_rgba(0,80,136,0.3)]"

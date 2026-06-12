@@ -117,7 +117,7 @@ export default function Testimonials() {
           <h2 className="home-section-title text-ocean">
             Lo que nos cuentan nuestros Novapatchers
           </h2>
-          <p className="text-[15px] text-ocean/60 mt-2">
+          <p className="home-section-subtitle mt-2">
             4.8 de 5 estrellas en promedio
           </p>
         </motion.div>
@@ -154,7 +154,7 @@ export default function Testimonials() {
                   className="bg-white rounded-[32px] p-7 shadow-[0_1px_4px_rgba(0,0,0,0.07)] flex flex-col"
                 >
                   <Stars />
-                  <p className="text-[15px] text-gray-900 leading-[1.7] flex-1 mb-5">
+                  <p className="home-body flex-1 mb-5">
                     &ldquo;{t.text}&rdquo;
                   </p>
                   <div className="flex items-center gap-3">
@@ -169,13 +169,13 @@ export default function Testimonials() {
                       />
                     </div>
                     <div>
-                      <p className="font-bold text-[14px] text-gray-900">{t.name}</p>
+                      <p className="home-item-title text-sm">{t.name}</p>
                       <div className="flex items-center gap-1.5 mt-0.5">
                         <span
                           className="w-2 h-2 rounded-full inline-block flex-shrink-0"
                           style={{ background: t.dot }}
                         />
-                        <span className="text-[12px] text-gray-500">Novapatch {t.product}</span>
+                        <span className="home-caption text-xs">Novapatch {t.product}</span>
                       </div>
                     </div>
                   </div>

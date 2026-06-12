@@ -134,22 +134,15 @@ export default function AbsorptionSection() {
         >
           
             
-            <p
-              className="inline-block text-sm font-bold uppercase tracking-[0.12em] text-teal mb-3"
-              style={{ color: "var(--color-teal)" }}
-            >
+            <p className="home-section-eyebrow">
               {t("badge")}
             </p>
-          
 
           <h2 className="home-section-title text-ocean">
             {t("title")}
           </h2>
 
-          <p
-            className="leading-[1.65] mb-10"
-            style={{ fontSize: "16px", color: "rgba(13,27,53,0.65)" }}
-          >
+          <p className="home-section-subtitle mb-10">
             {t("subtitle")}
           </p>
 
@@ -173,7 +166,7 @@ export default function AbsorptionSection() {
                     {s.unit}
                   </span>
                 </div>
-                <div style={{ fontSize: "11px", color: "#5A7A9A", fontWeight: 500 }}>
+                <div className="home-caption text-[11px] font-medium">
                   {s.label}
                 </div>
               </div>

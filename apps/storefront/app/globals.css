@@ -119,3 +119,35 @@ p {
   font-size: clamp(22px, 2.6vw, 32px);
   font-weight: 800;
 }
+
+/* Home section typography hierarchy */
+.home-section-eyebrow {
+  display: inline-block;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-teal);
+  margin-block-end: 0.75rem;
+}
+.home-section-subtitle {
+  font-size: 1rem;
+  line-height: 1.65;
+  color: color-mix(in srgb, var(--color-navy) 65%, transparent);
+}
+.home-item-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--color-navy);
+}
+.home-body {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--color-navy) 55%, transparent);
+}
+.home-caption {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--color-navy) 50%, transparent);
+}

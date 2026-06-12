@@ -28,13 +28,13 @@ export default async function CTABanner({ basePrice = 750, currency = "MXN" }: {
           {/* Contenido lado derecho */}
           <div className="space-y-8">
             <div>
-              <span className="inline-block text-sm font-bold uppercase tracking-[0.12em] text-teal mb-3">
+              <span className="home-section-eyebrow">
                 SUSCRIPCIÓN
               </span>
               <h2 className="home-section-title text-ocean">
                 Suscríbete y ahorra hasta 20%
               </h2>
-              <p className="text-xl text-gray-600 mt-4 leading-relaxed">
+              <p className="home-section-subtitle">
                 Recibe tus parches cómodamente en casa. Sin preocuparte. Sin olvidarte.
               </p>
             </div>
@@ -68,8 +68,8 @@ export default async function CTABanner({ basePrice = 750, currency = "MXN" }: {
                     />
                   </div>
                   <div>
-                    <h4 className="font-bold text-xl text-ocean">{b.title}</h4>
-                    <p className="text-gray-600 mt-1 leading-relaxed">{b.desc}</p>
+                    <h4 className="home-item-title">{b.title}</h4>
+                    <p className="home-body mt-1">{b.desc}</p>
                   </div>
                 </div>
               ))}
@@ -83,7 +83,7 @@ export default async function CTABanner({ basePrice = 750, currency = "MXN" }: {
               >
                 Encuentra tu parche y suscribete
               </Link>
-              <p className="text-sm text-gray-500 mt-4">
+              <p className="home-caption mt-4">
                 Cancela cuando quieras • Envío gratis
               </p>
             </div>

@@ -62,10 +62,7 @@ export default async function HowItWorks() {
 
         {/* Content — right */}
         <FadeIn x={40} y={0} duration={0.7}>
-          <p
-            className="inline-block text-sm font-bold uppercase tracking-[0.12em] text-teal mb-3"
-            style={{ color: "var(--color-teal)" }}
-          >
+          <p className="home-section-eyebrow">
             {t("badge")}
           </p>
           <h2 className="home-section-title text-ocean">
@@ -92,8 +89,8 @@ export default async function HowItWorks() {
                   {step.n}
                 </div>
                 <div>
-                  <h3 className="text-[18px] font-bold text-navy mb-1">{step.title}</h3>
-                  <p className="text-[14px] text-gray-500 leading-[1.6]">{step.desc}</p>
+                  <h3 className="home-item-title mb-1">{step.title}</h3>
+                  <p className="home-body">{step.desc}</p>
                 </div>
               </FadeIn>
             ))}

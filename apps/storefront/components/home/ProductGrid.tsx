@@ -255,10 +255,11 @@ export default function ProductGrid({
           transition={{ duration: 0.6 }}
           className="text-center mb-14"
         >
+          <p className="home-section-eyebrow">Nuestros parches</p>
           <h2 className="home-section-title text-ocean">
             Elige el parche que tu cuerpo necesita
           </h2>
-          <p className="text-[16px] text-gray-500 max-w-[480px] mx-auto leading-[1.6]">
+          <p className="home-section-subtitle max-w-[480px] mx-auto">
             Seis fórmulas, seis objetivos. Un solo formato: pega, olvida y deja que trabaje.
           </p>
         </motion.div>
