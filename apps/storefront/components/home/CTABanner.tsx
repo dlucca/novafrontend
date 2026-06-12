@@ -77,11 +77,11 @@ export default async function CTABanner({ basePrice = 750, currency = "MXN" }: {
 
             {/* CTA */}
             <div className="pt-4">
-              <Link
+                            <Link
                 href="/tienda"
-                className="inline-flex items-center justify-center bg-ocean text-white font-bold text-lg px-10 py-4 rounded-full hover:bg-ocean-dark transition-all hover:-translate-y-0.5 shadow-lg"
+                className="inline-flex items-center justify-center bg-ocean text-white font-bold text-[15px] px-10 py-4 rounded-full hover:bg-ocean-dark transition-all duration-200 hover:-translate-y-0.5 shadow-lg hover:shadow-xl"
               >
-                Encuentra tu parche y suscribete →
+                Encuentra tu parche y suscribete
               </Link>
               <p className="text-sm text-gray-500 mt-4">
                 Cancela cuando quieras • Envío gratis

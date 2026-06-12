@@ -183,10 +183,9 @@ export default function AbsorptionSection() {
             ))}
           </div>
 
-          <Link
+                    <Link
             href="#productos"
-            className="inline-flex items-center gap-2 bg-ocean text-white font-bold text-[15px] px-8 py-3.5 rounded-full transition-all duration-200 hover:-translate-y-0.5 hover:bg-ocean-dark hover:shadow-[0_8px_32px_rgba(0,80,136,0.28)] shadow-[0_4px_20px_rgba(0,80,136,0.18)]"
-            style={{ color: "white" }}
+            className="inline-flex items-center gap-2 bg-ocean text-white font-bold text-[15px] px-8 py-4 rounded-full transition-all duration-200 hover:-translate-y-0.5 hover:bg-ocean-dark hover:shadow-[0_8px_32px_rgba(0,80,136,0.28)] shadow-[0_4px_20px_rgba(0,80,136,0.18)]"
           >
             Encuentra tu parche
             <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">

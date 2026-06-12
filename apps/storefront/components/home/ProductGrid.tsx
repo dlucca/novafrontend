@@ -194,9 +194,10 @@ function ProductCard({
             Desde {formatPrice(subPrice, currency)} con suscripción
           </p>
 
-          <button
+                    <button
             onClick={onAdd}
-            className="relative z-[2] mt-3 w-full py-[17px] text-[15px] font-bold text-white rounded-full inline-flex items-center justify-center transition-all duration-200 active:scale-[0.97] hover:-translate-y-0.5 hover:bg-ocean-dark shadow-lg hover:shadow-xl bg-ocean"
+            className="relative z-[2] mt-3 w-full py-4 text-[15px] font-bold text-white rounded-full inline-flex items-center justify-center transition-all duration-200 active:scale-[0.97] hover:-translate-y-0.5 shadow-lg hover:shadow-xl"
+            style={{ background: p.color }}
           >
             Agregar al carrito
           </button>
