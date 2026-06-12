@@ -216,3 +216,43 @@ export async function getProductDetail(
     return fallbackDetail(handle);
   }
 }
+
+export type SubscriptionPlanTier = {
+  label: string;
+  freq: 30 | 60 | 90;
+  discountPct: number;
+  price: number;
+  best: boolean;
+};
+
+/**
+ * Precios de referencia para la página de suscripciones — misma lógica que la PDP.
+ * Usa variantes de Medusa cuando están disponibles; si no, calcula desde basePrice.
+ */
+export async function getSubscriptionPlanTiers(
+  regionId?: string,
+  currencyCode?: string,
+  productHandle = PRODUCT_ORDER[0]
+): Promise<SubscriptionPlanTier[]> {
+  const detail = await getProductDetail(productHandle, regionId, currencyCode);
+  const options =
+    detail?.options ??
+    TIER_DEFS.map((t) => ({
+      tier: t.tier,
+      label: t.label,
+      freq: t.freq,
+      price: Math.round(750 * (1 - t.discountPct / 100)),
+      discountPct: t.discountPct,
+      variantId: undefined,
+    }));
+
+  return options
+    .filter((o): o is PurchaseOption & { freq: 30 | 60 | 90 } => o.freq !== null)
+    .map((o) => ({
+      label: o.label,
+      freq: o.freq,
+      discountPct: o.discountPct,
+      price: o.price,
+      best: o.tier === "monthly",
+    }));
+}
