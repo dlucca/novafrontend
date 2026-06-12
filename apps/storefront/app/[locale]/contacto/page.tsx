@@ -60,13 +60,13 @@ export default function ContactoPage() {
         {/* Hero */}
         <section className="pt-32 pb-16 px-6 text-center" style={{ background: "#FEF7ED" }}>
           <div className="max-w-2xl mx-auto">
-            <p className="text-[#3CBFAB] font-semibold text-sm uppercase tracking-widest mb-4">
+            <p className="home-section-eyebrow">
               Soporte
             </p>
-            <h1 className="text-5xl lg:text-6xl font-bold text-[#005088] mb-4">
+            <h1 className="home-section-title text-ocean">
               Estamos aquí para ayudarte
             </h1>
-            <p className="text-[#6B7280] text-lg">
+            <p className="home-section-subtitle">
               Respondemos en menos de 24 horas en días hábiles.
             </p>
           </div>
@@ -93,15 +93,15 @@ export default function ContactoPage() {
                       <Icon className="w-4 h-4 text-[#3CBFAB]" />
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">
+                      <p className="home-caption mb-1 text-xs font-bold uppercase tracking-widest">
                         {item.title}
                       </p>
                       {item.display === "link" && item.link ? (
-                        <a href={item.link} className="text-sm font-semibold text-[#3CBFAB] hover:underline">
+                        <a href={item.link} className="home-body font-semibold text-teal hover:underline">
                           {item.value}
                         </a>
                       ) : (
-                        <p className="text-sm font-semibold text-[#005088] whitespace-pre-line">
+                        <p className="home-body font-semibold text-ocean whitespace-pre-line">
                           {item.value}
                         </p>
                       )}
@@ -112,14 +112,14 @@ export default function ContactoPage() {
 
               {/* Social */}
               <div className="bg-white rounded-2xl p-6 shadow-[0_4px_20px_rgba(13,27,53,0.05)] border border-[#005088]/6">
-                <p className="text-xs font-bold text-[#9CA3AF] uppercase tracking-widest mb-4">
+                <p className="home-caption mb-4 text-xs font-bold uppercase tracking-widest">
                   Redes sociales
                 </p>
                 <div className="flex gap-3">
                   <a
                     href="https://www.instagram.com/novapatch.mx?igsh=dGZ4cGNoNjluc3Vl"
                     target="_blank" rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#FAF7F2] hover:bg-[#EAF5FB] text-[#005088] transition-colors duration-200 text-sm font-semibold"
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#FAF7F2] hover:bg-[#EAF5FB] text-ocean transition-colors duration-200 home-body font-semibold"
                   >
                     <InstagramIcon />
                     Instagram
@@ -127,7 +127,7 @@ export default function ContactoPage() {
                   <a
                     href="https://www.tiktok.com/@novapatch.mx?_r=1&_t=ZS-95C7N0OkUke"
                     target="_blank" rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#FAF7F2] hover:bg-[#EAF5FB] text-[#005088] transition-colors duration-200 text-sm font-semibold"
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#FAF7F2] hover:bg-[#EAF5FB] text-ocean transition-colors duration-200 home-body font-semibold"
                   >
                     <TikTokIcon />
                     TikTok
@@ -136,13 +136,13 @@ export default function ContactoPage() {
               </div>
 
               <div className="bg-[#EAF5FB] rounded-2xl p-6 border border-[#5BA8D5]/20">
-                <p className="text-sm font-semibold text-[#1D3461] mb-1">
+                <p className="home-item-title mb-1">
                   ¿Tienes una pregunta frecuente?
                 </p>
-                <p className="text-sm text-[#6B7280] mb-4">
+                <p className="home-body mb-4">
                   Puede que ya tengamos la respuesta.
                 </p>
-                <a href="/faq" className="text-sm font-semibold text-[#3CBFAB] hover:underline">
+                <a href="/faq" className="home-body font-semibold text-teal hover:underline">
                   Ver preguntas frecuentes →
                 </a>
               </div>

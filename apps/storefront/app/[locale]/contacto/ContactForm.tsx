@@ -40,13 +40,13 @@ export default function ContactForm() {
         <div className="w-16 h-16 rounded-2xl bg-[#C9D849]/20 flex items-center justify-center">
           <Mail className="w-8 h-8 text-[#3CBFAB]" />
         </div>
-        <h2 className="text-2xl font-bold text-[#005088]">¡Mensaje enviado!</h2>
-        <p className="text-[#6B7280]">
+        <h2 className="home-item-title text-ocean mb-1">¡Mensaje enviado!</h2>
+        <p className="home-body">
           Te responderemos en menos de 24 horas a <strong>{form.email}</strong>
         </p>
         <button
           onClick={() => { setSent(false); setForm({ nombre: "", email: "", asunto: "", mensaje: "" }); }}
-          className="mt-2 text-sm text-[#3CBFAB] hover:underline font-medium"
+          className="home-body mt-2 font-semibold text-teal hover:underline"
         >
           Enviar otro mensaje
         </button>
@@ -56,11 +56,11 @@ export default function ContactForm() {
 
   return (
     <div className="bg-white rounded-3xl p-8 shadow-[0_4px_20px_rgba(13,27,53,0.06)] border border-[#005088]/6">
-      <h2 className="text-2xl font-bold text-[#005088] mb-6">Envíanos un mensaje</h2>
+      <h2 className="home-item-title text-ocean mb-6">Envíanos un mensaje</h2>
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <div className="grid md:grid-cols-2 gap-5">
           <div>
-            <label className="block text-sm font-semibold text-[#6B7280] mb-2">Nombre</label>
+            <label className="home-body mb-2 block font-semibold">Nombre</label>
             <input
               required type="text" value={form.nombre}
               onChange={(e) => setForm({ ...form, nombre: e.target.value })}
@@ -69,7 +69,7 @@ export default function ContactForm() {
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-[#6B7280] mb-2">Email</label>
+            <label className="home-body mb-2 block font-semibold">Email</label>
             <input
               required type="email" value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -79,7 +79,7 @@ export default function ContactForm() {
           </div>
         </div>
         <div>
-          <label className="block text-sm font-semibold text-[#6B7280] mb-2">Asunto</label>
+          <label className="home-body mb-2 block font-semibold">Asunto</label>
           <select
             required value={form.asunto}
             onChange={(e) => setForm({ ...form, asunto: e.target.value })}
@@ -93,7 +93,7 @@ export default function ContactForm() {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-semibold text-[#6B7280] mb-2">Mensaje</label>
+          <label className="home-body mb-2 block font-semibold">Mensaje</label>
           <textarea
             required rows={5} value={form.mensaje}
             onChange={(e) => setForm({ ...form, mensaje: e.target.value })}
@@ -102,11 +102,11 @@ export default function ContactForm() {
           />
         </div>
         {error && (
-          <p className="text-sm text-[#E8503A] font-medium text-center">{error}</p>
+          <p className="home-body text-center font-medium text-[#E8503A]">{error}</p>
         )}
         <button
           type="submit" disabled={loading}
-          className="w-full py-4 bg-[#3CBFAB] text-white font-semibold rounded-xl hover:bg-[#2da898] active:scale-[0.98] transition-all duration-200 shadow-[0_4px_16px_rgba(60,191,171,0.3)] disabled:opacity-60 disabled:cursor-not-allowed disabled:active:scale-100"
+          className="w-full rounded-full bg-[#3CBFAB] py-4 font-bold text-white shadow-[0_4px_20px_rgba(60,191,171,0.3)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#2da898] hover:shadow-[0_8px_32px_rgba(60,191,171,0.4)] active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 disabled:active:scale-100"
         >
           {loading ? "Enviando..." : "Enviar mensaje"}
         </button>
