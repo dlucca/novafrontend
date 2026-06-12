@@ -66,7 +66,7 @@ export default async function SuscripcionesPage({
         {/* Hero */}
         <section className="mx-auto grid max-w-6xl gap-10 px-6 pt-28 pb-16 lg:grid-cols-2 lg:items-center">
           <FadeIn x={-40} y={0} duration={0.7}>
-            <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[24px] shadow-[0_8px_32px_rgba(0,0,0,0.08)]">
+            <div className="relative aspect-square w-full overflow-hidden rounded-[24px] shadow-[0_8px_32px_rgba(0,0,0,0.08)]">
               <Image
                 src="/productusers/threepack.webp"
                 alt="Novapatch Sleep, Woman y Shield"
