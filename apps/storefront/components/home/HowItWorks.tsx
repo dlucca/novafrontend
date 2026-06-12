@@ -68,10 +68,7 @@ export default async function HowItWorks() {
           >
             {t("badge")}
           </p>
-          <h2
-            className="font-extrabold text-ocean leading-[1.15] tracking-[-0.02em]"
-            style={{ fontSize: "clamp(26px,3vw,40px)" }}
-          >
+          <h2 className="home-section-title text-ocean">
             {t("title")}
           </h2>
 

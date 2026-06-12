@@ -104,3 +104,18 @@ p {
   background: var(--btn-accent);
   color: #fff !important;
 }
+
+/* Home section title — consistent across homepage sections */
+.home-section-title {
+  font-family: var(--font-display);
+  font-weight: 900; /* equivalent to font-black */
+  font-size: clamp(26px, 3vw, 40px);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  padding-block: 0; /* consistent vertical padding */
+  margin-block-end: 0.75rem; /* keep a consistent gap below headings */
+}
+.home-section-title.lead {
+  font-size: clamp(22px, 2.6vw, 32px);
+  font-weight: 800;
+}

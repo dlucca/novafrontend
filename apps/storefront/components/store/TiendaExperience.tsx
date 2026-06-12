@@ -310,8 +310,7 @@ function ProductCard({
 
           <button
             onClick={handleAddToCart}
-            className="mt-2 w-full py-4 rounded-full text-base font-bold text-white transition-all active:scale-[0.97] hover:brightness-105"
-            style={{ background: meta.color }}
+            className="relative z-[2] mt-3 w-full inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-white font-bold text-[15px] justify-center transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.97] shadow-[0_4px_16px_rgba(0,80,136,0.3)] bg-ocean hover:bg-ocean-dark"
           >
             {mode === "sub" ? "Suscribirse" : "Agregar al carrito"}
           </button>

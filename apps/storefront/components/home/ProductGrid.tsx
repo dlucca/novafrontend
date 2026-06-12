@@ -194,10 +194,9 @@ function ProductCard({
             Desde {formatPrice(subPrice, currency)} con suscripción
           </p>
 
-                    <button
+          <button
             onClick={onAdd}
-            className="relative z-[2] mt-3 w-full py-4 text-[15px] font-bold text-white rounded-full inline-flex items-center justify-center transition-all duration-200 active:scale-[0.97] hover:-translate-y-0.5 shadow-lg hover:shadow-xl"
-            style={{ background: p.color }}
+            className="relative z-[2] mt-3 w-full inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-white font-bold text-[15px] justify-center transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.97] shadow-[0_4px_16px_rgba(0,80,136,0.3)] bg-ocean hover:bg-ocean-dark"
           >
             Agregar al carrito
           </button>
@@ -256,10 +255,7 @@ export default function ProductGrid({
           transition={{ duration: 0.6 }}
           className="text-center mb-14"
         >
-          <h2
-            className="font-black text-ocean tracking-[-0.02em] mb-3"
-            style={{ fontSize: "clamp(26px,3vw,38px)" }}
-          >
+          <h2 className="home-section-title text-ocean">
             Elige el parche que tu cuerpo necesita
           </h2>
           <p className="text-[16px] text-gray-500 max-w-[480px] mx-auto leading-[1.6]">

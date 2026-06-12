@@ -142,10 +142,7 @@ export default function AbsorptionSection() {
             </p>
           </div>
 
-          <h2
-            className="font-black leading-[1.1] tracking-[-0.02em] mb-5"
-            style={{ fontSize: "clamp(28px,3.2vw,44px)" }}
-          >
+          <h2 className="home-section-title text-ocean">
             {t("title")}
           </h2>
 

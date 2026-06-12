@@ -31,7 +31,7 @@ export default async function CTABanner({ basePrice = 750, currency = "MXN" }: {
               <span className="inline-block text-sm font-bold uppercase tracking-[0.12em] text-teal mb-3">
                 SUSCRIPCIÓN
               </span>
-              <h2 className="font-black text-ocean text-4xl md:text-5xl leading-[1.1] tracking-[-0.02em]">
+              <h2 className="home-section-title text-ocean">
                 Suscríbete y ahorra hasta 20%
               </h2>
               <p className="text-xl text-gray-600 mt-4 leading-relaxed">
