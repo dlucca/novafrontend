@@ -108,8 +108,7 @@ function FAQItem({
         className="w-full flex items-center justify-between gap-4 p-5 text-left"
       >
         <span
-          className="text-sm font-semibold leading-snug"
-          style={{ color: isOpen ? "#3CBFAB" : "#005088" }}
+          className={`home-item-title leading-snug ${isOpen ? "text-teal" : "text-ocean"}`}
         >
           {faq.q}
         </span>
@@ -135,9 +134,7 @@ function FAQItem({
           >
             <div className="px-5 pb-5">
               <div className="h-px mb-4" style={{ background: "rgba(0,80,136,0.08)" }} />
-              <p className="text-sm leading-relaxed" style={{ color: "#6B7280" }}>
-                {faq.a}
-              </p>
+              <p className="home-body">{faq.a}</p>
             </div>
           </motion.div>
         )}
@@ -168,8 +165,7 @@ export default function GarantiaPage() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="font-bold text-[11px] uppercase tracking-[0.22em] mb-8"
-              style={{ color: "#3CBFAB" }}
+              className="home-section-eyebrow"
             >
               Garantía de satisfacción
             </motion.p>
@@ -178,8 +174,7 @@ export default function GarantiaPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.65, delay: 0.08 }}
-              className="font-black text-[#005088] leading-[1.05] tracking-[-0.02em] mb-6"
-              style={{ fontSize: "clamp(30px, 4.2vw, 56px)" }}
+              className="home-section-title text-ocean"
             >
               30 días de garantía.<br />Sin riesgo.
             </motion.h1>
@@ -196,11 +191,7 @@ export default function GarantiaPage() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.65, delay: 0.22 }}
-              className="font-light leading-relaxed"
-              style={{
-                fontSize: "clamp(15px, 1.4vw, 18px)",
-                color: "#6B7280",
-              }}
+              className="home-section-subtitle"
             >
               Si tu primer pedido no te convence, te devolvemos el dinero.
               Sin trámites complicados, sin devolver el producto.
@@ -214,24 +205,15 @@ export default function GarantiaPage() {
             <div className="grid grid-cols-3 divide-x" style={{ borderColor: "rgba(0,80,136,0.15)" }}>
               {stats.map((s, i) => (
                 <motion.div key={i} {...fade(i * 0.08)} className="text-center px-6">
-                  <p
-                    className="font-black text-[#005088] leading-none mb-1"
-                    style={{ fontSize: "clamp(20px, 2.6vw, 34px)" }}
-                  >
+                  <p className="home-section-title text-ocean leading-none mb-1">
                     {s.value}
                     {s.unit && (
-                      <span
-                        className="font-semibold ml-1"
-                        style={{ fontSize: "clamp(11px, 1vw, 14px)", color: "#3CBFAB" }}
-                      >
+                      <span className="home-caption ml-1 font-semibold text-teal">
                         {s.unit}
                       </span>
                     )}
                   </p>
-                  <p
-                    className="text-[11px] font-medium uppercase tracking-[0.14em]"
-                    style={{ color: "#6B7280" }}
-                  >
+                  <p className="home-caption text-xs font-bold uppercase tracking-widest">
                     {s.label}
                   </p>
                 </motion.div>
@@ -245,16 +227,10 @@ export default function GarantiaPage() {
           <div className="max-w-7xl mx-auto">
 
             <motion.div {...fade(0)} className="text-center mb-14">
-              <p
-                className="font-bold text-[11px] uppercase tracking-[0.2em] mb-3"
-                style={{ color: "#3CBFAB" }}
-              >
+              <p className="home-section-eyebrow">
                 Cómo funciona
               </p>
-              <h2
-                className="font-black tracking-[-0.02em]"
-                style={{ fontSize: "clamp(20px, 2.2vw, 32px)", color: "#005088" }}
-              >
+              <h2 className="home-section-title text-ocean">
                 Todo lo que necesitas saber
               </h2>
             </motion.div>
@@ -303,16 +279,15 @@ export default function GarantiaPage() {
                       {card.items.map((item, j) => (
                         <li
                           key={j}
-                          className="py-3.5 text-sm leading-relaxed"
-                          style={{
-                            color: card.featured
+                          className={`py-3.5 ${
+                            card.featured
                               ? j === card.items.length - 1
-                                ? "rgba(255,255,255,0.48)"
-                                : "rgba(255,255,255,0.82)"
+                                ? "home-body text-white/50"
+                                : "home-body text-white/80"
                               : j === card.items.length - 1
-                              ? "#9CA3AF"
-                              : "#374151",
-                          }}
+                              ? "home-caption"
+                              : "home-body"
+                          }`}
                         >
                           {item}
                         </li>
@@ -331,12 +306,11 @@ export default function GarantiaPage() {
           style={{ background: "#FAF7F2", borderTop: "1px solid #E5E7EB", borderBottom: "1px solid #E5E7EB" }}
         >
           <div className="max-w-3xl mx-auto text-center">
-            <motion.p {...fade(0)} className="text-sm leading-relaxed" style={{ color: "#6B7280" }}>
+            <motion.p {...fade(0)} className="home-body">
               Llenas el{" "}
               <Link
                 href="/reembolso"
-                className="font-semibold transition-colors hover:underline"
-                style={{ color: "#3CBFAB" }}
+                className="home-body font-semibold text-teal transition-colors hover:underline"
               >
                 formulario de Solicitar reembolso
               </Link>{" "}
@@ -349,16 +323,10 @@ export default function GarantiaPage() {
         <section className="py-24 px-6 bg-white">
           <div className="max-w-3xl mx-auto">
             <motion.div {...fade(0)} className="text-center mb-12">
-              <p
-                className="font-bold text-[11px] uppercase tracking-[0.2em] mb-3"
-                style={{ color: "#3CBFAB" }}
-              >
+              <p className="home-section-eyebrow">
                 Preguntas frecuentes
               </p>
-              <h2
-                className="font-black tracking-[-0.02em]"
-                style={{ fontSize: "clamp(20px, 2.2vw, 32px)", color: "#005088" }}
-              >
+              <h2 className="home-section-title text-ocean">
                 Dudas sobre la garantía
               </h2>
             </motion.div>
@@ -387,27 +355,21 @@ export default function GarantiaPage() {
           <div className="max-w-xl mx-auto relative z-10">
             <motion.p
               {...fade(0)}
-              className="font-bold text-[11px] uppercase tracking-[0.22em] mb-8"
-              style={{ color: "#3CBFAB" }}
+              className="home-section-eyebrow"
             >
               Sin riesgo
             </motion.p>
 
             <motion.h2
               {...fade(0.1)}
-              className="font-black text-[#005088] leading-[1.05] tracking-[-0.02em] mb-4"
-              style={{ fontSize: "clamp(24px, 3.2vw, 44px)" }}
+              className="home-section-title text-ocean"
             >
               Prueba Novapatch.<br />Si no funciona, te devolvemos tu dinero.
             </motion.h2>
 
             <motion.p
               {...fade(0.18)}
-              className="mb-10 font-light"
-              style={{
-                fontSize: "clamp(14px, 1.2vw, 16px)",
-                color: "#6B7280",
-              }}
+              className="home-section-subtitle mb-10"
             >
               30 días de garantía total sobre tu primer pedido.
             </motion.p>
@@ -415,14 +377,7 @@ export default function GarantiaPage() {
             <motion.div {...fade(0.25)}>
               <Link
                 href="/tienda"
-                className="inline-flex items-center gap-2.5 font-bold rounded-full transition-all duration-200 hover:-translate-y-0.5"
-                style={{
-                  background: "#3CBFAB",
-                  color: "white",
-                  fontSize: "15px",
-                  padding: "14px 36px",
-                  boxShadow: "0 8px 32px rgba(60,191,171,0.35)",
-                }}
+                className="inline-flex items-center gap-2.5 rounded-full bg-[#3CBFAB] px-9 py-4 font-bold text-white shadow-[0_4px_20px_rgba(60,191,171,0.3)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#2da898] hover:shadow-[0_8px_32px_rgba(60,191,171,0.4)] active:scale-[0.97]"
               >
                 Ver los parches
                 <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
