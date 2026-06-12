@@ -121,11 +121,22 @@ export default async function SuscripcionesPage({
                     </span>
                   )}
                   <p className="home-item-title">{f.label}</p>
-                  <p className="mt-1 text-2xl font-black text-ocean">
-                    {formatPrice(f.price, market.currency, market.locale)}
-                    <span className="home-caption ml-1 text-sm font-medium">/ caja</span>
+                  <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                    <span className="home-caption text-base line-through">
+                      {formatPrice(f.basePrice, market.currency, market.locale)}
+                    </span>
+                    <span className="text-2xl font-black text-ocean">
+                      {formatPrice(f.price, market.currency, market.locale)}
+                      <span className="home-caption ml-1 text-sm font-medium">/ caja</span>
+                    </span>
+                  </div>
+                  <p className="home-body mt-2">
+                    <span className="font-bold text-teal">{f.discountPct}% de descuento</span>
+                    {" · "}
+                    <span className="font-bold text-[#1E7D4F]">
+                      Ahorras {formatPrice(f.basePrice - f.price, market.currency, market.locale)}
+                    </span>
                   </p>
-                  <p className="mt-2 text-sm font-bold text-teal">{f.discountPct}% de descuento</p>
                   <p className="home-caption mt-2">Cada {f.freq} días</p>
                 </div>
               ))}
