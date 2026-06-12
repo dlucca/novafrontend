@@ -132,15 +132,15 @@ export default function AbsorptionSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-[3px] rounded-full bg-teal" />
+          
+            
             <p
-              className="text-[11px] font-bold uppercase tracking-[0.12em]"
+              className="inline-block text-sm font-bold uppercase tracking-[0.12em] text-teal mb-3"
               style={{ color: "var(--color-teal)" }}
             >
               {t("badge")}
             </p>
-          </div>
+          
 
           <h2 className="home-section-title text-ocean">
             {t("title")}

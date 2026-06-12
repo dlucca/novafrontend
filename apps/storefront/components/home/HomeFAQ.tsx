@@ -101,7 +101,7 @@ export default function HomeFAQ() {
           transition={{ duration: 0.6 }}
         >
           <p
-            className="text-[11px] font-bold uppercase tracking-[0.12em] mb-2.5"
+            className="inline-block text-sm font-bold uppercase tracking-[0.12em] text-teal mb-3"
             style={{ color: "var(--color-teal)" }}
           >
             {t("badge")}

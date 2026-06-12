@@ -34,9 +34,14 @@ export default async function ComparisonTable() {
       <div className="max-w-[1100px] mx-auto">
         {/* Header text */}
         <FadeIn>
+          <div>
+              <span className="inline-block text-sm font-bold uppercase tracking-[0.12em] text-teal mb-3">
+                5 RAZONES IMPORTANTES
+              </span>
           <h2 className="home-section-title text-ocean">
             {t("title")}
           </h2>
+          </div>
         </FadeIn>
 
         {/* Two-column layout: table left, image right */}

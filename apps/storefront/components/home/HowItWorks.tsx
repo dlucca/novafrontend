@@ -63,7 +63,7 @@ export default async function HowItWorks() {
         {/* Content — right */}
         <FadeIn x={40} y={0} duration={0.7}>
           <p
-            className="text-[11px] font-bold uppercase tracking-[0.12em] mb-2.5"
+            className="inline-block text-sm font-bold uppercase tracking-[0.12em] text-teal mb-3"
             style={{ color: "var(--color-teal)" }}
           >
             {t("badge")}

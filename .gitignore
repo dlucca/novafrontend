@@ -1,2 +1,8 @@
 .vercel
 .worktrees/
+.DS_Store
+apps/.DS_Store
+**/.DS_Store
+.DS_Store
+apps/.DS_Store
+**/.DS_Store
