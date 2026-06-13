@@ -154,23 +154,50 @@ export default async function SuscripcionesPage({
 
         {/* Cómo funciona — compacto */}
         <section className="mx-auto max-w-6xl px-6 py-16 sm:py-20">
-          <FadeIn>
-            <p className="home-section-eyebrow">El proceso</p>
-            <h2 className="home-section-title text-ocean">Así de simple</h2>
-          </FadeIn>
+          <div className="grid items-start gap-10 lg:grid-cols-[1fr_280px] lg:gap-12">
+            <FadeIn className="lg:col-start-1 lg:row-start-1">
+              <p className="home-section-eyebrow">El proceso</p>
+              <h2 className="home-section-title text-ocean">Así de simple</h2>
+            </FadeIn>
 
-          <div className="mt-12 grid gap-10 sm:grid-cols-3">
-            {steps.map((step, i) => (
-              <FadeIn key={step.n} delay={i * 0.1} y={24}>
-                <div className="border-t-2 border-ocean pt-5">
-                  <span className="block text-[clamp(40px,4vw,56px)] font-black leading-none text-ocean">
-                    {step.n}
-                  </span>
-                  <h3 className="home-item-title mt-4">{step.title}</h3>
-                  <p className="home-body mt-2">{step.desc}</p>
-                </div>
-              </FadeIn>
-            ))}
+            <FadeIn
+              x={40}
+              y={0}
+              delay={0.15}
+              duration={0.7}
+              className="mx-auto w-full max-w-[280px] lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:mx-0 lg:sticky lg:top-28"
+            >
+              <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[24px] shadow-[0_8px_32px_rgba(0,0,0,0.08)]">
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  poster="/productusers/woman-using-patch.webp"
+                  className="h-full w-full object-cover"
+                  aria-label="Cómo funcionan las suscripciones Novapatch"
+                >
+                  <source src="/videos/suscripciones.mp4" type="video/mp4" />
+                </video>
+              </div>
+            </FadeIn>
+
+            <div className="lg:col-start-1 lg:row-start-2">
+              <div className="grid gap-10 sm:grid-cols-3 lg:mt-12">
+                {steps.map((step, i) => (
+                  <FadeIn key={step.n} delay={i * 0.1} y={24}>
+                    <div className="border-t-2 border-ocean pt-5">
+                      <span className="block text-[clamp(40px,4vw,56px)] font-black leading-none text-ocean">
+                        {step.n}
+                      </span>
+                      <h3 className="home-item-title mt-4">{step.title}</h3>
+                      <p className="home-body mt-2">{step.desc}</p>
+                    </div>
+                  </FadeIn>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 
