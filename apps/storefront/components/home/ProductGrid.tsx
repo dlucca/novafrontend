@@ -132,8 +132,8 @@ function ProductCard({
 
         {/* Image area */}
         <div
-          className="relative flex items-center justify-center"
-          style={{ background: p.bg, padding: "20px 16px" }}
+          className="relative flex items-center justify-center bg-white"
+          style={{ padding: "20px 16px" }}
         >
           {p.popular && (
             <span
@@ -156,7 +156,7 @@ function ProductCard({
         </div>
 
         {/* Body */}
-        <div className="p-5 flex flex-col gap-2 flex-1">
+        <div className="flex flex-1 flex-col gap-2 border-t border-black/[0.05] p-5">
           <div>
             <p
               className="text-[20px] font-black tracking-[-0.01em]"
@@ -181,25 +181,24 @@ function ProductCard({
             </p>
           </div>
 
-          {/* Pricing */}
-          <div className="mt-auto pt-3 flex items-baseline gap-2">
-            <span
-              className="text-[22px] text-[#0e1b34] font-black"
-              
-            >
-              {formatPrice(p.price, currency)}
-            </span>
-          </div>
-          <p className="text-[12px] text-[#0e1b34] font-semibold -mt-1">
-            Desde {formatPrice(subPrice, currency)} con suscripción
-          </p>
+          {/* Pricing + CTA */}
+          <div className="mt-auto border-t border-black/[0.05] pt-3">
+            <div className="flex items-baseline gap-2">
+              <span className="text-[22px] font-black text-[#0e1b34]">
+                {formatPrice(p.price, currency)}
+              </span>
+            </div>
+            <p className="text-[12px] font-semibold text-[#0e1b34] -mt-1">
+              Desde {formatPrice(subPrice, currency)} con suscripción
+            </p>
 
-          <button
-            onClick={onAdd}
-            className="relative z-[2] mt-3 w-full inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-white font-bold text-[15px] justify-center transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.97] shadow-[0_4px_16px_rgba(0,80,136,0.3)] bg-ocean hover:bg-ocean-dark"
-          >
-            Agregar al carrito
-          </button>
+            <button
+              onClick={onAdd}
+              className="relative z-[2] mt-3 w-full inline-flex items-center justify-center gap-2 rounded-full bg-ocean px-8 py-3.5 text-[15px] font-bold text-white shadow-[0_4px_16px_rgba(0,80,136,0.3)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-ocean-dark active:scale-[0.97]"
+            >
+              Agregar al carrito
+            </button>
+          </div>
         </div>
       </div>
     </motion.div>
