@@ -73,8 +73,8 @@ export default function NosotrosPage() {
                   style={{ boxShadow: "0 24px 72px rgba(13,27,53,0.14)" }}
                 >
                   <Image
-                    src="/girls.webp"
-                    alt="Dos amigas disfrutando en la playa"
+                    src="/productusers/us.webp"
+                    alt="El equipo de Novapatch"
                     fill
                     className="object-cover object-center"
                     priority
@@ -91,10 +91,10 @@ export default function NosotrosPage() {
                   }}
                 >
                   <p className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: "#E8503A" }}>
-                    Un solo gesto
+                    Cuatro miradas, una misma idea
                   </p>
                   <p className="text-[13px] font-semibold" style={{ color: "#0D1B35" }}>
-                    Todo el día.
+                    Que cuidarse sea algo que sí se pueda sostener.
                   </p>
                 </motion.div>
               </motion.div>
