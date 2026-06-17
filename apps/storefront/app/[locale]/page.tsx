@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import Navbar from "@/components/Navbar";
 import HeroWithBar from "@/components/home/HeroWithBar";
@@ -16,6 +17,20 @@ const HomeFAQ         = dynamic(() => import("@/components/home/HomeFAQ"));
 const Footer          = dynamic(() => import("@/components/Footer"));
 
 export const revalidate = 3600;
+
+// Canonical por locale: evita que las variantes con UTM (?utm_source=meta…) se
+// indexen como páginas duplicadas. metadataBase está en el root layout.
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return {
+    alternates: { canonical: `/${locale}` },
+    openGraph: { url: `/${locale}` },
+  };
+}
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

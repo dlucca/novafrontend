@@ -11,10 +11,32 @@ const outfit = Outfit({
   weight: ['400', '600', '700'],
 })
 
+const SITE_URL = 'https://novapatch.care'
+const SITE_TITLE = 'Novapatch — Bienestar que no interrumpe tu día'
+const SITE_DESCRIPTION =
+  'La forma más limpia y práctica de tomar vitaminas. Parches inteligentes de alta absorción transdérmica, sin pastillas ni rellenos.'
+
 export const metadata: Metadata = {
-  title: 'Novapatch — Bienestar que no interrumpe tu día',
-  description:
-    'La forma más limpia y práctica de tomar vitaminas. Parches inteligentes de alta absorción transdérmica, sin pastillas ni rellenos.',
+  metadataBase: new URL(SITE_URL),
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
+  openGraph: {
+    type: 'website',
+    siteName: 'Novapatch',
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    locale: 'es_MX',
+    // TODO: cambiar por un OG dedicado 1200×630 (JPG/PNG) para máxima compatibilidad
+    // con X/WhatsApp. girls.webp es la imagen lifestyle landscape usada como base.
+    images: [{ url: '/girls.webp', width: 1200, height: 630, alt: 'Novapatch — parches inteligentes de bienestar' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: ['/girls.webp'],
+  },
   icons: {
     icon: [
       { url: '/favicon/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
@@ -27,8 +49,10 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  // lang="es" cubre mx/ar/cl/co (mercados lanzados). El root layout no puede leer
+  // params; para pt-BR (/br) hay que derivar el lang del locale — ver nota.
   return (
-    <html suppressHydrationWarning>
+    <html lang="es" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://api.clerk.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://us.i.posthog.com" crossOrigin="anonymous" />
