@@ -60,6 +60,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://connect.facebook.net" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://openpay.s3.amazonaws.com" />
         <link rel="dns-prefetch" href="https://www.facebook.com" />
+        {/* Google tag (gtag.js) — GA4 */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-5EWD38ZXVW"
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-5EWD38ZXVW');`}
+        </Script>
         {/* Meta Pixel Code */}
         <Script id="meta-pixel" strategy="afterInteractive">
           {`!function(f,b,e,v,n,t,s)
