@@ -139,10 +139,17 @@ export type MedusaPaymentMethod = {
 // Paths where retrying a failed POST could have side effects (double charge, etc.)
 const NO_RETRY_PATHS = ["/complete", "/payment-sessions"];
 
+// Sin esto, un backend que acepta la conexión pero nunca responde cuelga el
+// fetch para siempre. En un Server Component (await getProducts) eso cuelga el
+// SSR entero y la página nunca emite respuesta (timeout del monitor → exit 28).
+// Con timeout, el fetch aborta → getProducts cae al fallback → la página renderiza.
+const DEFAULT_TIMEOUT_MS = 5000;
+
 async function medusaFetch<T>(
   path: string,
   options: RequestInit = {},
-  token?: string | null
+  token?: string | null,
+  timeoutMs: number = DEFAULT_TIMEOUT_MS
 ): Promise<T> {
   const url = `${MEDUSA_URL}${path}`;
   const method = (options.method ?? "GET").toUpperCase();
@@ -170,8 +177,11 @@ async function medusaFetch<T>(
       await new Promise<void>((r) => setTimeout(r, BASE_DELAY_MS * 2 ** (attempt - 1)));
     }
 
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+
     try {
-      const res = await fetch(url, fetchOptions);
+      const res = await fetch(url, { ...fetchOptions, signal: controller.signal });
 
       if (!res.ok) {
         let message = `Medusa HTTP ${res.status}`;
@@ -196,9 +206,19 @@ async function medusaFetch<T>(
 
       // Network error — request never reached server, safe to retry all methods
       const networkErr = err instanceof Error ? err : new Error(String(err));
-      console.warn(`[medusa] ${method} ${path} → network error (attempt ${attempt + 1}/${MAX_RETRIES + 1})`);
-      lastError = networkErr;
+      const isTimeout = networkErr.name === "AbortError";
+      console.warn(
+        `[medusa] ${method} ${path} → ${isTimeout ? `timeout after ${timeoutMs}ms` : "network error"} (attempt ${attempt + 1}/${MAX_RETRIES + 1})`
+      );
+      lastError = isTimeout
+        ? new Error(`[medusa] ${method} ${path} timed out after ${timeoutMs}ms`)
+        : networkErr;
+      // Backend colgado: reintentar solo apila latencia y arriesga colgar el SSR.
+      // Fallamos rápido para que el caller (getProducts) caiga al fallback.
+      if (isTimeout) break;
       // Falls through to next iteration; throws lastError after exhausting retries
+    } finally {
+      clearTimeout(timer);
     }
   }
 
