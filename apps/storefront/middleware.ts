@@ -3,12 +3,13 @@ import createMiddleware from 'next-intl/middleware'
 import { type NextRequest, NextResponse } from 'next/server'
 import { routing, type Locale } from './i18n/routing'
 
+// Solo mercados con región Medusa funcional. br/cl/co tienen rutas y traducciones
+// listas pero NO región en el backend (checkout no crea carrito), así que no los
+// enrutamos por geo: visitantes de esos países (y cualquier otro) caen al
+// defaultLocale (mx). Agregar el país acá cuando su mercado tenga región.
 const countryToLocale: Record<string, Locale> = {
   MX: 'mx',
-  BR: 'br',
   AR: 'ar',
-  CL: 'cl',
-  CO: 'co',
 }
 
 const intlMiddleware = createMiddleware(routing)
