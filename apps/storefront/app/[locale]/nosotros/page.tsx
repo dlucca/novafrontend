@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
@@ -13,8 +14,24 @@ const fade = (delay = 0, yOffset = 22) => ({
   transition: { delay, duration: 0.75, ease: [0.22, 1, 0.36, 1] as const },
 });
 
+const carouselImages = [
+  { src: "/productusers/us1.webp", alt: "El equipo de Novapatch — Imagen 1" },
+  { src: "/productusers/us2.webp", alt: "El equipo de Novapatch — Imagen 2" },
+  { src: "/productusers/us3.webp", alt: "El equipo de Novapatch — Imagen 3" },
+];
 
 export default function NosotrosPage() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+
+  useEffect(() => {
+    if (isHovered) return;
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % carouselImages.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [isHovered]);
+
   return (
     <>
       <Navbar lightBg />
@@ -61,37 +78,50 @@ export default function NosotrosPage() {
                 </motion.p>
               </div>
 
-              {/* Right: image */}
+              {/* Right: image carousel */}
               <motion.div
                 initial={{ opacity: 0, x: 30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.9, delay: 0.2, ease: [0.22, 1, 0.36, 1] as const }}
-                className="relative"
+                className="relative cursor-pointer"
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
               >
                 <div
-                  className="relative rounded-[28px] overflow-hidden aspect-[4/3]"
+                  className="relative rounded-[28px] overflow-hidden aspect-[4/3] w-full"
                   style={{ boxShadow: "0 24px 72px rgba(13,27,53,0.14)" }}
                 >
-                  <Image
-                    src="/productusers/us.webp"
-                    alt="El equipo de Novapatch"
-                    fill
-                    className="object-cover object-center"
-                    priority
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0D1B35]/30 via-transparent to-transparent" />
+                  <AnimatePresence mode="popLayout">
+                    <motion.div
+                      key={currentIndex}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.8, ease: "easeInOut" }}
+                      className="absolute inset-0 w-full h-full"
+                    >
+                      <Image
+                        src={carouselImages[currentIndex].src}
+                        alt={carouselImages[currentIndex].alt}
+                        fill
+                        className="object-cover object-center"
+                        priority
+                      />
+                    </motion.div>
+                  </AnimatePresence>
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0D1B35]/30 via-transparent to-transparent pointer-events-none z-10" />
                 </div>
                 {/* Floating badge */}
                 <motion.div
                   {...fade(0.5)}
-                  className="absolute -bottom-4 -left-4 bg-white rounded-2xl px-5 py-3.5 border"
+                  className="absolute -bottom-4 -left-4 bg-white rounded-2xl px-5 py-3.5 border z-20"
                   style={{
                     boxShadow: "0 8px 32px rgba(13,27,53,0.12)",
                     borderColor: "rgba(13,27,53,0.1)",
                   }}
                 >
                   <p className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: "#E8503A" }}>
-                    Cuatro miradas, una misma idea
+                    La idea era clara
                   </p>
                   <p className="text-[13px] font-semibold" style={{ color: "#0D1B35" }}>
                     Que cuidarse sea algo que sí se pueda sostener.
@@ -422,20 +452,20 @@ export default function NosotrosPage() {
                     <motion.div
                       key={i}
                       {...fade(0.35 + i * 0.1)}
-                      className="py-5 flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-5"
+                      className="py-6"
                       style={{ borderColor: "#E5E7EB" }}
                     >
                       <span
-                        className="leading-relaxed"
-                        style={{ fontSize: "clamp(14px, 1.1vw, 16px)", color: "#9CA3AF" }}
+                        className="font-black leading-[1.05] tracking-[-0.02em]"
+                        style={{
+                          fontSize: "clamp(20px, 2.5vw, 42px)",
+                          color: "rgba(0,80,136,0.18)",
+                        }}
                       >
-                        {item.cond}
-                      </span>
-                      <span
-                        className="font-black whitespace-nowrap"
-                        style={{ fontSize: "clamp(16px, 1.4vw, 20px)", color: "#0D1B35" }}
-                      >
-                        {item.result}
+                        {item.cond}{" "}
+                        <span className="block sm:inline" style={{ color: "#005088" }}>
+                          {item.result}
+                        </span>
                       </span>
                     </motion.div>
                   ))}
