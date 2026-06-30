@@ -29,58 +29,62 @@ function SkinDiagram({ shouldAnimate }: { shouldAnimate: boolean }) {
     >
       <defs>
         <linearGradient id="patchShine" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="white" stopOpacity="0.35" />
-          <stop offset="100%" stopColor="black" stopOpacity="0.08" />
+          <stop offset="0%" stopColor="white" stopOpacity="0.45" />
+          <stop offset="100%" stopColor="#FAF7F2" stopOpacity="0.1" />
         </linearGradient>
         <filter id="glow">
-          <feGaussianBlur stdDeviation="2.5" result="blur" />
-          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+          <feGaussianBlur stdDeviation="1.8" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
         </filter>
       </defs>
 
-      {/* ── Patch ── */}
-      <rect x="28" y="10" width="324" height="60" rx="12" fill="var(--color-gold)" />
-      <rect x="28" y="10" width="324" height="60" rx="12" fill="url(#patchShine)" />
+      {/* ── Patch (Translucent Glassmorphic) ── */}
+      <rect x="28" y="10" width="324" height="60" rx="16" fill="rgba(250, 247, 242, 0.85)" stroke="rgba(232, 80, 58, 0.3)" strokeWidth="1.5" />
+      <rect x="28" y="10" width="324" height="60" rx="16" fill="url(#patchShine)" />
       {/* perforation dots */}
       {[55, 90, 125, 160, 195, 230, 265, 300, 335].map((x) => (
-        <circle key={`t${x}`} cx={x} cy="10" r="2.8" fill="rgba(0,0,0,0.18)" />
+        <circle key={`t${x}`} cx={x} cy="10" r="2.5" fill="rgba(232,80,58,0.15)" />
       ))}
       {[55, 90, 125, 160, 195, 230, 265, 300, 335].map((x) => (
-        <circle key={`b${x}`} cx={x} cy="70" r="2.8" fill="rgba(0,0,0,0.18)" />
+        <circle key={`b${x}`} cx={x} cy="70" r="2.5" fill="rgba(232,80,58,0.15)" />
       ))}
-      <text x="190" y="39" textAnchor="middle" fontFamily="Outfit,system-ui,sans-serif" fontSize="13" fontWeight="800" fill="var(--color-ocean)" letterSpacing="1.5">NOVAPATCH</text>
-      <text x="190" y="57" textAnchor="middle" fontFamily="Outfit,system-ui,sans-serif" fontSize="10" fill="rgba(0,0,0,0.48)" fontWeight="500">Liberación controlada · 10–12 horas</text>
+      <text x="190" y="38" textAnchor="middle" fontFamily="Outfit,system-ui,sans-serif" fontSize="13" fontWeight="800" fill="var(--color-coral)" letterSpacing="1.8">NOVAPATCH</text>
+      <text x="190" y="55" textAnchor="middle" fontFamily="Outfit,system-ui,sans-serif" fontSize="10" fill="rgba(13,27,53,0.55)" fontWeight="500">Liberación controlada · 10–12 horas</text>
 
       {/* dashed connectors patch → skin */}
       {[88, 148, 195, 248, 298].map((x) => (
-        <line key={x} x1={x} y1="70" x2={x} y2="82" stroke="rgba(255,255,255,0.25)" strokeWidth="1" strokeDasharray="3 2" />
+        <line key={x} x1={x} y1="70" x2={x} y2="82" stroke="rgba(232,80,58,0.25)" strokeWidth="1" strokeDasharray="3 2" />
       ))}
 
-      {/* ── Estrato córneo ── */}
-      <path d="M8 84 C68 78 130 90 190 84 C250 78 312 90 372 84 L372 122 C312 128 250 116 190 122 C130 128 68 116 8 122 Z" fill="#002E4E" />
-      <text x="22" y="106" fontFamily="Outfit,system-ui,sans-serif" fontSize="9" fontWeight="700" fill="rgba(255,255,255,0.5)" letterSpacing="0.6">ESTRATO CÓRNEO</text>
+      {/* ── Estrato córneo (Cream Layer) ── */}
+      <path d="M8 84 C68 76 130 92 190 84 C250 76 312 92 372 84 L372 122 C312 130 250 114 190 122 C130 130 68 114 8 122 Z" fill="#FAF7F2" />
+      <text x="22" y="106" fontFamily="Outfit,system-ui,sans-serif" fontSize="9" fontWeight="700" fill="rgba(13,27,53,0.45)" letterSpacing="0.8">ESTRATO CÓRNEO</text>
 
-      {/* ── Epidermis ── */}
-      <path d="M8 124 C68 118 130 130 190 124 C250 118 312 130 372 124 L372 192 C312 198 250 186 190 192 C130 198 68 186 8 192 Z" fill="#00223C" />
-      <text x="22" y="162" fontFamily="Outfit,system-ui,sans-serif" fontSize="9" fontWeight="700" fill="rgba(255,255,255,0.5)" letterSpacing="0.6">EPIDERMIS</text>
+      {/* ── Epidermis (Warm Peach Layer) ── */}
+      <path d="M8 124 C68 116 130 132 190 124 C250 116 312 132 372 124 L372 192 C312 200 250 184 190 192 C130 200 68 184 8 192 Z" fill="#F7EAD7" />
+      <text x="22" y="162" fontFamily="Outfit,system-ui,sans-serif" fontSize="9" fontWeight="700" fill="rgba(13,27,53,0.45)" letterSpacing="0.8">EPIDERMIS</text>
 
-      {/* ── Dermis ── */}
-      <path d="M8 194 C68 188 130 200 190 194 C250 188 312 200 372 194 L372 302 C312 308 250 296 190 302 C130 308 68 296 8 302 Z" fill="#001628" />
+      {/* ── Dermis (Soft Sand Layer) ── */}
+      <path d="M8 194 C68 186 130 202 190 194 C250 186 312 202 372 194 L372 302 C312 310 250 294 190 302 C130 310 68 294 8 302 Z" fill="#EADCCF" />
       {/* collagen texture lines */}
       {[[28,220,140,238],[80,264,220,278],[200,212,350,230],[155,260,270,272],[70,288,210,298]].map(([x1,y1,x2,y2],i)=>(
-        <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="rgba(255,255,255,0.055)" strokeWidth="1.5"/>
+        <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="rgba(13,27,53,0.03)" strokeWidth="1.5"/>
       ))}
-      <text x="22" y="255" fontFamily="Outfit,system-ui,sans-serif" fontSize="9" fontWeight="700" fill="rgba(255,255,255,0.5)" letterSpacing="0.6">DERMIS</text>
+      <text x="22" y="255" fontFamily="Outfit,system-ui,sans-serif" fontSize="9" fontWeight="700" fill="rgba(13,27,53,0.45)" letterSpacing="0.8">DERMIS</text>
 
-      {/* ── Blood vessel layer ── */}
-      <rect x="8" y="304" width="364" height="72" fill="#000D1A" />
-      <path d="M18 326 Q110 318 200 326 Q290 334 362 326" stroke="#D94F4F" strokeWidth="6" strokeLinecap="round" opacity="0.72" />
-      <path d="M18 350 Q100 358 210 350 Q295 342 362 350" stroke="#D94F4F" strokeWidth="3.5" strokeLinecap="round" opacity="0.40" />
-      <text x="22" y="368" fontFamily="Outfit,system-ui,sans-serif" fontSize="9" fontWeight="700" fill="rgba(217,79,79,0.65)" letterSpacing="0.6">TORRENTE SANGUÍNEO</text>
+      {/* ── Blood vessel layer (Soft Blush Background) ── */}
+      <rect x="8" y="304" width="364" height="72" rx="16" fill="#F8EDEB" />
+      {/* Blood vessel capillary waves */}
+      <path d="M18 326 Q110 316 200 326 Q290 336 362 326" stroke="var(--color-coral)" strokeWidth="5" strokeLinecap="round" opacity="0.8" />
+      <path d="M18 350 Q100 360 210 350 Q295 340 362 350" stroke="var(--color-coral-light)" strokeWidth="3" strokeLinecap="round" opacity="0.5" />
+      <text x="22" y="368" fontFamily="Outfit,system-ui,sans-serif" fontSize="9" fontWeight="700" fill="rgba(232,80,58,0.7)" letterSpacing="0.8">TORRENTE SANGUÍNEO</text>
 
       {/* ── <500 Da badge ── */}
-      <rect x="258" y="88" width="104" height="22" rx="11" fill="rgba(28,177,188,0.14)" stroke="rgba(28,177,188,0.45)" strokeWidth="1" />
-      <text x="310" y="103" textAnchor="middle" fontFamily="Outfit,system-ui,sans-serif" fontSize="10" fontWeight="700" fill="var(--color-teal)">{"< 500 Daltons"}</text>
+      <rect x="258" y="88" width="104" height="22" rx="11" fill="rgba(91,168,213,0.15)" stroke="rgba(91,168,213,0.4)" strokeWidth="1" />
+      <text x="310" y="103" textAnchor="middle" fontFamily="Outfit,system-ui,sans-serif" fontSize="10" fontWeight="700" fill="var(--color-ocean)">{"< 500 Daltons"}</text>
 
       {/* ── Animated molecules ── */}
       {MOLECULES.map((m, i) => (
@@ -89,7 +93,7 @@ function SkinDiagram({ shouldAnimate }: { shouldAnimate: boolean }) {
           cx={m.x}
           cy={78}
           r="4.5"
-          fill="var(--color-teal)"
+          fill="var(--color-coral-light)"
           filter="url(#glow)"
           initial={{ y: 0, opacity: 0 }}
           animate={shouldAnimate ? { y: [0, TRAVEL], opacity: [0, 1, 1, 0] } : { y: TRAVEL * 0.5, opacity: 0.55 }}
@@ -196,8 +200,9 @@ export default function AbsorptionSection() {
             className="w-full rounded-3xl p-6"
             style={{
               maxWidth: 460,
-              background: "rgba(13,27,53,0.05)",
-              border: "1px solid rgba(13,27,53,0.10)",
+              background: "rgba(250, 247, 242, 0.4)",
+              border: "1px solid rgba(232, 80, 58, 0.12)",
+              boxShadow: "0 16px 48px rgba(13, 27, 53, 0.03)",
             }}
           >
             <SkinDiagram shouldAnimate={inView && !prefersReducedMotion} />

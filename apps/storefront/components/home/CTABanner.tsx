@@ -9,10 +9,10 @@ export default async function CTABanner({ basePrice = 750, currency = "MXN" }: {
 
   return (
     <section className="relative bg-white py-16 sm:py-24 px-5 sm:px-8 lg:px-12 overflow-hidden">
-      <FadeIn y={40} duration={0.7}>   {/* ← Agregado aquí */}
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
 
-          {/* Imagen lado izquierdo */}
+        {/* Imagen lado izquierdo */}
+        <FadeIn x={-40} y={0} duration={0.7}>
           <div className="relative rounded-3xl overflow-hidden shadow-2xl">
             <Image
               src="/productusers/woman-using-patch.webp"
@@ -24,8 +24,10 @@ export default async function CTABanner({ basePrice = 750, currency = "MXN" }: {
             />
             <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-transparent" />
           </div>
+        </FadeIn>
 
-          {/* Contenido lado derecho */}
+        {/* Contenido lado derecho */}
+        <FadeIn x={40} y={0} duration={0.7} delay={0.15}>
           <div className="space-y-8">
             <div>
               <span className="home-section-eyebrow">
@@ -77,7 +79,7 @@ export default async function CTABanner({ basePrice = 750, currency = "MXN" }: {
 
             {/* CTA */}
             <div className="pt-4">
-                            <Link
+              <Link
                 href="/tienda"
                 className="inline-flex items-center justify-center bg-ocean text-white font-bold text-[15px] px-10 py-4 rounded-full hover:bg-ocean-dark transition-all duration-200 hover:-translate-y-0.5 shadow-lg hover:shadow-xl"
               >
@@ -88,8 +90,8 @@ export default async function CTABanner({ basePrice = 750, currency = "MXN" }: {
               </p>
             </div>
           </div>
-        </div>
-      </FadeIn>
+        </FadeIn>
+      </div>
     </section>
   );
 }
