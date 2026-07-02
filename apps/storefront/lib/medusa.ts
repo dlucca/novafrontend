@@ -232,14 +232,20 @@ const catalog = {
    * GET /store/products?region_id=...
    * Carga la tienda inicial con precios en MXN.
    */
-  async getProducts(params?: { region_id?: string }): Promise<MedusaProduct[]> {
+  async getProducts(
+    params?: { region_id?: string },
+    timeoutMs?: number
+  ): Promise<MedusaProduct[]> {
     const search = new URLSearchParams();
     if (params?.region_id) search.set("region_id", params.region_id);
     // Sin esto, la selección de la variante "once" por metadata nunca matchea
     // y el precio mostrado dependería del orden de las variantes.
     search.set("fields", "+variants.metadata");
     const data = await medusaFetch<{ products: MedusaProduct[] }>(
-      `/store/products?${search.toString()}`
+      `/store/products?${search.toString()}`,
+      {},
+      null,
+      timeoutMs
     );
     return data.products;
   },

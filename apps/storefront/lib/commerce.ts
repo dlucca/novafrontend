@@ -66,6 +66,13 @@ function medusaToProduct(p: Awaited<ReturnType<typeof medusa.catalog.getProducts
 
 const REGION_ID = process.env.NEXT_PUBLIC_MEDUSA_REGION_ID ?? "";
 
+// El catálogo se pide durante el SSR de la landing (await getProducts). Con el
+// timeout global de 5s, un backend colgado mantiene el TTFB en ~5s — por encima
+// del umbral del monitor de perf (3s) y de la paciencia de un usuario real.
+// Como ya existe FALLBACK_PRODUCTS, fallamos rápido: 1.5s de margen sobre la
+// latencia normal del backend (<1s) y muy por debajo del umbral de la alerta.
+const SSR_CATALOG_TIMEOUT_MS = 1500;
+
 /**
  * Obtiene el catálogo de productos.
  * Intenta Medusa primero; si falla, usa fallback hardcodeado.
@@ -74,7 +81,8 @@ export async function getProducts(regionId?: string, currencyCode?: string): Pro
   const resolvedRegionId = regionId || REGION_ID;
   try {
     const medusaProducts = await medusa.catalog.getProducts(
-      resolvedRegionId ? { region_id: resolvedRegionId } : undefined
+      resolvedRegionId ? { region_id: resolvedRegionId } : undefined,
+      SSR_CATALOG_TIMEOUT_MS
     );
 
     if (medusaProducts.length === 0) return FALLBACK_PRODUCTS;
