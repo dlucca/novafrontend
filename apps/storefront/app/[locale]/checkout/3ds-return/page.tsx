@@ -7,6 +7,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import posthog from "posthog-js";
 import { clearCart } from "@/lib/cart";
+import { flushStashedPurchase } from "@/lib/meta";
 import { medusa } from "@/lib/medusa";
 import { CheckCircle2, XCircle, Loader2, Lock } from "lucide-react";
 
@@ -56,6 +57,9 @@ export default function ThreeDSReturnPage() {
           item_count: itemCount ? Number(itemCount) : undefined,
           via_3ds: true,
         });
+        // Dispara el Purchase/Subscribe de Meta que el redirect 3DS no pudo
+        // enviar. Idempotente: limpia su propio stash tras dispararse.
+        flushStashedPurchase();
 
         setOrderId(transactionId);
         setStatus("success");

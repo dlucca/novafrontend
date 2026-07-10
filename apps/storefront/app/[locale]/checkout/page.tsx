@@ -7,7 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useUser, useClerk, useAuth } from "@clerk/nextjs";
 import posthog from "posthog-js";
-import { trackMeta } from "@/lib/meta";
+import { trackMeta, stashPurchaseForRedirect } from "@/lib/meta";
 import { useCart } from "@/contexts/CartContext";
 import { medusa } from "@/lib/medusa";
 import { formatPrice } from "@/lib/format";
@@ -964,6 +964,46 @@ export default function CheckoutPage() {
           sessionStorage.setItem("novapatch_3ds_cart_id", cart_id);
           sessionStorage.setItem("novapatch_3ds_total", String(chargedTotal));
           sessionStorage.setItem("novapatch_3ds_items", String(items.reduce((sum, i) => sum + i.quantity, 0)));
+
+          // Stash del Purchase (y Subscribe) para dispararlo al volver del 3DS,
+          // ya que este flujo hace redirect antes de llegar al bloque de éxito.
+          const redirectNumItems = items.reduce((sum, i) => sum + i.quantity, 0);
+          const redirectIdentity = {
+            email: contact.email || user?.primaryEmailAddress?.emailAddress,
+            phone: contact.phone,
+            firstName: contact.name?.split(" ")[0],
+            lastName: contact.name?.split(" ").slice(1).join(" "),
+            externalId: user?.id,
+          };
+          const redirectSubItems = items.filter((i) => i.mode === "sub");
+          stashPurchaseForRedirect({
+            eventId: cart_id,
+            identity: redirectIdentity,
+            purchase: {
+              currency: market.currency,
+              value: chargedTotal,
+              content_ids: items.map((i) => i.variantId ?? i.slug),
+              contents: items.map((i) => ({
+                id: i.variantId ?? i.slug,
+                quantity: i.quantity,
+                item_price: i.price,
+              })),
+              num_items: redirectNumItems,
+            },
+            subscribe: redirectSubItems.length
+              ? {
+                  currency: market.currency,
+                  value: redirectSubItems.reduce((sum, i) => sum + i.price * i.quantity, 0),
+                  content_ids: redirectSubItems.map((i) => i.variantId ?? i.slug),
+                  contents: redirectSubItems.map((i) => ({
+                    id: i.variantId ?? i.slug,
+                    quantity: i.quantity,
+                    item_price: i.price,
+                  })),
+                  num_items: redirectSubItems.reduce((s, i) => s + i.quantity, 0),
+                }
+              : undefined,
+          });
           // Esperar 2 frames para que React renderice el overlay antes de navegar
           await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
           window.location.href = result.redirect_url;
