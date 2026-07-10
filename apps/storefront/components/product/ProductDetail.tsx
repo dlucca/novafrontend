@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import { useUser } from "@clerk/nextjs";
 import { useCart } from "@/contexts/CartContext";
+import { trackMeta } from "@/lib/meta";
 import { formatPrice } from "@/lib/format";
 import type { ProductDetail as ProductDetailData, PurchaseOption } from "@/lib/commerce";
 import {
@@ -232,6 +234,28 @@ export default function ProductDetail({
   currency: string;
 }) {
   const { addToCart } = useCart();
+  const { user, isLoaded } = useUser();
+
+  // Meta ViewContent — se dispara una vez al abrir la PDP, esperando a que
+  // Clerk resuelva para adjuntar identidad (mejor match quality en CAPI).
+  const viewTracked = useRef(false);
+  useEffect(() => {
+    if (!isLoaded || viewTracked.current) return;
+    viewTracked.current = true;
+    const defaultOption =
+      product.options.find((o) => o.tier === "monthly") ?? product.options[0];
+    trackMeta(
+      "ViewContent",
+      {
+        currency,
+        value: product.basePrice,
+        content_ids: [defaultOption?.variantId ?? product.slug],
+        content_name: product.title,
+        content_type: "product",
+      },
+      { email: user?.primaryEmailAddress?.emailAddress, externalId: user?.id },
+    );
+  }, [isLoaded, user, product, currency]);
 
   const meta: ProductMeta | undefined = PRODUCT_META[product.slug];
   const pdp: PdpMeta | undefined = PDP_META[product.slug];

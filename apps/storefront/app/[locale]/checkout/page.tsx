@@ -510,6 +510,7 @@ export default function CheckoutPage() {
 
   // ── Analytics: checkout_started ──────────────────────────────
   const checkoutTracked = useRef(false);
+  const addPaymentInfoTracked = useRef(false);
   useEffect(() => {
     if (!isLoaded || items.length === 0 || checkoutTracked.current) return;
     checkoutTracked.current = true;
@@ -703,6 +704,28 @@ export default function CheckoutPage() {
     setSubmitting(true);
     // Will be set to Medusa's authoritative cart total once shipping is applied
     let chargedTotal = finalTotal + shippingCost;
+
+    // Meta AddPaymentInfo — el usuario completó datos válidos y confirmó el pago.
+    // Una sola vez por sesión de checkout (no se re-dispara en reintentos).
+    if (!addPaymentInfoTracked.current) {
+      addPaymentInfoTracked.current = true;
+      trackMeta(
+        "AddPaymentInfo",
+        {
+          currency: market.currency,
+          value: chargedTotal,
+          content_ids: items.map((i) => i.variantId ?? i.slug),
+          num_items: items.reduce((s, i) => s + i.quantity, 0),
+        },
+        {
+          email: contact.email || user?.primaryEmailAddress?.emailAddress,
+          phone: contact.phone,
+          firstName: contact.name?.split(" ")[0],
+          lastName: contact.name?.split(" ").slice(1).join(" "),
+          externalId: user?.id,
+        },
+      );
+    }
 
     try {
       console.time("[Checkout] total");
@@ -995,6 +1018,33 @@ export default function CheckoutPage() {
         // dedupes with this browser-side one.
         cart_id || undefined,
       );
+      // Subscribe — señal de inicio de suscripción (evento propio, no dedupea
+      // con Purchase). Solo si el carrito incluye al menos un ítem recurrente.
+      if (hasSubscriptions) {
+        const subItems = items.filter((i) => i.mode === "sub");
+        const subValue = subItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
+        trackMeta(
+          "Subscribe",
+          {
+            currency: market.currency,
+            value: subValue,
+            content_ids: subItems.map((i) => i.variantId ?? i.slug),
+            contents: subItems.map((i) => ({
+              id: i.variantId ?? i.slug,
+              quantity: i.quantity,
+              item_price: i.price,
+            })),
+            num_items: subItems.reduce((s, i) => s + i.quantity, 0),
+          },
+          {
+            email: contact.email || user?.primaryEmailAddress?.emailAddress,
+            phone: contact.phone,
+            firstName: contact.name?.split(" ")[0],
+            lastName: contact.name?.split(" ").slice(1).join(" "),
+            externalId: user?.id,
+          },
+        );
+      }
       clearCart();
       if (cartRegion === "ars") {
         setSuccessAddress({ country_code: "ar", province: addressAR.province });

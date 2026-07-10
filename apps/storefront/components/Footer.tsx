@@ -6,6 +6,7 @@ import { useTranslations, useLocale } from 'next-intl'
 import { Link } from '@/lib/i18n-navigation'
 import CountrySelector from '@/components/CountrySelector'
 import type { Locale } from '@/i18n/routing'
+import { trackMeta } from '@/lib/meta'
 
 export default function Footer() {
   const t = useTranslations('footer')
@@ -37,7 +38,12 @@ export default function Footer() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) { setSent(true); setEmail(""); }
+    if (email) {
+      // Meta Lead — alta al newsletter (capturar email antes de limpiarlo).
+      trackMeta("Lead", { content_name: "newsletter" }, { email });
+      setSent(true);
+      setEmail("");
+    }
   };
 
   return (
