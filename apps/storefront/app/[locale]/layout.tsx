@@ -7,6 +7,7 @@ import { ClerkProvider } from '@clerk/nextjs'
 import { CartProvider } from '@/contexts/CartContext'
 import CartDrawer from '@/components/CartDrawer'
 import { SentryIdentity } from '@/components/SentryIdentity'
+import { MetaPixelIdentity } from '@/components/MetaPixelIdentity'
 import { PostHogProvider } from '@/components/PostHogProvider'
 import { getClerkLocalization } from '@/lib/clerk-theme'
 import { MARKETS } from '@/lib/markets'
@@ -43,6 +44,7 @@ export default async function LocaleLayout({
         signUpFallbackRedirectUrl={`/${locale}`}
       >
         <SentryIdentity />
+        <MetaPixelIdentity />
         <PostHogProvider />
         <CartProvider>
           {children}
@@ -61,30 +63,6 @@ export default async function LocaleLayout({
             />
           </>
         )}
-
-        <Script id="meta-pixel" strategy="afterInteractive">
-          {`
-            !function(f,b,e,v,n,t,s)
-            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-            n.queue=[];t=b.createElement(e);t.async=!0;
-            t.src=v;s=b.getElementsByTagName(e)[0];
-            s.parentNode.insertBefore(t,s)}(window,document,'script',
-            'https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', '988662053738645');
-            fbq('track', 'PageView');
-          `}
-        </Script>
-        <noscript>
-          <img
-            height="1"
-            width="1"
-            style={{ display: 'none' }}
-            src="https://www.facebook.com/tr?id=988662053738645&ev=PageView&noscript=1"
-            alt=""
-          />
-        </noscript>
       </ClerkProvider>
     </NextIntlClientProvider>
   )

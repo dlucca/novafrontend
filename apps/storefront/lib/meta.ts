@@ -8,6 +8,8 @@ declare global {
   }
 }
 
+export const META_PIXEL_ID = "988662053738645";
+
 type UserIdentity = {
   email?: string | null;
   phone?: string | null;
