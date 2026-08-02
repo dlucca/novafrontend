@@ -55,6 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="es" suppressHydrationWarning>
       <head>
+        <meta name="facebook-domain-verification" content="73gpcr6qpc5hv6rdv3uhubs8wrq0hc" />
         <link rel="preconnect" href="https://api.clerk.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://us.i.posthog.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://js.openpay.mx" crossOrigin="anonymous" />
