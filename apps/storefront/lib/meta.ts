@@ -2,9 +2,13 @@
 // Fires fbq() in the browser AND POSTs to /api/meta/track (server → Graph API).
 // Both legs share the same event_id so Meta deduplicates.
 
+import { PRODUCT_META } from "./product-meta";
+
 declare global {
   interface Window {
     fbq?: (...args: unknown[]) => void;
+    gtag?: (...args: any[]) => void;
+    dataLayer?: any[];
   }
 }
 
@@ -65,6 +69,80 @@ export function trackMeta(
     window.fbq?.("track", event, customData, { eventID: event_id });
   } catch (err) {
     console.warn("[meta] fbq failed", err);
+  }
+
+  // 1.5) Browser GA4 (gtag)
+  try {
+    const gtag = window.gtag || function (...args: any[]) {
+      (window.dataLayer = window.dataLayer || []).push(args);
+    };
+
+    const ga4Events: Record<string, string> = {
+      ViewContent: "view_item",
+      AddToCart: "add_to_cart",
+      InitiateCheckout: "begin_checkout",
+      AddPaymentInfo: "add_payment_info",
+      Purchase: "purchase",
+    };
+
+    const gaEvent = ga4Events[event];
+    if (gaEvent) {
+      let ga4Items: Array<{
+        item_id: string;
+        item_name: string;
+        item_category?: string;
+        price?: number;
+        quantity?: number;
+      }> = [];
+
+      if (customData.contents && customData.contents.length > 0) {
+        ga4Items = customData.contents.map((item) => {
+          const slug = item.id.split("-")[0].toLowerCase();
+          const meta = PRODUCT_META[slug];
+          const name = meta ? `Novapatch ${meta.name}` : `Novapatch ${slug.charAt(0).toUpperCase() + slug.slice(1)}`;
+          return {
+            item_id: item.id,
+            item_name: name,
+            item_category: "Wellness",
+            price: item.item_price ?? (customData.value ? customData.value / (item.quantity || 1) : 0),
+            quantity: item.quantity,
+          };
+        });
+      } else if (customData.content_ids && customData.content_ids.length > 0) {
+        const avgPrice = (customData.value ?? 0) / (customData.num_items || customData.content_ids.length || 1);
+        ga4Items = customData.content_ids.map((id) => {
+          const slug = id.split("-")[0].toLowerCase();
+          const meta = PRODUCT_META[slug];
+          const name = customData.content_name || (meta ? `Novapatch ${meta.name}` : `Novapatch ${slug.charAt(0).toUpperCase() + slug.slice(1)}`);
+          return {
+            item_id: id,
+            item_name: name,
+            item_category: "Wellness",
+            price: avgPrice,
+            quantity: 1,
+          };
+        });
+      }
+
+      const gaParams: {
+        currency: string;
+        value?: number;
+        items: typeof ga4Items;
+        transaction_id?: string;
+      } = {
+        currency: customData.currency ?? "MXN",
+        value: customData.value,
+        items: ga4Items,
+      };
+
+      if (gaEvent === "purchase" && event_id) {
+        gaParams.transaction_id = event_id;
+      }
+
+      gtag("event", gaEvent, gaParams);
+    }
+  } catch (err) {
+    console.warn("[meta] GA4 tracking failed", err);
   }
 
   // 2) Server CAPI — best effort, never throw to the UI
