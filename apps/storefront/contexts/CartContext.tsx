@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 import posthog from "posthog-js";
+import { useUser } from "@clerk/nextjs";
 import { trackMeta } from "@/lib/meta";
 import { MARKETS } from "@/lib/markets";
 import type { Locale } from "@/i18n/routing";
@@ -49,6 +50,7 @@ const COUPON_STORAGE_KEY = "novapatch_coupon";
 const CART_LOCALE_KEY = "novapatch_cart_locale";
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
+  const { user } = useUser();
   const [items, setItems] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [coupons, setCoupons] = useState<AppliedCoupon[]>(() => {
@@ -124,15 +126,22 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
               freq: item.freq,
             });
             const currency = MARKETS[currentLocale as Locale]?.currency ?? "MXN";
-            trackMeta("AddToCart", {
-              currency,
-              value: item.price * qty,
-              content_ids: [item.variantId ?? item.slug],
-              content_name: item.title,
-              content_type: "product",
-              contents: [{ id: item.variantId ?? item.slug, quantity: qty, item_price: item.price }],
-              num_items: qty,
-            });
+            trackMeta(
+              "AddToCart",
+              {
+                currency,
+                value: item.price * qty,
+                content_ids: [item.variantId ?? item.slug],
+                content_name: item.title,
+                content_type: "product",
+                contents: [{ id: item.variantId ?? item.slug, quantity: qty, item_price: item.price }],
+                num_items: qty,
+              },
+              {
+                email: user?.primaryEmailAddress?.emailAddress,
+                externalId: user?.id,
+              }
+            );
           }
         },
         updateQty: (slug, mode, freq, delta) => {
