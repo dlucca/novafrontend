@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "node:crypto";
+import { META_PIXEL_ID } from "@/lib/meta";
 
 export const runtime = "nodejs";
 
@@ -25,7 +26,7 @@ const sha256 = (s: string) =>
 const normPhone = (s: string) => s.replace(/[^\d]/g, "");
 
 export async function POST(req: NextRequest) {
-  const PIXEL_ID = process.env.META_PIXEL_ID;
+  const PIXEL_ID = process.env.META_PIXEL_ID || META_PIXEL_ID;
   const TOKEN = process.env.META_CAPI_ACCESS_TOKEN;
   const TEST_CODE = process.env.META_TEST_EVENT_CODE;
 
