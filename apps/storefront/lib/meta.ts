@@ -71,6 +71,7 @@ export function trackMeta(
   // 1) Browser Pixel
   try {
     if (identity && Object.keys(identity).length > 0) {
+      window.fbq?.("set", "autoConfig", "false", META_PIXEL_ID);
       window.fbq?.("init", META_PIXEL_ID, {
         em: identity.email ?? undefined,
         ph: identity.phone ?? undefined,

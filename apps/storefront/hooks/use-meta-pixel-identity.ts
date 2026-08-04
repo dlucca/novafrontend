@@ -12,6 +12,7 @@ export function useMetaPixelIdentity() {
   useEffect(() => {
     if (!isLoaded || !user || typeof window.fbq !== 'function') return
 
+    window.fbq('set', 'autoConfig', 'false', META_PIXEL_ID)
     window.fbq('init', META_PIXEL_ID, {
       em: user.primaryEmailAddress?.emailAddress,
       fn: user.firstName ?? undefined,
