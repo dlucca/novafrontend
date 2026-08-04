@@ -139,6 +139,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
               },
               {
                 email: user?.primaryEmailAddress?.emailAddress,
+                phone: user?.primaryPhoneNumber?.phoneNumber ?? undefined,
+                firstName: user?.firstName ?? undefined,
+                lastName: user?.lastName ?? undefined,
                 externalId: user?.id,
               }
             );
