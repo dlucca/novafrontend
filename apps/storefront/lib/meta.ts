@@ -20,6 +20,10 @@ export type UserIdentity = {
   firstName?: string | null;
   lastName?: string | null;
   externalId?: string | null;
+  city?: string | null;
+  state?: string | null;
+  zip?: string | null;
+  country?: string | null;
 };
 
 type MetaEventName =
@@ -66,6 +70,19 @@ export function trackMeta(
 
   // 1) Browser Pixel
   try {
+    if (identity && Object.keys(identity).length > 0) {
+      window.fbq?.("init", META_PIXEL_ID, {
+        em: identity.email ?? undefined,
+        ph: identity.phone ?? undefined,
+        fn: identity.firstName ?? undefined,
+        ln: identity.lastName ?? undefined,
+        external_id: identity.externalId ?? undefined,
+        ct: identity.city ?? undefined,
+        st: identity.state ?? undefined,
+        zp: identity.zip ?? undefined,
+        country: identity.country ?? undefined,
+      });
+    }
     window.fbq?.("track", event, customData, { eventID: event_id });
   } catch (err) {
     console.warn("[meta] fbq failed", err);
@@ -159,6 +176,10 @@ export function trackMeta(
       fn: identity.firstName ?? undefined,
       ln: identity.lastName ?? undefined,
       external_id: identity.externalId ?? undefined,
+      ct: identity.city ?? undefined,
+      st: identity.state ?? undefined,
+      zp: identity.zip ?? undefined,
+      country: identity.country ?? undefined,
       fbp,
       fbc,
     },

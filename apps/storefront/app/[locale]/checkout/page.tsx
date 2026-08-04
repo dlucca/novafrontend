@@ -705,6 +705,12 @@ export default function CheckoutPage() {
     // Will be set to Medusa's authoritative cart total once shipping is applied
     let chargedTotal = finalTotal + shippingCost;
 
+    // Extracción de datos de dirección para optimizar Event Match Quality (EMQ)
+    const cityVal = cartRegion === "ars" ? addressAR.city : (copomex.status === "success" ? copomex.data.municipio || address.city : address.city);
+    const stateVal = cartRegion === "ars" ? addressAR.province : (copomex.status === "success" ? copomex.data.estado || address.state : address.state);
+    const zipVal = cartRegion === "ars" ? addressAR.zip : address.zip;
+    const countryVal = cartRegion === "ars" ? "ar" : (cartRegion === "br" ? "br" : "mx");
+
     // Meta AddPaymentInfo — el usuario completó datos válidos y confirmó el pago.
     // Una sola vez por sesión de checkout (no se re-dispara en reintentos).
     if (!addPaymentInfoTracked.current) {
@@ -723,6 +729,10 @@ export default function CheckoutPage() {
           firstName: contact.name?.split(" ")[0],
           lastName: contact.name?.split(" ").slice(1).join(" "),
           externalId: user?.id,
+          city: cityVal,
+          state: stateVal,
+          zip: zipVal,
+          country: countryVal,
         },
       );
     }
@@ -974,6 +984,10 @@ export default function CheckoutPage() {
             firstName: contact.name?.split(" ")[0],
             lastName: contact.name?.split(" ").slice(1).join(" "),
             externalId: user?.id,
+            city: cityVal,
+            state: stateVal,
+            zip: zipVal,
+            country: countryVal,
           };
           const redirectSubItems = items.filter((i) => i.mode === "sub");
           stashPurchaseForRedirect({
@@ -1053,6 +1067,10 @@ export default function CheckoutPage() {
           firstName: contact.name?.split(" ")[0],
           lastName: contact.name?.split(" ").slice(1).join(" "),
           externalId: user?.id,
+          city: cityVal,
+          state: stateVal,
+          zip: zipVal,
+          country: countryVal,
         },
         // Use cart_id as event_id when available so a future Medusa-side Purchase
         // dedupes with this browser-side one.
@@ -1082,6 +1100,10 @@ export default function CheckoutPage() {
             firstName: contact.name?.split(" ")[0],
             lastName: contact.name?.split(" ").slice(1).join(" "),
             externalId: user?.id,
+            city: cityVal,
+            state: stateVal,
+            zip: zipVal,
+            country: countryVal,
           },
         );
       }

@@ -14,6 +14,10 @@ type IncomingEvent = {
     fn?: string;
     ln?: string;
     external_id?: string;
+    ct?: string;
+    st?: string;
+    zp?: string;
+    country?: string;
     fbp?: string;
     fbc?: string;
   };
@@ -56,6 +60,10 @@ export async function POST(req: NextRequest) {
   if (u.fn) user_data.fn = sha256(u.fn);
   if (u.ln) user_data.ln = sha256(u.ln);
   if (u.external_id) user_data.external_id = sha256(u.external_id);
+  if (u.ct) user_data.ct = sha256(u.ct);
+  if (u.st) user_data.st = sha256(u.st);
+  if (u.zp) user_data.zp = sha256(u.zp);
+  if (u.country) user_data.country = sha256(u.country);
   if (u.fbp) user_data.fbp = u.fbp;
   if (u.fbc) user_data.fbc = u.fbc;
   if (ip) user_data.client_ip_address = ip;
