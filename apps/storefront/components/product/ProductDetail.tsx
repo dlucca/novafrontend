@@ -253,7 +253,13 @@ export default function ProductDetail({
         content_name: product.title,
         content_type: "product",
       },
-      { email: user?.primaryEmailAddress?.emailAddress, externalId: user?.id },
+      {
+        email: user?.primaryEmailAddress?.emailAddress,
+        phone: user?.primaryPhoneNumber?.phoneNumber ?? undefined,
+        firstName: user?.firstName ?? undefined,
+        lastName: user?.lastName ?? undefined,
+        externalId: user?.id,
+      },
     );
   }, [isLoaded, user, product, currency]);
 
