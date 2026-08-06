@@ -10,6 +10,7 @@ import { useState, useCallback, useEffect } from "react";
 import { medusa } from "@/lib/medusa";
 import { useMarket } from "@/lib/useMarket";
 import { formatPrice } from "@/lib/format";
+import { FREE_SHIPPING } from "@/lib/free-shipping";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -501,8 +502,8 @@ export default function CartDrawer() {
 
                       <div className="flex justify-between text-[12px] text-gray-500">
                         <span>Envío</span>
-                        <span className={shippingCoupon ? "text-green-600 font-semibold" : ""}>
-                          {shippingCoupon ? "Gratis al pagar" : "Calculado al pagar"}
+                        <span className={FREE_SHIPPING || shippingCoupon ? "text-green-600 font-semibold" : ""}>
+                          {FREE_SHIPPING ? "GRATIS" : shippingCoupon ? "Gratis al pagar" : "Calculado al pagar"}
                         </span>
                       </div>
 
