@@ -18,6 +18,7 @@ import { tokenizeCardMP, parseCardFormMP } from "@/lib/mercadopago";
 import { useCopomex } from "@/hooks/useCopomex";
 import { useGooglePlaces } from "@/hooks/useGooglePlaces";
 import { resolveShippingEta } from "@/lib/shipping-eta";
+import { FREE_SHIPPING } from "@/lib/free-shipping";
 import {
   CartItem,
   FREQ_LABELS,
@@ -443,7 +444,11 @@ export default function CheckoutPage() {
         : CDMX_EDOMEX_STATES.has(normalizedStateForPreview)
           ? 90
           : 145;
-  const displayShippingCost = shippingCost > 0 ? shippingCost : shippingPreview;
+  const displayShippingCost = FREE_SHIPPING
+    ? 0
+    : shippingCost > 0
+      ? shippingCost
+      : shippingPreview;
 
   // ── Google Places (street autocomplete) ────────────────────
   const streetInputRef = useRef<HTMLInputElement>(null);
@@ -1900,11 +1905,23 @@ export default function CheckoutPage() {
                   </div>
                 )}
 
-                {displayShippingCost > 0 && (
-                  <div className="flex justify-between text-[13px] text-[#6B7280]">
-                    <span>Envío{shippingCost === 0 && <span className="text-[11px] text-[#9CA3AF] ml-1">(estimado)</span>}</span>
-                    <span className="font-semibold text-[#005088]">{fmt(displayShippingCost, cartRegion)}</span>
+                {FREE_SHIPPING ? (
+                  <div className="flex justify-between text-[13px]">
+                    <span className="text-[#6B7280]">Envío</span>
+                    <span className="flex items-center gap-1.5">
+                      {shippingPreview > 0 && (
+                        <span className="text-[#9CA3AF] line-through">{fmt(shippingPreview, cartRegion)}</span>
+                      )}
+                      <span className="font-bold text-[#16A34A]">GRATIS</span>
+                    </span>
                   </div>
+                ) : (
+                  displayShippingCost > 0 && (
+                    <div className="flex justify-between text-[13px] text-[#6B7280]">
+                      <span>Envío{shippingCost === 0 && <span className="text-[11px] text-[#9CA3AF] ml-1">(estimado)</span>}</span>
+                      <span className="font-semibold text-[#005088]">{fmt(displayShippingCost, cartRegion)}</span>
+                    </div>
+                  )
                 )}
 
                 <div className="pt-2.5 border-t border-[#E5E7EB] flex justify-between">
