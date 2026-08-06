@@ -39,37 +39,62 @@ export default function ThreeDSReturnPage() {
       return;
     }
 
+    const finishSuccess = () => {
+      clearCart();
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("novapatch_medusa_cart_id");
+        sessionStorage.removeItem("novapatch_3ds_cart_id");
+        sessionStorage.removeItem("novapatch_3ds_total");
+        sessionStorage.removeItem("novapatch_3ds_items");
+      }
+      posthog.capture("order_completed", {
+        cart_total: cartTotal ? Number(cartTotal) : undefined,
+        item_count: itemCount ? Number(itemCount) : undefined,
+        via_3ds: true,
+      });
+      // Hand off to the unified confirmation page, which fires the stashed
+      // Purchase/Subscribe on mount (single, reliable place for both flows).
+      // The purchase stash written before the 3DS redirect survives here.
+      router.replace(`/${locale}/checkout/gracias`);
+    };
+
+    // Post-3DS the charge is already authorized (the bank redirected us back),
+    // so the money is committed. complete-3ds can be slow and time out even
+    // though the order completes backend-side moments later. Before ever
+    // showing a failure, poll the cart: if it completed, treat it as success —
+    // otherwise we'd charge the customer and tell them it failed.
+    const confirmViaPolling = async (): Promise<boolean> => {
+      for (let i = 0; i < 5; i++) {
+        await new Promise((r) => setTimeout(r, 3000));
+        try {
+          const cart = await medusa.cart.retrieve(cartId);
+          if (cart?.completed_at) return true;
+        } catch {
+          // A read hiccup shouldn't end the recovery — keep polling.
+        }
+      }
+      return false;
+    };
+
     // Verificar el cobro con el backend y completar la orden
     medusa.checkout
       .complete3DS(cartId, transactionId)
-      .then(() => {
-        // Limpiar estado local
-        clearCart();
-        if (typeof window !== "undefined") {
-          localStorage.removeItem("novapatch_medusa_cart_id");
-          sessionStorage.removeItem("novapatch_3ds_cart_id");
-          sessionStorage.removeItem("novapatch_3ds_total");
-          sessionStorage.removeItem("novapatch_3ds_items");
-        }
-
-        posthog.capture("order_completed", {
-          cart_total: cartTotal ? Number(cartTotal) : undefined,
-          item_count: itemCount ? Number(itemCount) : undefined,
-          via_3ds: true,
-        });
-        // Hand off to the unified confirmation page, which fires the stashed
-        // Purchase/Subscribe on mount (single, reliable place for both flows).
-        // The purchase stash written before the 3DS redirect survives here.
-        router.replace(`/${locale}/checkout/gracias`);
-      })
-      .catch((err: unknown) => {
+      .then(finishSuccess)
+      .catch(async (err: unknown) => {
         const message =
           err instanceof Error ? err.message : "El pago no pudo confirmarse";
-        console.error("[3ds-return] complete3DS failed:", message);
-        setErrorMessage(message);
-        setStatus("failed");
+        console.error(
+          "[3ds-return] complete3DS failed, polling cart for completion:",
+          message
+        );
+        if (await confirmViaPolling()) {
+          finishSuccess();
+        } else {
+          setErrorMessage(message);
+          setStatus("failed");
+        }
       });
-  }, [searchParams, router]);
+  }, [searchParams, router, locale]);
 
   if (status === "loading") {
     return (

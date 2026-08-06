@@ -137,13 +137,19 @@ export type MedusaPaymentMethod = {
 // ─── Fetch helper ─────────────────────────────────────────────────────────────
 
 // Paths where retrying a failed POST could have side effects (double charge, etc.)
-const NO_RETRY_PATHS = ["/complete", "/payment-sessions"];
+const NO_RETRY_PATHS = ["/complete", "/complete-3ds", "/payment-sessions"];
 
 // Sin esto, un backend que acepta la conexión pero nunca responde cuelga el
 // fetch para siempre. En un Server Component (await getProducts) eso cuelga el
 // SSR entero y la página nunca emite respuesta (timeout del monitor → exit 28).
 // Con timeout, el fetch aborta → getProducts cae al fallback → la página renderiza.
 const DEFAULT_TIMEOUT_MS = 5000;
+
+// Payment-finalization calls (complete / complete-3ds) verify the charge with
+// Openpay and create the order — legitimately slower than a read. A 5s timeout
+// here turns a slow-but-successful charge into a customer-facing failure (they
+// were already debited), so these get a much longer budget.
+const COMPLETE_TIMEOUT_MS = 30000;
 
 async function medusaFetch<T>(
   path: string,
@@ -519,7 +525,9 @@ const checkout = {
       {
         method: "POST",
         body: JSON.stringify(payload),
-      }
+      },
+      null,
+      COMPLETE_TIMEOUT_MS
     );
     if (data.type === "order") {
       if (typeof window !== "undefined") {
@@ -542,7 +550,9 @@ const checkout = {
       {
         method: "POST",
         body: JSON.stringify({ openpay_transaction_id }),
-      }
+      },
+      null,
+      COMPLETE_TIMEOUT_MS
     );
   },
 };
