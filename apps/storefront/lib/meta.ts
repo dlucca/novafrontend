@@ -210,6 +210,8 @@ type StashedPurchase = {
   identity: UserIdentity;
   purchase: MetaCustomData;
   subscribe?: MetaCustomData;
+  /** Shipping address kept so the confirmation page can show the delivery ETA. */
+  address?: { country_code?: string | null; province?: string | null };
 };
 
 export function stashPurchaseForRedirect(data: StashedPurchase): void {
@@ -223,26 +225,27 @@ export function stashPurchaseForRedirect(data: StashedPurchase): void {
 
 // Fires the stashed Purchase/Subscribe once, then clears it so a page refresh
 // can't double-count. Safe to call unconditionally on the 3DS return page.
-export function flushStashedPurchase(): void {
-  if (typeof window === "undefined") return;
+export function flushStashedPurchase(): StashedPurchase | null {
+  if (typeof window === "undefined") return null;
   let raw: string | null = null;
   try {
     raw = window.sessionStorage.getItem(STASH_KEY);
-    if (!raw) return;
+    if (!raw) return null;
     window.sessionStorage.removeItem(STASH_KEY);
   } catch {
-    return;
+    return null;
   }
 
   let data: StashedPurchase;
   try {
     data = JSON.parse(raw) as StashedPurchase;
   } catch {
-    return;
+    return null;
   }
 
   trackMeta("Purchase", data.purchase, data.identity, data.eventId);
   if (data.subscribe) {
     trackMeta("Subscribe", data.subscribe, data.identity);
   }
+  return data;
 }

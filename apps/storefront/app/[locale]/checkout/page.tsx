@@ -17,7 +17,6 @@ import { tokenizeCard, parseCardForm, getDeviceSessionId } from "@/lib/openpay";
 import { tokenizeCardMP, parseCardFormMP } from "@/lib/mercadopago";
 import { useCopomex } from "@/hooks/useCopomex";
 import { useGooglePlaces } from "@/hooks/useGooglePlaces";
-import { resolveShippingEta } from "@/lib/shipping-eta";
 import { FREE_SHIPPING } from "@/lib/free-shipping";
 import {
   CartItem,
@@ -267,56 +266,6 @@ function SectionHeader({
   );
 }
 
-// ─── Success Screen ───────────────────────────────────────────────────────────
-
-function SuccessScreen({ shippingAddress }: { shippingAddress?: { country_code?: string | null; province?: string | null } | null }) {
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#FAF7F2] px-6 text-center">
-      <motion.div
-        initial={{ scale: 0.7, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 260, damping: 22 }}
-      >
-        <CheckCircle2 size={72} className="mx-auto mb-6" style={{ color: "#E8503A" }} />
-      </motion.div>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-      >
-        <h1 className="text-[32px] font-black text-[#005088] tracking-[-0.03em] mb-3">
-          ¡Pedido realizado!
-        </h1>
-        <p className="text-[16px] text-[#6B7280] leading-[1.6] max-w-[360px] mb-8">
-          Recibirás un correo de confirmación con los detalles de tu envío.
-          Tu parche está en camino.
-        </p>
-        {(() => {
-          const eta = resolveShippingEta({
-            country_code: shippingAddress?.country_code ?? null,
-            province: shippingAddress?.province ?? null,
-          })
-          if (!eta) return null
-          return (
-            <p className="mt-4 text-[14px] text-[#425066]">
-              Envío estimado: <span className="font-bold text-[#0D1B35]">{eta}</span>.
-              <br />
-              Te enviaremos la guía por email en las próximas 24 horas.
-            </p>
-          )
-        })()}
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-[15px] font-bold text-white transition-all duration-200 hover:brightness-95 active:scale-[0.97]"
-          style={{ background: "#E8503A" }}
-        >
-          Volver al inicio
-        </Link>
-      </motion.div>
-    </div>
-  );
-}
-
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function CheckoutPage() {
@@ -383,8 +332,6 @@ export default function CheckoutPage() {
       return next;
     });
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-  const [successAddress, setSuccessAddress] = useState<{ country_code?: string | null; province?: string | null } | null>(null);
   const [paymentStep, setPaymentStep] = useState<number>(0); // 0=idle, 1-4=processing
   // Total confirmed by Medusa after shipping is applied — authoritative for what gets charged
   const [confirmedTotal, setConfirmedTotal] = useState<number | null>(null);
@@ -508,14 +455,17 @@ export default function CheckoutPage() {
 
   // Redirect if cart is empty (after load)
   useEffect(() => {
-    if (isLoaded && items.length === 0 && !success) {
+    if (isLoaded && items.length === 0 && !orderCompleted.current) {
       router.replace("/tienda");
     }
-  }, [isLoaded, items.length, success, router]);
+  }, [isLoaded, items.length, router]);
 
   // ── Analytics: checkout_started ──────────────────────────────
   const checkoutTracked = useRef(false);
   const addPaymentInfoTracked = useRef(false);
+  // Set right before navigating to the confirmation page so the empty-cart
+  // guard below doesn't bounce us to /tienda after clearCart().
+  const orderCompleted = useRef(false);
   useEffect(() => {
     if (!isLoaded || items.length === 0 || checkoutTracked.current) return;
     checkoutTracked.current = true;
@@ -656,7 +606,6 @@ export default function CheckoutPage() {
     );
   }
 
-  if (success) return <SuccessScreen shippingAddress={successAddress} />;
 
   // ── validation ───────────────────────────────────────────────
   function validate() {
@@ -1022,6 +971,10 @@ export default function CheckoutPage() {
                   num_items: redirectSubItems.reduce((s, i) => s + i.quantity, 0),
                 }
               : undefined,
+            address: {
+              country_code: cartRegion === "ars" ? "ar" : "mx",
+              province: stateVal,
+            },
           });
           // Esperar 2 frames para que React renderice el overlay antes de navegar
           await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
@@ -1053,9 +1006,33 @@ export default function CheckoutPage() {
         cart_total: chargedTotal,
         item_count: purchaseNumItems,
       });
-      trackMeta(
-        "Purchase",
-        {
+      const purchaseIdentity = {
+        email: contact.email || user?.primaryEmailAddress?.emailAddress,
+        phone: contact.phone,
+        firstName: contact.name?.split(" ")[0],
+        lastName: contact.name?.split(" ").slice(1).join(" "),
+        externalId: user?.id,
+        city: cityVal,
+        state: stateVal,
+        zip: zipVal,
+        country: countryVal,
+      };
+      const subItems = hasSubscriptions ? items.filter((i) => i.mode === "sub") : [];
+      const successProvince =
+        cartRegion === "ars"
+          ? addressAR.province
+          : copomex.status === "success"
+            ? copomex.data.estado || address.state
+            : address.state;
+      // Stash Purchase (+ Subscribe) and hand off to the dedicated confirmation
+      // page, which fires them on mount. Firing there — on a real URL with a
+      // guaranteed page load and dwell — is what makes Purchase reliably reach
+      // GA4/Meta, unlike an in-place state swap with no pageview. The 3DS branch
+      // above already stashes the same way before its redirect.
+      stashPurchaseForRedirect({
+        eventId: cart_id || undefined,
+        identity: purchaseIdentity,
+        purchase: {
           currency: market.currency,
           value: chargedTotal,
           content_ids: items.map((i) => i.variantId ?? i.slug),
@@ -1066,61 +1043,27 @@ export default function CheckoutPage() {
           })),
           num_items: purchaseNumItems,
         },
-        {
-          email: contact.email || user?.primaryEmailAddress?.emailAddress,
-          phone: contact.phone,
-          firstName: contact.name?.split(" ")[0],
-          lastName: contact.name?.split(" ").slice(1).join(" "),
-          externalId: user?.id,
-          city: cityVal,
-          state: stateVal,
-          zip: zipVal,
-          country: countryVal,
+        subscribe: subItems.length
+          ? {
+              currency: market.currency,
+              value: subItems.reduce((sum, i) => sum + i.price * i.quantity, 0),
+              content_ids: subItems.map((i) => i.variantId ?? i.slug),
+              contents: subItems.map((i) => ({
+                id: i.variantId ?? i.slug,
+                quantity: i.quantity,
+                item_price: i.price,
+              })),
+              num_items: subItems.reduce((s, i) => s + i.quantity, 0),
+            }
+          : undefined,
+        address: {
+          country_code: cartRegion === "ars" ? "ar" : "mx",
+          province: successProvince,
         },
-        // Use cart_id as event_id when available so a future Medusa-side Purchase
-        // dedupes with this browser-side one.
-        cart_id || undefined,
-      );
-      // Subscribe — señal de inicio de suscripción (evento propio, no dedupea
-      // con Purchase). Solo si el carrito incluye al menos un ítem recurrente.
-      if (hasSubscriptions) {
-        const subItems = items.filter((i) => i.mode === "sub");
-        const subValue = subItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
-        trackMeta(
-          "Subscribe",
-          {
-            currency: market.currency,
-            value: subValue,
-            content_ids: subItems.map((i) => i.variantId ?? i.slug),
-            contents: subItems.map((i) => ({
-              id: i.variantId ?? i.slug,
-              quantity: i.quantity,
-              item_price: i.price,
-            })),
-            num_items: subItems.reduce((s, i) => s + i.quantity, 0),
-          },
-          {
-            email: contact.email || user?.primaryEmailAddress?.emailAddress,
-            phone: contact.phone,
-            firstName: contact.name?.split(" ")[0],
-            lastName: contact.name?.split(" ").slice(1).join(" "),
-            externalId: user?.id,
-            city: cityVal,
-            state: stateVal,
-            zip: zipVal,
-            country: countryVal,
-          },
-        );
-      }
+      });
       clearCart();
-      if (cartRegion === "ars") {
-        setSuccessAddress({ country_code: "ar", province: addressAR.province });
-      } else {
-        const resolvedState =
-          copomex.status === "success" ? copomex.data.estado || address.state : address.state;
-        setSuccessAddress({ country_code: "mx", province: resolvedState });
-      }
-      setSuccess(true);
+      orderCompleted.current = true;
+      router.replace(`/${localeParam || "mx"}/checkout/gracias`);
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Error inesperado";
       setSubmitError(msg);
