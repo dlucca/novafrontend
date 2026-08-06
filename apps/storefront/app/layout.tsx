@@ -2,6 +2,7 @@
 import type { Metadata } from 'next'
 import { Outfit } from 'next/font/google'
 import Script from 'next/script'
+import { Analytics } from '@vercel/analytics/next'
 import { META_PIXEL_ID } from '@/lib/meta'
 import './globals.css'
 
@@ -99,6 +100,7 @@ fbq('track', 'PageView');`}
           />
         </noscript>
         {children}
+        <Analytics />
       </body>
     </html>
   )
