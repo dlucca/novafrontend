@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import type { Product } from "@/lib/commerce";
-import { useCart } from "@/contexts/CartContext";
 import { formatPrice } from "@/lib/format";
+import { PRODUCT_META } from "@/lib/product-meta";
+import { useCart } from "@/contexts/CartContext";
 
 // ─── UI metadata por producto ───────────────────────────────────────────────
 
@@ -64,121 +65,34 @@ const META: Record<string, {
   },
 };
 
-// ─── Frecuencias de suscripción (del PRD) ───────────────────────────────────
-
-const FRECUENCIAS = [
-  { days: 30 as const, label: "Mensual",    discount: 0.20, badge: "20% OFF" },
-  { days: 60 as const, label: "Bimestral",  discount: 0.15, badge: "15% OFF" },
-  { days: 90 as const, label: "Trimestral", discount: 0.10, badge: "10% OFF" },
-];
-
-type Freq = 30 | 60 | 90;
-type Mode = "once" | "sub";
-
-// ─── Helpers ────────────────────────────────────────────────────────────────
-
-function discountedPrice(base: number, freq: Freq): number {
-  const { discount } = FRECUENCIAS.find((f) => f.days === freq)!;
-  return Math.round(base * (1 - discount));
-}
-
 // ─── Componentes internos ────────────────────────────────────────────────────
-
-function ModeToggle({ mode, onChange }: { mode: Mode; onChange: (m: Mode) => void }) {
-  return (
-    <div className="inline-flex items-center bg-white rounded-full p-1 shadow-sm border border-black/[0.07]">
-      <button
-        onClick={() => onChange("once")}
-        className="px-6 py-2.5 rounded-full text-[13px] font-bold transition-all duration-200"
-        style={{
-          background: mode === "once" ? "var(--color-ocean)" : "transparent",
-          color: mode === "once" ? "#fff" : "#6B7280",
-        }}
-      >
-        Compra única
-      </button>
-      <button
-        onClick={() => onChange("sub")}
-        className="flex items-center gap-2 px-6 py-2.5 rounded-full text-[13px] font-bold transition-all duration-200"
-        style={{
-          background: mode === "sub" ? "var(--color-coral)" : "transparent",
-          color: mode === "sub" ? "#fff" : "#6B7280",
-        }}
-      >
-        Suscripción
-        {mode === "once" && (
-          <span className="text-[10px] font-black bg-coral text-white px-2 py-0.5 rounded-full">
-            hasta 20% OFF
-          </span>
-        )}
-      </button>
-    </div>
-  );
-}
-
-function FrequencyPicker({
-  selected,
-  color,
-  bg,
-  taglineColor,
-  onChange,
-}: {
-  selected: Freq;
-  color: string;
-  bg: string;
-  taglineColor: string;
-  onChange: (f: Freq) => void;
-}) {
-  return (
-    <div className="grid grid-cols-3 gap-2">
-      {FRECUENCIAS.map((f) => {
-        const isActive = selected === f.days;
-        return (
-          <button
-            key={f.days}
-            onClick={() => onChange(f.days)}
-            className="rounded-2xl border-2 px-3 py-3 text-center transition-all"
-            style={{
-              borderColor: isActive ? color : "#E7E1D6",
-              background: isActive ? `color-mix(in srgb, ${bg} 45%, #fff)` : "#FCFAF6",
-              color: isActive ? taglineColor : "#6B7280",
-            }}
-          >
-            <span className="block text-xs font-semibold">{f.label}</span>
-            <span className="block text-[12px] font-black mt-0.5">
-              {f.badge}
-            </span>
-          </button>
-        );
-      })}
-    </div>
-  );
-}
 
 function ProductCard({
   product,
-  mode,
-  freq,
-  onFreqChange,
+  ratingSummary,
   currency = "MXN",
 }: {
   product: Product;
-  mode: Mode;
-  freq: Freq;
-  onFreqChange: (f: Freq) => void;
+  ratingSummary?: { average: number; count: number };
   currency?: string;
 }) {
   const meta = META[product.slug];
   const { addToCart } = useCart();
   const params = useParams();
   const locale = typeof params?.locale === "string" ? params.locale : "mx";
+  const [isHovered, setIsHovered] = useState(false);
+
   if (!meta) return null;
 
-  const displayPrice =
-    mode === "sub" ? discountedPrice(product.price, freq) : product.price;
-  const freqBadge = FRECUENCIAS.find((f) => f.days === freq)!.badge;
+  const fallbackMeta = PRODUCT_META[product.slug];
+  const hoverImage = fallbackMeta?.howItWorksImage ?? product.image;
 
-  function handleAddToCart() {
+  const rating = ratingSummary?.average ?? 5.0;
+  const count = ratingSummary?.count ?? 80;
+
+  function handleAddToCart(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
     addToCart({
       slug: product.slug,
       title: product.title,
@@ -186,159 +100,148 @@ function ProductCard({
       price: product.price,
       color: meta.color,
       bg: meta.bg,
-      mode,
-      freq,
+      mode: "once",
+      freq: 30,
     });
   }
 
   return (
-    <div
-      data-testid="product-card"
-      className="bg-white rounded-[22px] overflow-hidden border border-black/[0.05] shadow-[0_4px_24px_rgba(0,0,0,0.06)] hover:shadow-[0_16px_48px_rgba(0,0,0,0.09)] hover:-translate-y-1 transition-all duration-300 flex flex-col h-full"
+    <Link
+      href={`/${locale}/tienda/${product.slug}`}
+      className="group bg-white rounded-[28px] overflow-hidden border border-[#E8E2D8]/60 shadow-[0_4px_24px_rgba(13,27,53,0.03)] hover:shadow-[0_16px_48px_rgba(13,27,53,0.07)] hover:-translate-y-1 transition-all duration-300 flex flex-col h-full"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
-
-      {/* Imagen */}
+      {/* Imagen Box */}
       <div
-        className="relative flex items-center justify-center py-6 px-4"
-        style={{ background: meta.bg }}
+        className="relative flex items-center justify-center p-2 aspect-square overflow-hidden bg-white"
       >
         {meta.popular && (
-          <span className="absolute top-3 right-3 bg-coral text-white text-[10px] font-extrabold uppercase tracking-widest px-3 py-1.5 rounded-full">
+          <span className="absolute top-4 right-4 bg-coral text-white text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full z-10">
             Más popular
           </span>
         )}
-        <AnimatePresence>
-          {mode === "sub" && (
-            <motion.span
-              key="discount-badge"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ duration: 0.2 }}
-              className="absolute top-3 left-3 text-white text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full"
-              style={{ background: meta.color }}
-            >
-              {freqBadge}
-            </motion.span>
-          )}
-        </AnimatePresence>
-        <Link href={`/${locale}/tienda/${product.slug}`} className="relative block w-[246px] h-[246px]">
+
+        <div className="relative w-full h-full">
+          {/* Base Image */}
           <Image
             src={product.image}
             alt={`Novapatch ${product.title}`}
             fill
-            sizes="246px"
+            sizes="(max-width: 768px) 100vw, 350px"
             loading="lazy"
-            className="object-contain drop-shadow-md"
+            className={`object-contain drop-shadow-md transition-all duration-500 ease-in-out ${isHovered ? "opacity-0 scale-95" : "opacity-100 scale-100"
+              }`}
           />
-        </Link>
+        </div>
+        {/* Hover Image (Full bleed - absolute inset-0) */}
+        <Image
+          src={hoverImage}
+          alt={`Detalles de Novapatch ${product.title}`}
+          fill
+          sizes="(max-width: 768px) 100vw, 350px"
+          loading="lazy"
+          className={`object-cover transition-all duration-500 ease-in-out absolute inset-0 w-full h-full z-10 ${isHovered ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"
+            }`}
+        />
       </div>
 
-            {/* Cuerpo */}
-      <div className="p-5 flex flex-col gap-3 flex-1">
+      {/* Cuerpo */}
+      <div className="p-6 flex flex-col gap-4 flex-1 justify-between">
         <div>
-          <h3 className="text-[42px] font-black tracking-tight leading-none" 
-              style={{ color: meta.color }}>
-            <Link href={`/${locale}/tienda/${product.slug}`}>{product.title}</Link>
+          {/* Valoración */}
+          <div className="flex items-center gap-1.5 mb-2">
+            <div className="text-[#F59E0B] text-xs font-bold tracking-tight">
+              {"★".repeat(Math.round(rating))}
+              {"☆".repeat(5 - Math.round(rating))}
+            </div>
+            <span className="text-[11px] font-bold text-[#0D1B35]/60">
+              {rating} ({count} {count === 1 ? "opinión" : "opiniones"})
+            </span>
+          </div>
+
+          <h3 className="text-xl sm:text-2xl font-black tracking-tight text-[#0D1B35] leading-none group-hover:text-coral transition-colors duration-300">
+            {product.title}
           </h3>
-          <p className="text-[13px] leading-snug mt-3 text-[#0e1b34]">
+
+          <p className="mt-3 text-[13px] leading-relaxed text-[#425066] font-medium">
             {product.description}
           </p>
         </div>
 
-        <p className="text-[14px] text-[#0e1b34] italic leading-relaxed">
-          {meta.quote}
-        </p>
-
-        <div className="flex flex-wrap gap-1.5">
-          {meta.tags.map((tag) => (
-            <span
-              key={tag}
-              className="text-[13px] font-bold px-2.5 py-1 rounded-full border-[1.2px]"
-              style={{ borderColor: meta.color, color: meta.color }}
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-
-        {/* Selector de frecuencia (solo en modo suscripción) */}
-        <AnimatePresence>
-          {mode === "sub" && (
-            <motion.div
-              key="freq-picker"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.22, ease: "easeInOut" }}
-              className="overflow-hidden"
-            >
-              <p className="text-[12px] font-bold text-[#0e1b34] mb-2 mt-1">
-                ¿Cómo quieres recibirlo?
-              </p>
-              <FrequencyPicker
-                selected={freq}
-                color={meta.color}
-                bg={meta.bg}
-                taglineColor={meta.taglineColor}
-                onChange={onFreqChange}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Precio + CTA */}
-        <div className="mt-auto pt-3 border-t border-black/[0.05]">
-          <div className="flex items-baseline gap-2 mb-3">
-            <span className="text-[26px] font-black tracking-tight text-[#0e1b34]">
-              {formatPrice(displayPrice, currency)}
-            </span>
-            <AnimatePresence>
-              {mode === "sub" && (
-                <motion.span
-                  key="original-price"
-                  initial={{ opacity: 0, x: -4 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -4 }}
-                  className="text-[14px] text-[#C0C0C0] line-through"
-                >
-                  {formatPrice(product.price, currency)}
-                </motion.span>
-              )}
-            </AnimatePresence>
+        {/* Precios + Botón */}
+        <div className="pt-4 border-t border-[#E8E2D8]/50">
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-xs font-extrabold text-[#0D1B35]/60 uppercase tracking-wider">Precio</span>
+            <span className="text-xl font-black text-[#0D1B35]">{formatPrice(product.price, currency)}</span>
           </div>
 
-          <button
-            onClick={handleAddToCart}
-            className="relative z-[2] mt-3 w-full inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-white font-bold text-[15px] justify-center transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.97] shadow-[0_4px_16px_rgba(0,80,136,0.3)] bg-ocean hover:bg-ocean-dark"
-          >
-            {mode === "sub" ? "Suscribirse" : "Agregar al carrito"}
-          </button>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={handleAddToCart}
+              className="relative z-10 px-4 py-3 rounded-full text-white font-bold text-xs text-center transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-sm bg-coral hover:bg-coral-dark"
+            >
+              Comprar ahora
+            </button>
+
+            <div
+              className="px-4 py-3 rounded-full font-bold text-xs text-center border transition-all duration-200 hover:bg-[#FAF7F2] flex items-center justify-center gap-1"
+              style={{ borderColor: meta.color, color: meta.color }}
+            >
+              Más detalles
+              <svg className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24" style={{ width: "12px", height: "12px" }}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 
 // ─── Componente principal ────────────────────────────────────────────────────
 
 export default function TiendaExperience({ products, currency = "MXN" }: { products: Product[], currency?: string }) {
-  const [mode, setMode] = useState<Mode>("once");
-  const [freqs, setFreqs] = useState<Record<string, Freq>>({});
+  const [reviewsSummary, setReviewsSummary] = useState<Record<string, { average: number; count: number }>>({});
 
-  function getFreq(slug: string): Freq {
-    return freqs[slug] ?? 30;
-  }
+  useEffect(() => {
+    async function loadReviews() {
+      try {
+        const res = await fetch("/api/reviews");
+        if (res.ok) {
+          const allReviews: { slug: string; rating: number }[] = await res.json();
+          const groups: Record<string, number[]> = {};
 
-  function setFreq(slug: string, f: Freq) {
-    setFreqs((prev) => ({ ...prev, [slug]: f }));
-  }
+          allReviews.forEach((r) => {
+            if (!groups[r.slug]) groups[r.slug] = [];
+            groups[r.slug].push(r.rating);
+          });
+
+          const summary: Record<string, { average: number; count: number }> = {};
+          Object.keys(groups).forEach((slug) => {
+            const ratings = groups[slug];
+            const sum = ratings.reduce((a, b) => a + b, 0);
+            summary[slug] = {
+              average: Number((sum / ratings.length).toFixed(1)),
+              count: ratings.length,
+            };
+          });
+
+          setReviewsSummary(summary);
+        }
+      } catch (e) {
+        console.error("Error loading reviews summary for shop page:", e);
+      }
+    }
+    loadReviews();
+  }, []);
 
   return (
     <main className="min-h-screen" style={{ background: "#F8F3EC" }}>
 
       {/* ── Hero ── */}
-      <section className="pt-32 pb-12 px-6 text-center">
+      <section className="pt-32 pb-16 px-6 text-center">
         <motion.p
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -347,6 +250,7 @@ export default function TiendaExperience({ products, currency = "MXN" }: { produ
         >
           Tienda Novapatch
         </motion.p>
+
         <motion.h1
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -356,43 +260,20 @@ export default function TiendaExperience({ products, currency = "MXN" }: { produ
         >
           Elige el parche que necesita tu cuerpo
         </motion.h1>
+
         <motion.p
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, delay: 0.13 }}
-          className="text-[#5A6475] text-base leading-relaxed mb-8 max-w-md mx-auto"
+          className="text-[#5A6475] text-base leading-relaxed max-w-md mx-auto"
         >
           Seis fórmulas. Un solo formato: pega, olvida y deja que trabaje.
         </motion.p>
-
-        {/* Toggle Una vez / Suscripción */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45, delay: 0.19 }}
-        >
-          <ModeToggle mode={mode} onChange={setMode} />
-        </motion.div>
-
-        <AnimatePresence>
-          {mode === "sub" && (
-            <motion.p
-              key="sub-hint"
-              initial={{ opacity: 0, y: -6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.2 }}
-              className="text-[12px] text-[#9CA3AF] mt-3"
-            >
-              Elige la frecuencia por producto. Pausa o cancela cuando quieras.
-            </motion.p>
-          )}
-        </AnimatePresence>
       </section>
 
       {/* ── Grid de productos ── */}
       <section className="px-4 pb-24 max-w-[1200px] mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {products.map((product, i) => (
             <motion.div
               key={product.slug}
@@ -403,75 +284,17 @@ export default function TiendaExperience({ products, currency = "MXN" }: { produ
                 duration: 0.55,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className={`flex ${i === 0 ? "sm:col-span-2 md:col-span-1" : ""}`}
+              className="flex"
             >
               <ProductCard
                 product={product}
-                mode={mode}
-                freq={getFreq(product.slug)}
-                onFreqChange={(f) => setFreq(product.slug, f)}
+                ratingSummary={reviewsSummary[product.slug]}
                 currency={currency}
               />
             </motion.div>
           ))}
         </div>
       </section>
-
-      {/* ── Banda de beneficios suscripción ── */}
-      <AnimatePresence>
-        {mode === "sub" && (
-          <motion.section
-            key="benefits-band"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.35 }}
-            className="border-t border-black/[0.06] py-10 px-6"
-            style={{ background: "#fff" }}
-          >
-            <div className="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
-              {[
-                {
-                  icon: (
-                    <svg width="24" height="24" fill="none" stroke="var(--color-coral)" strokeWidth="1.8" viewBox="0 0 24 24">
-                      <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  ),
-                  title: "Sin interrupciones",
-                  desc: "Tu parche llega antes de que se te acabe.",
-                },
-                {
-                  icon: (
-                    <svg width="24" height="24" fill="none" stroke="var(--color-coral)" strokeWidth="1.8" viewBox="0 0 24 24">
-                      <path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  ),
-                  title: "Precio de suscriptor",
-                  desc: "Siempre más bajo que la compra individual.",
-                },
-                {
-                  icon: (
-                    <svg width="24" height="24" fill="none" stroke="var(--color-coral)" strokeWidth="1.8" viewBox="0 0 24 24">
-                      <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  ),
-                  title: "Tú controlas",
-                  desc: "Pausa, cambia o cancela sin llamadas ni penalizaciones.",
-                },
-              ].map((b) => (
-                <div key={b.title} className="flex flex-col items-center gap-3">
-                  <div className="w-11 h-11 rounded-full bg-[#FFF0ED] flex items-center justify-center">
-                    {b.icon}
-                  </div>
-                  <p className="text-[14px] font-bold text-ocean">{b.title}</p>
-                  <p className="text-[13px] text-[#6B7280] leading-relaxed">{b.desc}</p>
-                </div>
-              ))}
-            </div>
-          </motion.section>
-        )}
-      </AnimatePresence>
     </main>
   );
 }
