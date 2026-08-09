@@ -53,7 +53,33 @@
       "title": "Bienestar que no interrumpe tu día.",
       "subtitle": "Sin cápsulas. Sin horarios. Sin agua. Un solo parche y listo — el resto del día es tuyo.",
       "cta": "Conoce los parches",
-      "ctaSecondary": "¿Cómo funciona?"
+      "ctaSecondary": "¿Cómo funciona?",
+      "slides": {
+        "glow": {
+          "title": "Piel radiante y colágeno natural",
+          "subtitle": "Glow nutre tu piel, cabello y uñas desde adentro con biotina y ácido hialurónico."
+        },
+        "shield": {
+          "title": "Fortaleza inmune todos los días",
+          "subtitle": "Shield apoya tus defensas con vitamina C, Zinc y D3 en una sola aplicación."
+        },
+        "energy": {
+          "title": "Energía pura y sin bajones",
+          "subtitle": "Energy te da vitalidad celular sostenida con L-Carnitina y Ginseng por 12 horas."
+        },
+        "sleep": {
+          "title": "Duerme profundo, despierta fresco",
+          "subtitle": "Sleep mejora tu descanso nocturno natural con Magnesio y Triptófano."
+        },
+        "woman": {
+          "title": "Bienestar y balance hormonal",
+          "subtitle": "Woman ayuda a regular tu ciclo y aliviar síntomas naturalmente."
+        },
+        "zen": {
+          "title": "Calma mental y foco diario",
+          "subtitle": "Zen alivia el estrés y la tensión para que mantengas la calma en días intensos."
+        }
+      }
     },
     "howItWorks": {
       "badge": "Uso diario",

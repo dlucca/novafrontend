@@ -53,7 +53,33 @@
       "title": "Vitaminas que realmente se absorvem",
       "subtitle": "Adesivos inteligentes de alta absorção transdérmica, sem comprimidos nem rellenos.",
       "cta": "Ver produtos",
-      "ctaSecondary": "Como funciona?"
+      "ctaSecondary": "Como funciona?",
+      "slides": {
+        "glow": {
+          "title": "Pele radiante e colágeno natural",
+          "subtitle": "Glow nutre pele, cabelos e unhas de dentro para fora com biotina e ácido hialurônico."
+        },
+        "shield": {
+          "title": "Imunidade fortalecida todos os dias",
+          "subtitle": "Shield apoia suas defesas com vitamina C, Zinco e D3 em uma única aplicação."
+        },
+        "energy": {
+          "title": "Energia pura e sem picos",
+          "subtitle": "Energy fornece vitalidade celular sustentada com L-Carnitina e Ginseng por 12 horas."
+        },
+        "sleep": {
+          "title": "Durma profundamente, acorde revigorado",
+          "subtitle": "Sleep melhora seu descanso noturno natural com Magnésio e Triptofano."
+        },
+        "woman": {
+          "title": "Bem-estar e equilíbrio hormonal",
+          "subtitle": "Woman ajuda a regular seu ciclo e aliviar sintomas naturalmente."
+        },
+        "zen": {
+          "title": "Calma mental e foco diário",
+          "subtitle": "Zen alivia o estresse e a tensão para você manter a calma em dias intensos."
+        }
+      }
     },
     "howItWorks": {
       "badge": "Simples assim",

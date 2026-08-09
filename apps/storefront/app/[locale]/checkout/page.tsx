@@ -1757,8 +1757,8 @@ export default function CheckoutPage() {
                     <button
                       type="submit"
                       disabled={submitting}
-                      className="mt-6 w-full py-4 rounded-xl text-[16px] font-black text-white transition-all duration-200 active:scale-[0.97] hover:brightness-95 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                      style={{ background: "#E8503A" }}
+                      className="mt-6 w-full py-4 rounded-full text-[16px] font-black text-white transition-all duration-200 active:scale-[0.97] hover:brightness-95 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      style={{ background: "#22c55e" }}
                     >
                       <Lock size={16} />
                       Pagar {fmt(confirmedTotal ?? (finalTotal + displayShippingCost), cartRegion)}

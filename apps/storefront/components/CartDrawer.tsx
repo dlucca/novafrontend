@@ -524,7 +524,7 @@ export default function CartDrawer() {
                     <Link
                       href="/checkout"
                       onClick={closeCart}
-                      className="w-full flex items-center justify-center gap-2 bg-coral hover:bg-coral-dark text-white font-bold text-[15px] py-4 rounded-2xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(232,80,58,0.35)] shadow-[0_4px_12px_rgba(232,80,58,0.2)]"
+                      className="w-full flex items-center justify-center gap-2 bg-[#22c55e] hover:bg-[#16a34a] text-white font-bold text-[15px] py-4 rounded-full transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(34,197,94,0.35)] shadow-[0_4px_12px_rgba(34,197,94,0.2)]"
                     >
                       Ir a pagar
                       <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
