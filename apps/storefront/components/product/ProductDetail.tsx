@@ -540,31 +540,9 @@ export default function ProductDetail({
               </svg>
               30 parches por sobre
             </span>
-
-            {/* Outlined benefit tags */}
-            {meta?.tags.map((tag) => (
-              <span
-                key={tag}
-                className="rounded-full border px-3 py-1 text-xs font-semibold"
-                style={{ borderColor: color, color }}
-              >
-                {tag}
-              </span>
-            ))}
           </div>
 
-          <div className="mt-8">
-            <TierSelector
-              options={product.options}
-              selected={selected}
-              onSelect={setSelected}
-              currency={currency}
-              color={color}
-              bg={bg}
-            />
-          </div>
-
-          {/* Grilla de Trust Badges Premium (Encima del CTA) */}
+          {/* Grilla de Trust Badges Premium */}
           <div className="grid grid-cols-2 gap-3 mt-6 mb-2">
             {[
               {
@@ -619,6 +597,18 @@ export default function ProductDetail({
                 <p className="text-[10px] leading-tight text-[#425066] font-medium">{b.desc}</p>
               </div>
             ))}
+          </div>
+
+          {/* Selector de frecuencia (abajo de la grilla de badges y justo arriba de la CTA de compra) */}
+          <div className="mt-6">
+            <TierSelector
+              options={product.options}
+              selected={selected}
+              onSelect={setSelected}
+              currency={currency}
+              color={color}
+              bg={bg}
+            />
           </div>
 
           <button
