@@ -49,8 +49,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: "event_name and event_id required" }, { status: 400 });
   }
 
+  const cfIp = req.headers.get("cf-connecting-ip");
   const fwd = req.headers.get("x-forwarded-for") ?? "";
-  const ip = fwd.split(",")[0].trim() || req.headers.get("x-real-ip") || undefined;
+  const firstFwd = fwd.split(",")[0].trim();
+  const realIp = req.headers.get("x-real-ip");
+  const ip = (req as any).ip || cfIp || firstFwd || realIp || undefined;
   const ua = req.headers.get("user-agent") ?? undefined;
 
   const u = body.user_data ?? {};
@@ -69,6 +72,34 @@ export async function POST(req: NextRequest) {
   if (ip) user_data.client_ip_address = ip;
   if (ua) user_data.client_user_agent = ua;
 
+  // ── Normalización de Divisa y Valor para CAPI Server ──
+  const custom_data = (body.custom_data ?? {}) as Record<string, any>;
+  let resolvedCurrency = custom_data.currency;
+  if (!resolvedCurrency && body.event_source_url) {
+    const urlLower = body.event_source_url.toLowerCase();
+    if (urlLower.includes("/br")) resolvedCurrency = "BRL";
+    else if (urlLower.includes("/ar")) resolvedCurrency = "ARS";
+    else if (urlLower.includes("/cl")) resolvedCurrency = "CLP";
+    else if (urlLower.includes("/co")) resolvedCurrency = "COP";
+  }
+  resolvedCurrency = (resolvedCurrency ?? "MXN").toUpperCase();
+
+  const isCommerceEvent =
+    body.event_name === "AddToCart" ||
+    body.event_name === "Purchase" ||
+    body.event_name === "InitiateCheckout" ||
+    body.event_name === "AddPaymentInfo" ||
+    body.event_name === "Subscribe";
+
+  if (custom_data.value !== undefined || isCommerceEvent) {
+    custom_data.currency = resolvedCurrency;
+
+    if (custom_data.value !== undefined) {
+      const parsedVal = Number(custom_data.value);
+      custom_data.value = !isNaN(parsedVal) ? parsedVal : 0;
+    }
+  }
+
   const payload = {
     data: [
       {
@@ -78,7 +109,7 @@ export async function POST(req: NextRequest) {
         action_source: "website" as const,
         event_source_url: body.event_source_url,
         user_data,
-        custom_data: body.custom_data ?? {},
+        custom_data,
       },
     ],
     ...(TEST_CODE ? { test_event_code: TEST_CODE } : {}),

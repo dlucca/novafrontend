@@ -68,6 +68,34 @@ export function trackMeta(
 
   const event_id = eventIdOverride ?? makeEventId();
 
+  // ── Normalización de Divisa y Valor para Meta ──
+  let resolvedCurrency = customData.currency;
+  if (!resolvedCurrency) {
+    const path = window.location.pathname.toLowerCase();
+    if (path.includes("/br")) resolvedCurrency = "BRL";
+    else if (path.includes("/ar")) resolvedCurrency = "ARS";
+    else if (path.includes("/cl")) resolvedCurrency = "CLP";
+    else if (path.includes("/co")) resolvedCurrency = "COP";
+  }
+  resolvedCurrency = (resolvedCurrency ?? "MXN").toUpperCase();
+
+  const isCommerceEvent =
+    event === "AddToCart" ||
+    event === "Purchase" ||
+    event === "InitiateCheckout" ||
+    event === "AddPaymentInfo" ||
+    event === "Subscribe";
+
+  if (customData.value !== undefined || isCommerceEvent) {
+    customData.currency = resolvedCurrency;
+
+    if (customData.value !== undefined) {
+      const parsedVal = Number(customData.value);
+      customData.value = !isNaN(parsedVal) ? parsedVal : 0;
+    }
+  }
+  // ──────────────────────────────────────────────
+
   // 1) Browser Pixel
   try {
     if (identity && Object.keys(identity).length > 0) {
