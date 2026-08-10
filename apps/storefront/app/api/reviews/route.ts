@@ -517,17 +517,59 @@ function getAdminStatus(userEmail: string | undefined): boolean {
   );
 }
 
+const MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || "http://localhost:9000";
+
+function mapMedusaReviewToFrontend(r: any): Review {
+  return {
+    id: r.id,
+    slug: r.product_slug,
+    rating: Number(r.rating),
+    title: r.title,
+    user: r.user_name,
+    email: r.user_email,
+    verified: true,
+    text: r.comment || "",
+    date: r.created_at || new Date().toISOString(),
+    reply: r.reply
+      ? {
+          text: r.reply,
+          date: r.reply_created_at || new Date().toISOString(),
+        }
+      : null,
+  };
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const slug = searchParams.get("slug");
-  const reviews = getReviews();
 
-  if (slug) {
-    const filtered = reviews.filter((r) => r.slug === slug);
-    return NextResponse.json(filtered);
+  try {
+    const url = new URL(`${MEDUSA_BACKEND_URL}/store/custom/reviews`);
+    if (slug) {
+      url.searchParams.set("slug", slug);
+    }
+
+    const res = await fetch(url.toString(), {
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      throw new Error(`Medusa responded with ${res.status}`);
+    }
+
+    const data = await res.json();
+    const reviews = data.map(mapMedusaReviewToFrontend);
+    return NextResponse.json(reviews);
+  } catch (e) {
+    console.error("Failed to fetch reviews from Medusa:", e);
+    // Fallback to local default reviews in case the backend is down/not deployed yet
+    const reviews = getReviews();
+    if (slug) {
+      const filtered = reviews.filter((r) => r.slug === slug);
+      return NextResponse.json(filtered);
+    }
+    return NextResponse.json(reviews);
   }
-
-  return NextResponse.json(reviews);
 }
 
 export async function POST(request: Request) {
@@ -547,24 +589,30 @@ export async function POST(request: Request) {
     const email = clerkUser.emailAddresses[0]?.emailAddress ?? "";
     const user = `${clerkUser.firstName ?? ""} ${clerkUser.lastName ?? ""}`.trim() || "Cliente verificado";
 
-    const reviews = getReviews();
-    const newReview: Review = {
-      id: Math.random().toString(36).substring(2, 9),
-      slug,
-      rating: Number(rating),
-      title,
-      user,
-      email,
-      verified: true,
-      text,
-      date: new Date().toISOString()
-    };
+    const res = await fetch(`${MEDUSA_BACKEND_URL}/store/custom/reviews`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        product_slug: slug,
+        user_name: user,
+        user_email: email,
+        clerk_user_id: clerkUser.id,
+        rating: Number(rating),
+        title,
+        comment: text,
+      }),
+    });
 
-    reviews.unshift(newReview);
-    saveReviews(reviews);
+    if (!res.ok) {
+      throw new Error(`Medusa returned ${res.status}`);
+    }
 
-    return NextResponse.json(newReview);
+    const data = await res.json();
+    return NextResponse.json(mapMedusaReviewToFrontend(data));
   } catch (e) {
+    console.error("Failed to save review to Medusa:", e);
     return NextResponse.json({ error: "Error interno al guardar la opinión" }, { status: 500 });
   }
 }
@@ -584,25 +632,30 @@ export async function PUT(request: Request) {
     const body = await request.json();
     const { action, reviewId, text } = body;
 
-    const reviews = getReviews();
-    const reviewIdx = reviews.findIndex((r) => r.id === reviewId);
-
-    if (reviewIdx === -1) {
-      return NextResponse.json({ error: "Opinión no encontrada" }, { status: 404 });
+    if (action !== "reply" || !reviewId || !text) {
+      return NextResponse.json({ error: "Acción o campos inválidos" }, { status: 400 });
     }
 
-    if (action === "reply") {
-      reviews[reviewIdx].reply = {
-        text,
-        date: new Date().toISOString()
-      };
-      saveReviews(reviews);
-      return NextResponse.json(reviews[reviewIdx]);
+    const res = await fetch(`${MEDUSA_BACKEND_URL}/store/custom/reviews`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: reviewId,
+        reply: text,
+      }),
+    });
+
+    if (!res.ok) {
+      throw new Error(`Medusa returned ${res.status}`);
     }
 
-    return NextResponse.json({ error: "Acción inválida" }, { status: 400 });
+    const data = await res.json();
+    return NextResponse.json(mapMedusaReviewToFrontend(data));
   } catch (e) {
-    return NextResponse.json({ error: "Error procesando la solicitud" }, { status: 500 });
+    console.error("Failed to reply to review in Medusa:", e);
+    return NextResponse.json({ error: "Error procesando la respuesta" }, { status: 500 });
   }
 }
 
@@ -624,13 +677,18 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: "Falta ID de opinión" }, { status: 400 });
   }
 
-  const reviews = getReviews();
-  const filtered = reviews.filter((r) => r.id !== id);
+  try {
+    const res = await fetch(`${MEDUSA_BACKEND_URL}/store/custom/reviews?id=${id}`, {
+      method: "DELETE",
+    });
 
-  if (reviews.length === filtered.length) {
-    return NextResponse.json({ error: "Opinión no encontrada" }, { status: 404 });
+    if (!res.ok) {
+      throw new Error(`Medusa returned ${res.status}`);
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (e) {
+    console.error("Failed to delete review in Medusa:", e);
+    return NextResponse.json({ error: "Error eliminando la opinión" }, { status: 500 });
   }
-
-  saveReviews(filtered);
-  return NextResponse.json({ success: true });
 }
