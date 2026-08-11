@@ -101,11 +101,16 @@ export async function loadMercadoPago(country = "mx"): Promise<MPInstance> {
   if (mpInstance) return mpInstance;
   await loadScript();
 
-  const cc = country.toUpperCase();
-  const publicKey =
-    process.env[`NEXT_PUBLIC_MP_PUBLIC_KEY_${cc}`] ?? process.env.NEXT_PUBLIC_MP_PUBLIC_KEY;
+  // Next.js only inlines statically-referenced NEXT_PUBLIC_* vars; a computed
+  // key resolves to undefined in the browser, so reference each one statically.
+  const keyByCountry: Record<string, string | undefined> = {
+    mx: process.env.NEXT_PUBLIC_MP_PUBLIC_KEY_MX,
+    ar: process.env.NEXT_PUBLIC_MP_PUBLIC_KEY_AR,
+  };
+  const cc = country.toLowerCase();
+  const publicKey = keyByCountry[cc] ?? process.env.NEXT_PUBLIC_MP_PUBLIC_KEY;
   if (!publicKey) {
-    throw new Error(`[MercadoPago] Falta NEXT_PUBLIC_MP_PUBLIC_KEY_${cc} en .env.local`);
+    throw new Error(`[MercadoPago] Falta NEXT_PUBLIC_MP_PUBLIC_KEY_${cc.toUpperCase()} en .env.local`);
   }
   if (!window.MercadoPago) {
     throw new Error("[MercadoPago] window.MercadoPago no disponible tras cargar el script");
