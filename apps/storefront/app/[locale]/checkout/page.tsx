@@ -854,6 +854,29 @@ export default function CheckoutPage() {
           completePayload as import("@/lib/medusa").CompleteCartPayload
         );
 
+        // ── OXXO / SPEI: pago pendiente, se genera un voucher ────────────────
+        // El cobro no se captura al instante: MP devuelve `pending` con el
+        // voucher (ficha OXXO / CLABE SPEI) y el cart queda abierto hasta que
+        // el webhook lo complete al pagar. NO disparamos Purchase acá (el pago
+        // aún no ocurrió); /gracias muestra el voucher vía Status Screen Brick.
+        if (result.type === "voucher") {
+          setPaymentStep(5);
+          sessionStorage.setItem("novapatch_mp_payment_id", result.payment_id);
+          sessionStorage.setItem("novapatch_mp_voucher", "1");
+          if (result.voucher_url) {
+            sessionStorage.setItem("novapatch_mp_voucher_url", result.voucher_url);
+          }
+          posthog.capture("order_voucher_pending", {
+            payment_method: result.payment_method_id,
+            cart_total: chargedTotal,
+          });
+          clearCart();
+          orderCompleted.current = true;
+          await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+          router.replace(`/${localeParam || "mx"}/checkout/gracias`);
+          return;
+        }
+
         // ── 3DS: el banco exige autenticación adicional ──────────────────────
         if (result.type === "redirect") {
           // Mostrar paso 5 para evitar el flash de vuelta al formulario mientras el
@@ -1017,6 +1040,11 @@ export default function CheckoutPage() {
     setErrors({});
     setSubmitError(null);
     setSubmitting(true);
+    // Clear any voucher keys left by a prior abandoned OXXO/SPEI attempt so a
+    // fresh submit (card or voucher) never resurfaces a stale voucher on /gracias.
+    sessionStorage.removeItem("novapatch_mp_payment_id");
+    sessionStorage.removeItem("novapatch_mp_voucher");
+    sessionStorage.removeItem("novapatch_mp_voucher_url");
     try {
       await finalizeOrder({ payment: formData, email: contact.email });
     } finally {

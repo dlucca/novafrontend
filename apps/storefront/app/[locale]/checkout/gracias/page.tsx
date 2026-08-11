@@ -24,6 +24,7 @@ export default function GraciasPage() {
     province?: string | null;
   } | null>(null);
   const [mpPaymentId, setMpPaymentId] = useState<string | null>(null);
+  const [isVoucher, setIsVoucher] = useState(false);
 
   useEffect(() => {
     // flushStashedPurchase is idempotent (clears its own stash), so a refresh
@@ -32,11 +33,15 @@ export default function GraciasPage() {
     flushedRef.current = true;
     const data = flushStashedPurchase();
     if (data?.address) setAddress(data.address);
-    // Present only when a prior step stashed an MP payment id under this
-    // key. None currently does (see checkout/page.tsx — the complete result
-    // doesn't expose it client-side), so this is enhancement-only scaffolding:
-    // absent today, this page falls back to the confirmation copy below.
+    // Set by the OXXO/SPEI voucher branch in checkout (an MP payment id +
+    // voucher flag). Card checkouts don't stash these, so they fall back to the
+    // captured-order copy below. Read then clear so a later card order on the
+    // same tab doesn't resurface a stale voucher.
     setMpPaymentId(sessionStorage.getItem("novapatch_mp_payment_id"));
+    setIsVoucher(sessionStorage.getItem("novapatch_mp_voucher") === "1");
+    sessionStorage.removeItem("novapatch_mp_payment_id");
+    sessionStorage.removeItem("novapatch_mp_voucher");
+    sessionStorage.removeItem("novapatch_mp_voucher_url");
   }, []);
 
   const eta = resolveShippingEta({
@@ -64,13 +69,22 @@ export default function GraciasPage() {
         transition={{ delay: 0.2 }}
       >
         <h1 className="text-[32px] font-black text-[#005088] tracking-[-0.03em] mb-3">
-          ¡Pedido realizado!
+          {isVoucher ? "¡Pedido reservado!" : "¡Pedido realizado!"}
         </h1>
         <p className="text-[16px] text-[#6B7280] leading-[1.6] max-w-[360px] mb-8">
-          Recibirás un correo de confirmación con los detalles de tu envío.
-          Tu parche está en camino.
+          {isVoucher ? (
+            <>
+              Sigue las instrucciones de arriba para completar tu pago. En cuanto
+              lo recibamos, te enviaremos la confirmación y prepararemos tu envío.
+            </>
+          ) : (
+            <>
+              Recibirás un correo de confirmación con los detalles de tu envío.
+              Tu parche está en camino.
+            </>
+          )}
         </p>
-        {eta && (
+        {!isVoucher && eta && (
           <p className="mt-4 text-[14px] text-[#425066]">
             Envío estimado: <span className="font-bold text-[#0D1B35]">{eta}</span>.
             <br />

@@ -80,7 +80,9 @@ export type MedusaCart = {
 
 export type CompleteCartPayload =
   | { openpay_token_id: string; email?: string; device_session_id?: string }
-  | { mp_card_token: string; email?: string };
+  | { mp_card_token: string; email?: string }
+  // MercadoPago Payment Brick formData (card or offline OXXO/SPEI).
+  | { payment: Record<string, unknown>; email?: string };
 
 export type MedusaShippingOption = {
   id: string;
@@ -111,7 +113,16 @@ export type MedusaOrder = {
 
 export type CompleteCartResult =
   | { type: "order"; data: MedusaOrder }
-  | { type: "redirect"; redirect_url: string };
+  | { type: "redirect"; redirect_url: string }
+  // OXXO/SPEI: payment is pending; the cart stays open until the MP webhook
+  // completes it. `payment_id` drives the Status Screen voucher on /gracias.
+  | {
+      type: "voucher";
+      payment_id: string;
+      payment_method_id?: string;
+      voucher_url?: string;
+      status_detail?: string;
+    };
 
 export type MedusaSubscription = {
   id: string;

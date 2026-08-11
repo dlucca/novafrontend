@@ -26,7 +26,12 @@ export default function PaymentBrick({
     <Payment
       initialization={{ amount, payer: { email: payerEmail } }}
       customization={{
-        paymentMethods: { creditCard: "all", debitCard: "all" },
+        paymentMethods: {
+          creditCard: "all",
+          debitCard: "all",
+          ticket: "all", // OXXO (efectivo)
+          bankTransfer: "all", // SPEI (transferencia)
+        },
         visual: {
           style: { theme: "default", customVariables: { baseColor: "#005088" } },
         },
