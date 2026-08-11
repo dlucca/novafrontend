@@ -2,10 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
 import { flushStashedPurchase } from "@/lib/meta";
 import { resolveShippingEta } from "@/lib/shipping-eta";
+import PaymentStatusBrick from "@/components/checkout/PaymentStatusBrick";
 
 // Unified order-confirmation ("gracias por tu compra") page. Both the direct
 // charge flow and the 3DS return flow redirect here after a confirmed order.
@@ -15,10 +17,13 @@ import { resolveShippingEta } from "@/lib/shipping-eta";
 // is read from the durable sessionStorage stash written before completion.
 export default function GraciasPage() {
   const flushedRef = useRef(false);
+  const params = useParams();
+  const locale = typeof params?.locale === "string" ? params.locale : "mx";
   const [address, setAddress] = useState<{
     country_code?: string | null;
     province?: string | null;
   } | null>(null);
+  const [mpPaymentId, setMpPaymentId] = useState<string | null>(null);
 
   useEffect(() => {
     // flushStashedPurchase is idempotent (clears its own stash), so a refresh
@@ -27,6 +32,11 @@ export default function GraciasPage() {
     flushedRef.current = true;
     const data = flushStashedPurchase();
     if (data?.address) setAddress(data.address);
+    // Present only when a prior step stashed an MP payment id under this
+    // key. None currently does (see checkout/page.tsx — the complete result
+    // doesn't expose it client-side), so this is enhancement-only scaffolding:
+    // absent today, this page falls back to the confirmation copy below.
+    setMpPaymentId(sessionStorage.getItem("novapatch_mp_payment_id"));
   }, []);
 
   const eta = resolveShippingEta({
@@ -36,6 +46,11 @@ export default function GraciasPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#FAF7F2] px-6 text-center">
+      {mpPaymentId && (
+        <div className="max-w-md mx-auto mb-8 w-full">
+          <PaymentStatusBrick paymentId={mpPaymentId} country={locale === "ar" ? "ar" : "mx"} />
+        </div>
+      )}
       <motion.div
         initial={{ scale: 0.7, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
