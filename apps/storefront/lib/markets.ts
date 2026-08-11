@@ -5,7 +5,7 @@ export const MARKETS = {
   mx: {
     locale: 'es-MX',
     currency: 'MXN',
-    paymentProvider: 'openpay' as const,
+    paymentProvider: 'mercadopago' as const,
     clerkLocaleKey: 'esMX' as const,
     supportEmail: 'soporte@novapatch.mx',
     medusaRegionId: process.env.NEXT_PUBLIC_MEDUSA_REGION_MX || 'reg_01KNAF0276KEPK8HRMACPEQ80Y',

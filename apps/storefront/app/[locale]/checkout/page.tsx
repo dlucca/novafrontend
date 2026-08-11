@@ -699,11 +699,13 @@ export default function CheckoutPage() {
 
       let completePayload: import("@/lib/medusa").CompleteCartPayload;
 
-      if (cartRegion === "ars") {
-        // ── MercadoPago (AR) ──────────────────────────────────────────────
+      if (market.paymentProvider === "mercadopago") {
+        // ── MercadoPago (LATAM) ───────────────────────────────────────────
+        const mpCountry = cartRegion === "ars" ? "ar" : "mx";
         try {
           const mp_card_token = await tokenizeCardMP(
-            parseCardFormMP(card.number, card.name, card.expiry, card.cvv, card.dni)
+            parseCardFormMP(card.number, card.name, card.expiry, card.cvv, card.dni),
+            mpCountry
           );
           completePayload = { mp_card_token, email: contact.email };
         } catch (err) {

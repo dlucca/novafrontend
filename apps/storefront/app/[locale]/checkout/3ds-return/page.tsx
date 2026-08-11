@@ -21,8 +21,9 @@ export default function ThreeDSReturnPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    // Openpay redirige con ?id=<charge_id>
-    const transactionId = searchParams.get("id") ?? searchParams.get("Id");
+    // MP redirige con ?payment_id=<id> (algunos flujos usan ?id=)
+    const transactionId =
+      searchParams.get("payment_id") ?? searchParams.get("id") ?? searchParams.get("Id");
 
     // El cart_id se guarda en sessionStorage antes del redirect 3DS
     const cartId =

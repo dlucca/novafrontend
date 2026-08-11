@@ -543,14 +543,11 @@ const checkout = {
    */
   async complete3DS(
     cart_id: string,
-    openpay_transaction_id: string
+    mp_payment_id: string
   ): Promise<Record<string, unknown>> {
     return medusaFetch<Record<string, unknown>>(
       `/store/carts/${cart_id}/complete-3ds`,
-      {
-        method: "POST",
-        body: JSON.stringify({ openpay_transaction_id }),
-      },
+      { method: "POST", body: JSON.stringify({ mp_payment_id }) },
       null,
       COMPLETE_TIMEOUT_MS
     );
