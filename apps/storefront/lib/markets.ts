@@ -5,7 +5,10 @@ export const MARKETS = {
   mx: {
     locale: 'es-MX',
     currency: 'MXN',
-    paymentProvider: 'mercadopago' as const,
+    // Widened (not `as const`) so `=== 'openpay'` comparisons still typecheck
+    // while every market runs on MercadoPago. Openpay frontend code is removed
+    // wholesale in the cleanup plan; until then this keeps `next build` green.
+    paymentProvider: 'mercadopago' as 'openpay' | 'mercadopago',
     clerkLocaleKey: 'esMX' as const,
     supportEmail: 'soporte@novapatch.mx',
     medusaRegionId: process.env.NEXT_PUBLIC_MEDUSA_REGION_MX || 'reg_01KNAF0276KEPK8HRMACPEQ80Y',
@@ -16,7 +19,10 @@ export const MARKETS = {
   br: {
     locale: 'pt-BR',
     currency: 'BRL',
-    paymentProvider: 'mercadopago' as const,
+    // Widened (not `as const`) so `=== 'openpay'` comparisons still typecheck
+    // while every market runs on MercadoPago. Openpay frontend code is removed
+    // wholesale in the cleanup plan; until then this keeps `next build` green.
+    paymentProvider: 'mercadopago' as 'openpay' | 'mercadopago',
     clerkLocaleKey: 'ptBR' as const,
     supportEmail: 'suporte@novapatch.com.br',
     medusaRegionId: process.env.NEXT_PUBLIC_MEDUSA_REGION_BR ?? '',
@@ -27,7 +33,10 @@ export const MARKETS = {
   ar: {
     locale: 'es-AR',
     currency: 'ARS',
-    paymentProvider: 'mercadopago' as const,
+    // Widened (not `as const`) so `=== 'openpay'` comparisons still typecheck
+    // while every market runs on MercadoPago. Openpay frontend code is removed
+    // wholesale in the cleanup plan; until then this keeps `next build` green.
+    paymentProvider: 'mercadopago' as 'openpay' | 'mercadopago',
     clerkLocaleKey: 'esES' as const,
     supportEmail: 'soporte@novapatch.com.ar',
     medusaRegionId: process.env.NEXT_PUBLIC_MEDUSA_REGION_AR || 'reg_01KP4XCXCFX44HTA01WVC885V2',
@@ -38,7 +47,10 @@ export const MARKETS = {
   cl: {
     locale: 'es-CL',
     currency: 'CLP',
-    paymentProvider: 'mercadopago' as const,
+    // Widened (not `as const`) so `=== 'openpay'` comparisons still typecheck
+    // while every market runs on MercadoPago. Openpay frontend code is removed
+    // wholesale in the cleanup plan; until then this keeps `next build` green.
+    paymentProvider: 'mercadopago' as 'openpay' | 'mercadopago',
     clerkLocaleKey: 'esES' as const,
     supportEmail: 'soporte@novapatch.cl',
     medusaRegionId: process.env.NEXT_PUBLIC_MEDUSA_REGION_CL ?? '',
@@ -49,7 +61,10 @@ export const MARKETS = {
   co: {
     locale: 'es-CO',
     currency: 'COP',
-    paymentProvider: 'mercadopago' as const,
+    // Widened (not `as const`) so `=== 'openpay'` comparisons still typecheck
+    // while every market runs on MercadoPago. Openpay frontend code is removed
+    // wholesale in the cleanup plan; until then this keeps `next build` green.
+    paymentProvider: 'mercadopago' as 'openpay' | 'mercadopago',
     clerkLocaleKey: 'esES' as const,
     supportEmail: 'soporte@novapatch.co',
     medusaRegionId: process.env.NEXT_PUBLIC_MEDUSA_REGION_CO ?? '',
