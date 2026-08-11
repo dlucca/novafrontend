@@ -13,8 +13,7 @@ import { medusa } from "@/lib/medusa";
 import { formatPrice } from "@/lib/format";
 import { MARKETS } from "@/lib/markets";
 import type { Locale } from "@/i18n/routing";
-import { tokenizeCard, parseCardForm, getDeviceSessionId } from "@/lib/openpay";
-import { tokenizeCardMP, parseCardFormMP } from "@/lib/mercadopago";
+import PaymentBrick from "@/components/checkout/PaymentBrick";
 import { useCopomex } from "@/hooks/useCopomex";
 import { useGooglePlaces } from "@/hooks/useGooglePlaces";
 import { FREE_SHIPPING } from "@/lib/free-shipping";
@@ -313,13 +312,6 @@ export default function CheckoutPage() {
     interior: "",
     instructions: "",
   });
-  const [card, setCard] = useState({
-    number: "",
-    name: "",
-    expiry: "",
-    cvv: "",
-    dni: "",
-  });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
 
@@ -590,7 +582,7 @@ export default function CheckoutPage() {
           // coupons are handled separately after shipping is applied.
           couponAppliedInPreload.current = allApplied;
         }
-      } catch { /* se creará en handleSubmit como fallback */ }
+      } catch { /* se creará en finalizeOrder como fallback */ }
 
       console.timeEnd("[Checkout] preload");
     };
@@ -633,29 +625,14 @@ export default function CheckoutPage() {
       if (!address.zip.trim() || !/^\d{5}$/.test(address.zip)) e.zip = "5 dígitos";
     }
 
-    if (!card.number.replace(/\s/g, "") || card.number.replace(/\s/g, "").length < 15)
-      e.cardNumber = "Número inválido";
-    if (!card.name.trim()) e.cardName = "Requerido";
-    if (!card.expiry.trim() || !/^\d{2}\/\d{2}$/.test(card.expiry))
-      e.expiry = "MM/AA";
-    if (!card.cvv.trim() || card.cvv.length < 3) e.cvv = "Requerido";
-    if (cartRegion === "ars") {
-      const digits = card.dni.replace(/\D/g, "");
-      if (!digits || digits.length < 7 || digits.length > 8) e.dni = "DNI inválido";
-    }
     return e;
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const errs = validate();
-    if (Object.keys(errs).length) {
-      setErrors(errs);
-      return;
-    }
-    setErrors({});
-    setSubmitError(null);
-    setSubmitting(true);
+  async function finalizeOrder(
+    completePayload:
+      | import("@/lib/medusa").CompleteCartPayload
+      | { payment: unknown; email?: string }
+  ) {
     // Will be set to Medusa's authoritative cart total once shipping is applied
     let chargedTotal = finalTotal + shippingCost;
 
@@ -693,53 +670,6 @@ export default function CheckoutPage() {
 
     try {
       console.time("[Checkout] total");
-
-      // ── Paso 1: Verificando tarjeta ──────────────────────────────────────
-      setPaymentStep(1);
-
-      let completePayload: import("@/lib/medusa").CompleteCartPayload;
-
-      if (market.paymentProvider === "mercadopago") {
-        // ── MercadoPago (LATAM) ───────────────────────────────────────────
-        const mpCountry = cartRegion === "ars" ? "ar" : "mx";
-        try {
-          const mp_card_token = await tokenizeCardMP(
-            parseCardFormMP(card.number, card.name, card.expiry, card.cvv, card.dni),
-            mpCountry
-          );
-          completePayload = { mp_card_token, email: contact.email };
-        } catch (err) {
-          const msg = err instanceof Error ? err.message : "Error en tarjeta";
-          if (process.env.NODE_ENV === "development") {
-            console.warn("[Checkout] MP en modo dev, usando token mock");
-            completePayload = { mp_card_token: "tok_mp_dev_mock", email: contact.email };
-          } else {
-            setSubmitError(msg);
-            setSubmitting(false);
-            return;
-          }
-        }
-      } else {
-        // ── Openpay (MX) ──────────────────────────────────────────────────
-        const device_session_id = getDeviceSessionId("checkout-form") ?? "dev_session";
-        let openpay_token_id: string;
-        try {
-          openpay_token_id = await tokenizeCard(
-            parseCardForm(card.number, card.name, card.expiry, card.cvv)
-          );
-        } catch (err) {
-          const msg = err instanceof Error ? err.message : "Error en tarjeta";
-          if (process.env.NODE_ENV === "development") {
-            console.warn("[Checkout] Openpay en modo dev, usando token mock");
-            openpay_token_id = "tok_dev_mock";
-          } else {
-            setSubmitError(msg);
-            setSubmitting(false);
-            return;
-          }
-        }
-        completePayload = { openpay_token_id, email: contact.email, device_session_id };
-      }
 
       // ── Paso 2: Usar carrito pre-cargado o crear uno nuevo (fallback) ─────
       let cart_id: string | null = null;
@@ -919,7 +849,10 @@ export default function CheckoutPage() {
 
         // ── Paso 4: Procesando cobro ────────────────────────────────────────
         setPaymentStep(4);
-        const result = await medusa.checkout.completeCart(cart_id, completePayload);
+        const result = await medusa.checkout.completeCart(
+          cart_id,
+          completePayload as import("@/lib/medusa").CompleteCartPayload
+        );
 
         // ── 3DS: el banco exige autenticación adicional ──────────────────────
         if (result.type === "redirect") {
@@ -1069,21 +1002,26 @@ export default function CheckoutPage() {
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Error inesperado";
       setSubmitError(msg);
-    } finally {
-      setSubmitting(false);
     }
   }
 
-  // ── card number formatting ───────────────────────────────────
-  function formatCardNumber(v: string) {
-    const digits = v.replace(/\D/g, "").slice(0, 16);
-    return digits.replace(/(.{4})/g, "$1 ").trim();
-  }
-
-  function formatExpiry(v: string) {
-    const digits = v.replace(/\D/g, "").slice(0, 4);
-    if (digits.length >= 3) return digits.slice(0, 2) + "/" + digits.slice(2);
-    return digits;
+  // Driven by the MercadoPago Payment Brick: validate contact/address (the Brick
+  // validates the card instrument itself), then complete the order with the
+  // Brick's tokenized form data.
+  async function handleBrickSubmit(formData: unknown) {
+    const errs = validate();
+    if (Object.keys(errs).length) {
+      setErrors(errs);
+      throw new Error("Revisá los datos de envío");
+    }
+    setErrors({});
+    setSubmitError(null);
+    setSubmitting(true);
+    try {
+      await finalizeOrder({ payment: formData, email: contact.email });
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -1167,7 +1105,7 @@ export default function CheckoutPage() {
             )}
 
             {/* FORM — visible always for contact/address, gated for payment */}
-            <form id="checkout-form" onSubmit={handleSubmit} className="space-y-6">
+            <form id="checkout-form" onSubmit={(e) => e.preventDefault()} className="space-y-6">
 
               {/* ── 1. Contacto ── */}
               <motion.div
@@ -1612,93 +1550,17 @@ export default function CheckoutPage() {
                     title="Datos de pago"
                   />
 
-                  {/* card brand logos */}
-                  <div className="flex items-center gap-2 mb-5">
-                    {["VISA", "MC", "AMEX"].map((b) => (
-                      <span
-                        key={b}
-                        className="px-2.5 py-1 rounded-md border border-[#E5E7EB] text-[10px] font-black text-[#6B7280] bg-[#F9FAFB]"
-                      >
-                        {b}
-                      </span>
-                    ))}
-                    <span className="text-[11px] text-[#9CA3AF] ml-1">
-                      {cartRegion === "ars" ? "Vía MercadoPago" : "Vía Openpay"}
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="sm:col-span-2">
-                      <Field
-                        id="cardNumber"
-                        label="Número de tarjeta"
-                        placeholder="1234 5678 9012 3456"
-                        value={card.number}
-                        onChange={(v) => { setCard((c) => ({ ...c, number: formatCardNumber(v) })); clearErr("cardNumber"); }}
-                        required
-                        error={errors.cardNumber}
-                        autoComplete="cc-number"
-                      />
-                    </div>
-                    <div className="sm:col-span-2">
-                      <Field
-                        id="cardName"
-                        label="Nombre en la tarjeta"
-                        placeholder="MARIA GARCIA"
-                        value={card.name}
-                        onChange={(v) => { setCard((c) => ({ ...c, name: v.toUpperCase() })); clearErr("cardName"); }}
-                        required
-                        error={errors.cardName}
-                        autoComplete="cc-name"
-                      />
-                    </div>
-                    <Field
-                      id="expiry"
-                      label="Vencimiento"
-                      placeholder="MM/AA"
-                      value={card.expiry}
-                      onChange={(v) => { setCard((c) => ({ ...c, expiry: formatExpiry(v) })); clearErr("expiry"); }}
-                      required
-                      error={errors.expiry}
-                      autoComplete="cc-exp"
+                  {finalTotal > 0 && contact.email ? (
+                    <PaymentBrick
+                      amount={confirmedTotal ?? finalTotal}
+                      payerEmail={contact.email}
+                      country={cartRegion === "ars" ? "ar" : "mx"}
+                      onSubmitPayment={handleBrickSubmit}
+                      onError={(e) => setSubmitError(e instanceof Error ? e.message : "Error en el formulario de pago")}
                     />
-                    <Field
-                      id="cvv"
-                      label="CVV"
-                      placeholder="123"
-                      value={card.cvv}
-                      onChange={(v) => { setCard((c) => ({ ...c, cvv: v.replace(/\D/g, "").slice(0, 4) })); clearErr("cvv"); }}
-                      required
-                      error={errors.cvv}
-                      autoComplete="cc-csc"
-                    />
-                    {cartRegion === "ars" && (
-                      <div className="sm:col-span-2">
-                        <Field
-                          id="dni"
-                          label="DNI del titular"
-                          placeholder="12345678"
-                          value={card.dni}
-                          onChange={(v) => { setCard((c) => ({ ...c, dni: v.replace(/\D/g, "").slice(0, 8) })); clearErr("dni"); }}
-                          required
-                          error={errors.dni}
-                          autoComplete="off"
-                        />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Payment provider security badge */}
-                  <div className="mt-5 flex items-center gap-2 p-3 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB]">
-                    <ShieldCheck size={16} className="text-[#3CBFAB] flex-shrink-0" />
-                    <p className="text-[11px] text-[#6B7280] leading-[1.5]">
-                      Tus datos están protegidos con encriptación SSL de 256 bits.
-                      El procesamiento es a través de{" "}
-                      <span className="font-bold text-[#005088]">
-                        {cartRegion === "ars" ? "MercadoPago" : "Openpay"}
-                      </span>.
-                    </p>
-                  </div>
+                  ) : (
+                    <p className="text-[13px] text-[#6B7280]">Completá tu correo y dirección para ver las opciones de pago.</p>
+                  )}
 
                   {/* Submit error */}
                   <AnimatePresence>
@@ -1715,8 +1577,8 @@ export default function CheckoutPage() {
                     )}
                   </AnimatePresence>
 
-                  {/* Submit + Progress Stepper */}
-                  {submitting && paymentStep > 0 ? (
+                  {/* Progress Stepper (submission is driven by the Brick's own button) */}
+                  {submitting && paymentStep > 0 && (
                     <div className="mt-6 space-y-3">
                       {[
                         { step: 1, label: "Verificando tarjeta" },
@@ -1755,16 +1617,6 @@ export default function CheckoutPage() {
                         No cierres esta página...
                       </p>
                     </div>
-                  ) : (
-                    <button
-                      type="submit"
-                      disabled={submitting}
-                      className="mt-6 w-full py-4 rounded-xl text-[16px] font-black text-white transition-all duration-200 active:scale-[0.97] hover:brightness-95 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                      style={{ background: "#E8503A" }}
-                    >
-                      <Lock size={16} />
-                      Pagar {fmt(confirmedTotal ?? (finalTotal + displayShippingCost), cartRegion)}
-                    </button>
                   )}
                 </motion.div>
               )}
