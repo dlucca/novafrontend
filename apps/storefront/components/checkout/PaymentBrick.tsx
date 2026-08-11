@@ -1,7 +1,7 @@
 // apps/storefront/components/checkout/PaymentBrick.tsx
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { initMercadoPago, Payment } from "@mercadopago/sdk-react";
 import { mpPublicKeyFor, mpLocaleFor } from "@/lib/mp-brick-init";
 
@@ -18,11 +18,9 @@ export default function PaymentBrick({
   onSubmitPayment: (formData: unknown) => Promise<void>;
   onError?: (e: unknown) => void;
 }) {
-  const inited = useRef(false);
-  if (!inited.current) {
+  useEffect(() => {
     initMercadoPago(mpPublicKeyFor(country), { locale: mpLocaleFor(country) });
-    inited.current = true;
-  }
+  }, [country]);
 
   return (
     <Payment
