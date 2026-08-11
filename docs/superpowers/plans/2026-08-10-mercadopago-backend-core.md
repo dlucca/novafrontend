@@ -515,8 +515,7 @@ Inmediatamente después del `charge`, antes de listar tarjetas, insertar:
   })
 
   if (outcome.kind === "challenge") {
-    logger.info(`[CompleteCart/MP] 3DS challenge payment_id=${payment.id}`)
-    sessionStorageHint(logger, cartId, payment.id)
+    logger.info(`[CompleteCart/MP] 3DS challenge — awaiting return for cart=${cartId} payment=${payment.id}`)
     res.json({ type: "redirect", redirect_url: outcome.redirectUrl })
     return
   }
@@ -526,14 +525,6 @@ Inmediatamente después del `charge`, antes de listar tarjetas, insertar:
     return
   }
   // outcome.kind === "approved" → continúa con el flujo existente (listCards, metadata, complete)
-```
-
-Agregar el helper al pie del archivo:
-
-```ts
-function sessionStorageHint(logger: any, cartId: string, paymentId: number) {
-  logger.info(`[CompleteCart/MP] awaiting 3DS return for cart=${cartId} payment=${paymentId}`)
-}
 ```
 
 - [ ] **Step 4: Verify build compiles**
