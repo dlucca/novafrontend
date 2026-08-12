@@ -15,8 +15,8 @@ export default async function SubscriptionBanner({ basePrice = 750, currency = "
         <FadeIn x={-40} y={0} duration={0.7}>
           <div className="relative rounded-3xl overflow-hidden shadow-md border border-stone-200/60" style={{ maxHeight: "480px" }}>
             <Image
-              src="/productusers/woman-using-patch.webp"
-              alt="Mujer usando Novapatch"
+              src="/productusers/build_your_ritual_banner.webp"
+              alt="Suscripción Novapatch"
               width={620}
               height={480}
               className="w-full h-auto object-cover"
