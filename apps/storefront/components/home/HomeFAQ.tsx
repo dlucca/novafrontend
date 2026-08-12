@@ -92,8 +92,9 @@ export default function HomeFAQ() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section className="bg-white px-5 sm:px-8 md:px-12 py-20">
-      <div className="max-w-[600px] mx-auto text-center mb-12">
+    <section className="bg-white py-20">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="max-w-[600px] mx-auto text-center mb-12">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -129,6 +130,7 @@ export default function HomeFAQ() {
           >
             Contactar soporte
           </Link>
+        </div>
         </div>
       </div>
     </section>

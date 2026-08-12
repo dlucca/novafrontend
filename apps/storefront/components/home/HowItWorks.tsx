@@ -1,6 +1,6 @@
-import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { FadeIn } from "@/components/ui/FadeIn";
+import HowItWorksImage from "./HowItWorksImage";
 
 export default async function HowItWorks() {
   const t = await getTranslations("home.howItWorks");
@@ -11,53 +11,16 @@ export default async function HowItWorks() {
     { n: 3, title: t("step3Title"), desc: t("step3Desc") },
   ];
   return (
-    <section id="como-funciona" className="bg-white py-16 sm:py-20 px-5 sm:px-8 lg:px-12">
-      <div className="max-w-[1100px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-        {/* Image — left */}
+    <section id="como-funciona" className="bg-stone-50 py-16 sm:py-20">
+      <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        {/* Image — left (Swaps automatically every 7 seconds) */}
         <FadeIn
           x={-40}
           y={0}
           duration={0.7}
-          className="relative rounded-[48px] overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.14)]"
+          className="w-full"
         >
-          <div className="relative w-full" style={{ height: "480px" }}>
-            <Image
-              src="/productusers/bellypatch.webp"
-              alt="Cómo usar Novapatch"
-              fill
-              loading="lazy"
-              className="object-cover"
-              sizes="(max-width: 1024px) 100vw, 50vw"
-            />
-          </div>
-          {/* Badge — 30-day grid */}
-          <div
-            className="absolute top-7 right-7 rounded-[20px] p-4 flex flex-col items-center gap-2.5 border border-white/40"
-            style={{ 
-              background: "rgba(255, 255, 255, 0.3)", 
-              boxShadow: "0 4px 20px rgba(0,0,0,0.12)" 
-            }}
-          >
-            {/* 5 × 6 grid — one square per day, number centered */}
-            <div className="relative grid gap-[0.25em]" style={{ gridTemplateColumns: "repeat(6, 0.7em)" }}>
-              {Array.from({ length: 30 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="w-[0.7em] h-[0.7em]"
-                  style={{ background: "rgba(0,0,0,0.20)", borderRadius: "3px" }}
-                />
-              ))}
-              {/* Number centered over the grid */}
-               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-[30px] font-black leading-none text-gray-900 tracking-tight">
-                  30
-                </span>
-              </div>
-            </div>
-            <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-navy/60 leading-none">
-              un día · un parche
-            </span>
-          </div>
+          <HowItWorksImage />
         </FadeIn>
 
         {/* Content — right */}

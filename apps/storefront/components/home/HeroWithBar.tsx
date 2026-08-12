@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import HeroSection from "./HeroSection";
-import AttributeBar from "./AttributeBar";
 
 export const slides = [
   { src: "/carousel/Glow-new.webp",   alt: "Novapatch Glow",   accent: "#F25C54", key: "glow" },
@@ -80,16 +79,13 @@ export default function HeroWithBar() {
   }, [scheduleResume]);
 
   return (
-    <>
-      <HeroSection
-        slides={slides}
-        current={current}
-        onNav={handleNav}
-        onDot={handleDot}
-        onPause={handlePause}
-        onResume={handleResume}
-      />
-      <AttributeBar accent={slides[current].accent} />
-    </>
+    <HeroSection
+      slides={slides}
+      current={current}
+      onNav={handleNav}
+      onDot={handleDot}
+      onPause={handlePause}
+      onResume={handleResume}
+    />
   );
 }

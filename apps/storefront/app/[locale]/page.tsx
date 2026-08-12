@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 import HeroWithBar from "@/components/home/HeroWithBar";
 import HowItWorks from "@/components/home/HowItWorks";
 import ComparisonTable from "@/components/home/ComparisonTable";
-import CTABanner from "@/components/home/CTABanner";
+import SubscriptionBanner from "@/components/home/SubscriptionBanner";
 import { getProducts } from "@/lib/commerce";
 import { MARKETS } from "@/lib/markets";
 import type { Locale } from "@/i18n/routing";
@@ -56,7 +56,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         {/* 5. Comparativo — comparison table */}
         <ComparisonTable />
         {/* 6. Suscripciones — subscription plans */}
-        <CTABanner basePrice={basePrice} currency={currency} />
+        <SubscriptionBanner basePrice={basePrice} currency={currency} />
         {/* 8. Social Proof — testimonials */}
         <Testimonials />
         {/* 9. FAQ */}

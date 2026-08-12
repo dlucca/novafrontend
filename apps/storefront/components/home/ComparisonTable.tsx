@@ -3,11 +3,11 @@ import { getTranslations } from "next-intl/server";
 import { FadeIn } from "@/components/ui/FadeIn";
 
 const rows = [
-  { feature: "Alta tasa de absorción",               nova: true,  caps: false, gummies: false },
-  { feature: "Sin pastillas difíciles de tragar",    nova: true,  caps: false, gummies: true  },
-  { feature: "Sin azúcar ni calorías",               nova: true,  caps: true,  gummies: false },
-  { feature: "Sin colorantes ni rellenos artificiales", nova: true, caps: false, gummies: false },
-  { feature: "No afecta tu sistema digestivo",       nova: true,  caps: false, gummies: false },
+  { feature: "Alta tasa de absorción",               nova: true,  caps: false, gummies: false, powders: false, sprays: false },
+  { feature: "Sin pastillas difíciles de tragar",    nova: true,  caps: false, gummies: true,  powders: true,  sprays: true  },
+  { feature: "Sin azúcar ni calorías",               nova: true,  caps: true,  gummies: false, powders: true,  sprays: true  },
+  { feature: "Sin colorantes ni rellenos artificiales", nova: true, caps: false, gummies: false, powders: false, sprays: false },
+  { feature: "No afecta tu sistema digestivo",       nova: true,  caps: false, gummies: false, powders: false, sprays: true  },
 ];
 
 function Check({ ok }: { ok: boolean }) {
@@ -30,17 +30,17 @@ function Check({ ok }: { ok: boolean }) {
 export default async function ComparisonTable() {
   const t = await getTranslations("home.comparison");
   return (
-    <section className="bg-gray-50 py-[72px] px-5 md:px-12">
-      <div className="max-w-[1100px] mx-auto">
+    <section className="bg-white py-20">
+      <div className="max-w-7xl mx-auto px-4">
         {/* Header text */}
         <FadeIn>
           <div>
-              <span className="inline-block text-sm font-bold uppercase tracking-[0.12em] text-teal mb-3">
-                5 RAZONES IMPORTANTES
-              </span>
-          <h2 className="home-section-title text-ocean">
-            {t("title")}
-          </h2>
+            <p className="home-section-eyebrow">
+              COMPARATIVA
+            </p>
+            <h2 className="home-section-title text-ocean">
+              {t("title")}
+            </h2>
           </div>
         </FadeIn>
 
@@ -53,10 +53,10 @@ export default async function ComparisonTable() {
             duration={0.7}
             delay={0.1}
           >
-            <div className="rounded-[20px] overflow-hidden shadow-[0_4px_16px_rgba(0,0,0,0.10)] bg-white h-full flex flex-col">
+            <div className="rounded-3xl overflow-hidden shadow-sm border border-stone-200/80 bg-white h-full flex flex-col">
 
               {/* Header row */}
-              <div className="grid border-b-2 border-gray-200 [grid-template-columns:1fr_76px_76px_76px] md:[grid-template-columns:1fr_100px_100px_100px]">
+              <div className="grid border-b-2 border-gray-200 [grid-template-columns:1fr_64px_64px_64px_64px_64px] md:[grid-template-columns:1fr_88px_88px_88px_88px_88px]">
                 {/* Feature label */}
                 <div className="px-4 py-4 text-[13px] font-bold text-gray-400 flex items-end">
                   Características
@@ -101,13 +101,35 @@ export default async function ComparisonTable() {
                   />
                   <span className="text-[11px] font-bold text-gray-500">Gomitas</span>
                 </div>
+
+                {/* Polvos */}
+                <div className="py-4 px-2 flex flex-col items-center justify-end gap-2">
+                  <svg width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M24 4C13 4 4 13 4 24s9 20 20 20 20-9 20-20S35 4 24 4z" fill="#9CA3AF" fillOpacity="0.2" stroke="#9CA3AF" strokeWidth="2.5"/>
+                    <path d="M16 30c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="#9CA3AF" strokeWidth="2.5" strokeLinecap="round"/>
+                    <circle cx="24" cy="18" r="3" fill="#9CA3AF"/>
+                  </svg>
+                  <span className="text-[11px] font-bold text-gray-500">Polvos</span>
+                </div>
+
+                {/* Sprays & Cremas */}
+                <div className="py-4 px-2 flex flex-col items-center justify-end gap-2">
+                  <svg width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="14" y="20" width="16" height="22" rx="4" fill="#9CA3AF" fillOpacity="0.2" stroke="#9CA3AF" strokeWidth="2.5"/>
+                    <path d="M22 20v-6h6v6" stroke="#9CA3AF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M28 14h4" stroke="#9CA3AF" strokeWidth="2.5" strokeLinecap="round"/>
+                    <path d="M32 11v6" stroke="#9CA3AF" strokeWidth="2.5" strokeLinecap="round"/>
+                    <path d="M20 28h8M20 34h8" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" opacity="0.5"/>
+                  </svg>
+                  <span className="text-[10px] font-bold text-gray-500 text-center leading-tight">Sprays &<br/>Cremas</span>
+                </div>
               </div>
 
               {/* Data rows */}
               {rows.map((row, i) => (
                 <div
                   key={row.feature}
-                  className={`grid border-b border-gray-100 last:border-b-0 [grid-template-columns:1fr_76px_76px_76px] md:[grid-template-columns:1fr_100px_100px_100px] ${i % 2 === 1 ? "bg-gray-50" : "bg-white"}`}
+                  className={`grid border-b border-gray-100 last:border-b-0 [grid-template-columns:1fr_64px_64px_64px_64px_64px] md:[grid-template-columns:1fr_88px_88px_88px_88px_88px] ${i % 2 === 1 ? "bg-gray-50" : "bg-white"}`}
                 >
                   <div className="px-4 py-4 text-[13px] md:text-[14px] font-medium text-gray-800 flex items-center leading-snug">
                     {row.feature}
@@ -123,6 +145,12 @@ export default async function ComparisonTable() {
                   <div className="py-4 flex items-center justify-center">
                     <Check ok={row.gummies} />
                   </div>
+                  <div className="py-4 flex items-center justify-center">
+                    <Check ok={row.powders} />
+                  </div>
+                  <div className="py-4 flex items-center justify-center">
+                    <Check ok={row.sprays} />
+                  </div>
                 </div>
               ))}
             </div>
@@ -137,7 +165,7 @@ export default async function ComparisonTable() {
             className="h-full"
           >
             <div className="relative flex flex-col h-full">
-              <div className="flex-1 rounded-[32px] overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.14)] relative">
+              <div className="flex-1 rounded-3xl overflow-hidden shadow-md border border-stone-200/60 relative">
                 <Image
                   src="/productusers/armpatch.webp"
                   alt="Novapatch en uso"
@@ -149,7 +177,7 @@ export default async function ComparisonTable() {
               </div>
               
               {/* Bubble */}
-              <div className="mt-4 sm:mt-0 sm:absolute sm:-bottom-5 sm:-left-5 bg-white rounded-[20px] px-5 py-4 shadow-[0_8px_32px_rgba(0,0,0,0.14)]">
+              <div className="mt-4 sm:mt-0 sm:absolute sm:-bottom-5 sm:-left-5 bg-white rounded-2xl px-5 py-4 shadow-md border border-stone-200/80">
                 <strong className="block text-[16px] font-extrabold text-ocean">
                   Un parche, todo el día.
                 </strong>
@@ -159,18 +187,20 @@ export default async function ComparisonTable() {
           </FadeIn>
         </div>
 
-        {/* Closing text */}
+        {/* Closing text highlight */}
         <FadeIn
-          y={16}
-          delay={0.2}
-          duration={0.5}
-          className="text-center mt-12 text-[15px] text-gray-500 leading-[1.7]"
+          y={20}
+          delay={0.25}
+          duration={0.6}
+          className="mt-16 sm:mt-20 w-full text-center"
         >
-          <em>Lo simple se repite. Lo complejo se abandona.</em>
-          <br />
-          <strong className="text-gray-900">
-            Novapatch está diseñado para ser el hábito que sí se sostiene.
-          </strong>
+          <p className="italic text-stone-500 text-base sm:text-lg md:text-xl font-medium leading-relaxed mb-2">
+            Lo simple se repite. Lo complejo se abandona.
+          </p>
+          <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-ocean tracking-tight leading-snug">
+            Novapatch está diseñado para ser el hábito{" "}
+            <span className="text-teal font-black">que sí se sostiene.</span>
+          </h3>
         </FadeIn>
       </div>
     </section>

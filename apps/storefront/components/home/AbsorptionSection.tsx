@@ -124,10 +124,10 @@ export default function AbsorptionSection() {
   return (
     <section
       ref={sectionRef}
-      className="text-ocean overflow-hidden py-20 sm:py-24 px-5 sm:px-8 lg:px-12"
+      className="text-ocean overflow-hidden py-20 sm:py-24"
       style={{ background: "var(--color-blush)" }}
     >
-      <div className="max-w-[1160px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
         {/* ── Left — Content ── */}
         <motion.div

@@ -4,21 +4,21 @@ import { getTranslations } from "next-intl/server";
 import { FadeIn } from "@/components/ui/FadeIn";
 import { formatPrice } from "@/lib/format";
 
-export default async function CTABanner({ basePrice = 750, currency = "MXN" }: { basePrice?: number; currency?: string }) {
+export default async function SubscriptionBanner({ basePrice = 750, currency = "MXN" }: { basePrice?: number; currency?: string }) {
   const t = await getTranslations("home.cta");
 
   return (
-    <section className="relative bg-white py-16 sm:py-24 px-5 sm:px-8 lg:px-12 overflow-hidden">
-      <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
+    <section className="relative bg-white py-16 sm:py-24 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
 
         {/* Imagen lado izquierdo */}
         <FadeIn x={-40} y={0} duration={0.7}>
-          <div className="relative rounded-3xl overflow-hidden shadow-2xl">
+          <div className="relative rounded-3xl overflow-hidden shadow-md border border-stone-200/60" style={{ maxHeight: "480px" }}>
             <Image
               src="/productusers/woman-using-patch.webp"
               alt="Mujer usando Novapatch"
               width={620}
-              height={720}
+              height={480}
               className="w-full h-auto object-cover"
               priority
             />
@@ -36,38 +36,24 @@ export default async function CTABanner({ basePrice = 750, currency = "MXN" }: {
               <h2 className="home-section-title text-ocean">
                 Suscríbete y ahorra hasta 20%
               </h2>
-              <p className="home-section-subtitle">
-                Recibe tus parches cómodamente en casa. Sin preocuparte. Sin olvidarte.
-              </p>
             </div>
 
             {/* Los 3 beneficios */}
             <div className="grid grid-cols-1 gap-6">
               {[
-                {
-                  icon: "/features/ctabanner_suscripcion/1.png",
-                  title: "Sin interrupciones",
-                  desc: "Tu próximo envío llega automáticamente antes de que se te acaben. Así mantienes el hábito sin perder el ritmo."
-                },
-                {
-                  icon: "/features/ctabanner_suscripcion/2.png",
-                  title: "Precio de suscriptor",
-                  desc: "Disfruta de descuentos de hasta 20% sobre el precio normal. El hábito que sostienes, conviene más."
-                },
-                {
-                  icon: "/features/ctabanner_suscripcion/3.png",
-                  title: "Tú tienes el control",
-                  desc: "Pausa, cambia la frecuencia, modifica tu selección o cancela cuando quieras. Sin penalizaciones, sin llamadas y sin complicaciones."
-                }
+                { num: 1, title: "Sin interrupciones",   desc: "Tu próximo envío llega automáticamente antes de que se te acaben. Envío gratis a tu puerta, sin que tengas que preocuparte." },
+                { num: 2, title: "Precio de suscriptor",  desc: "Disfruta de descuentos de hasta 20% sobre el precio normal. El hábito que sostienes, conviene más." },
+                { num: 3, title: "Tú tienes el control",  desc: "Pausa, cambia la frecuencia, modifica tu selección o cancela cuando quieras. Sin penalizaciones ni complicaciones." }
               ].map((b, i) => (
                 <div key={i} className="flex gap-5 items-start">
-                  <div className="flex-shrink-0 mt-1 w-12 h-12 relative">
-                    <Image
-                      src={b.icon}
-                      alt={b.title}
-                      fill
-                      className="object-contain"
-                    />
+                  <div
+                    className="w-12 h-12 rounded-full flex-shrink-0 flex items-center justify-center text-white font-extrabold text-[20px] mt-1"
+                    style={{
+                      background: "var(--color-ocean)",
+                      boxShadow: "0 4px 14px rgba(0,80,136,0.3)",
+                    }}
+                  >
+                    {b.num}
                   </div>
                   <div>
                     <h4 className="home-item-title">{b.title}</h4>
@@ -85,9 +71,7 @@ export default async function CTABanner({ basePrice = 750, currency = "MXN" }: {
               >
                 Encuentra tu parche y suscribete
               </Link>
-              <p className="home-caption mt-4">
-                Cancela cuando quieras • Envío gratis
-              </p>
+
             </div>
           </div>
         </FadeIn>

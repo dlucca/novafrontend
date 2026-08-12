@@ -271,29 +271,6 @@ export default function HeroSection({ slides, current, onNav, onDot, onPause, on
         </svg>
       </button>
 
-      {/* Dots — 44×44px touch target wrapping the visual dot */}
-      <div role="tablist" aria-label="Diapositivas" className="absolute bottom-0 sm:bottom-1 left-1/2 -translate-x-1/2 z-[5] flex items-center">
-        {slides.map((s, i) => (
-          <button
-            key={i}
-            role="tab"
-            onClick={() => onDot(i)}
-            aria-label={`Diapositiva ${i + 1} de ${slides.length}`}
-            aria-selected={i === current}
-            className="flex items-center justify-center"
-            style={{ width: "44px", height: "44px" }}
-          >
-            <span
-              className="rounded-full block transition-all duration-[350ms]"
-              style={{
-                height: "8px",
-                width: i === current ? "24px" : "8px",
-                background: i === current ? s.accent : "rgba(255,255,255,0.5)",
-              }}
-            />
-          </button>
-        ))}
-      </div>
     </section>
   );
 }
