@@ -71,8 +71,8 @@ export default function InstagramFeed() {
           </h2>
         </motion.div>
 
-        {/* 5-column posts grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 md:gap-4">
+        {/* Posts carousel on mobile / 5-column grid on desktop */}
+        <div className="flex overflow-x-auto gap-3.5 sm:gap-4 pb-4 sm:pb-0 snap-x snap-mandatory no-scrollbar sm:grid sm:grid-cols-3 md:grid-cols-5 -mx-4 px-4 sm:mx-0 sm:px-0">
           {posts.map((post, i) => (
             <motion.a
               key={post.id}
@@ -83,7 +83,7 @@ export default function InstagramFeed() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.45, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
-              className="group relative aspect-[4/5] rounded-2xl overflow-hidden shadow-sm block bg-stone-100"
+              className="flex-shrink-0 w-[185px] xs:w-[210px] sm:w-auto snap-center group relative aspect-[4/5] rounded-2xl overflow-hidden shadow-sm block bg-stone-100"
               aria-label={post.alt}
             >
               {/* Post image */}
@@ -91,7 +91,7 @@ export default function InstagramFeed() {
                 src={post.img}
                 alt={post.alt}
                 fill
-                sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 20vw"
+                sizes="(max-width: 640px) 185px, (max-width: 768px) 33vw, 20vw"
                 className="object-cover transition-transform duration-500 group-hover:scale-[1.06]"
               />
 
@@ -109,8 +109,6 @@ export default function InstagramFeed() {
                   </span>
                 </div>
               </div>
-
-
             </motion.a>
           ))}
         </div>

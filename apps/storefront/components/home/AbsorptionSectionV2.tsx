@@ -353,7 +353,7 @@ export default function AbsorptionSectionV2() {
             </div>
 
             {/* Infographic 2: Novapatch (Novapatch logo badge + Novapatch header) */}
-            <div className="rounded-3xl p-4 pt-4 sm:p-4.5 relative bg-white border-2 border-[#005088]/25 shadow-md flex flex-col justify-between">
+            <div className="rounded-3xl p-4 pt-4 sm:p-4.5 relative bg-white border-2 border-[#005088]/25 shadow-md flex flex-col justify-between mt-7 sm:mt-0">
               {/* "Novapatch" isologo top badge */}
               <div
                 className="absolute -top-7 left-1/2 -translate-x-1/2 p-2 rounded-full text-white shadow-md flex items-center justify-center"

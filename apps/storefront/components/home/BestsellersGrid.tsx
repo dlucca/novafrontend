@@ -17,7 +17,7 @@ const BESTSELLERS_META = [
     color: "#1EB1BC",
     bg: "#EBF7F5",
     imgSrc: "/products/Sleep_thumb.webp",
-    hoverImgSrc: "/products/Sleep_patch.webp",
+    hoverImgSrc: "/products/Sleep_3.webp",
   },
   {
     name: "Energy",
@@ -26,7 +26,7 @@ const BESTSELLERS_META = [
     color: "#83B5F4",
     bg: "#EBF4FB",
     imgSrc: "/products/Energy_thumb.webp",
-    hoverImgSrc: "/products/Energy_patch.webp",
+    hoverImgSrc: "/products/Energy_3.webp",
   },
   {
     name: "Zen",
@@ -35,7 +35,7 @@ const BESTSELLERS_META = [
     color: "#4E82BC",
     bg: "#EBF0F9",
     imgSrc: "/products/Zen_thumb.webp",
-    hoverImgSrc: "/products/Zen_patch.webp",
+    hoverImgSrc: "/products/Zen_3.webp",
   },
 ];
 

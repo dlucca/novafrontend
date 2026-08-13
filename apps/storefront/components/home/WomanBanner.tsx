@@ -16,14 +16,14 @@ export default function WomanBanner() {
         src="/productusers/bannerwoman.webp"
         alt="Novapatch Woman"
         fill
-        className="object-cover object-top md:object-[center_top]"
+        className="object-cover object-[82%_top] sm:object-top md:object-[center_top]"
         sizes="100vw"
         priority
       />
 
       {/* Light Cream Gradient Mask for Seamless Alignment with Website */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#FAF7F2] via-[#FAF7F2]/85 to-transparent md:w-[62%]" />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#FAF7F2] via-[#FAF7F2]/50 to-transparent md:hidden" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#FAF7F2] via-[#FAF7F2]/80 to-transparent md:w-[62%]" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#FAF7F2] via-[#FAF7F2]/40 to-transparent md:hidden" />
 
       {/* Content Container over Image */}
       <motion.div
