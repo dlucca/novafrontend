@@ -3,6 +3,7 @@
 import { useRef, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
@@ -26,6 +27,8 @@ const SWIPE_THRESHOLD = 50;
 
 export default function HeroSection({ slides, current, onNav, onDot, onPause, onResume }: HeroSectionProps) {
   const t = useTranslations("home.hero");
+  const params = useParams();
+  const locale = typeof params?.locale === "string" ? params.locale : "mx";
   const shouldReduceMotion = useReducedMotion();
   const pointerStartX = useRef<number | null>(null);
   const swiping = useRef(false);
@@ -218,7 +221,7 @@ export default function HeroSection({ slides, current, onNav, onDot, onPause, on
                 className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center"
               >
                 <Link
-                  href="#productos"
+                  href={`/${locale}/tienda`}
                   className="group inline-flex items-center justify-center gap-2 bg-white font-bold px-7 py-3.5 rounded-full transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_28px_rgba(0,0,0,0.25)] shadow-[0_4px_20px_rgba(0,0,0,0.15)]"
                   style={{ color: "var(--color-ocean)", fontSize: "clamp(14px, 3.5vw, 15px)" }}
                 >

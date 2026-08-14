@@ -143,31 +143,31 @@ function ProductCard({
       {/* Info del producto */}
       <div className="flex flex-col flex-1 px-1">
         {/* Nombre / Título */}
-        <h3 className="text-xl font-bold text-[#0D1B35] leading-tight mb-1">
+        <h3 className="text-base sm:text-xl font-bold text-[#0D1B35] leading-tight mb-1">
           <Link href={`/${locale}/tienda/${p.slug}`} className="hover:text-[#1a4b8c] transition-colors relative z-[4]">
             {p.name}
           </Link>
         </h3>
 
         {/* Claim / Subtítulo */}
-        <p className="home-body mb-2">
+        <p className="home-body text-xs sm:text-sm mb-2 line-clamp-2">
           {p.desc}
         </p>
 
         {/* Estrellas y Reviews reales */}
-        <div className="flex items-center gap-1.5 mb-3">
+        <div className="flex flex-wrap items-center gap-1 sm:gap-1.5 mb-2 sm:mb-3">
           <div className="flex gap-0.5">
             {[...Array(5)].map((_, i) => (
               <StarIcon key={i} />
             ))}
           </div>
-          <span className="home-caption mt-0.5">
-            {reviewsData.rating} ({reviewsData.count} {reviewsData.count === 1 ? "opinión" : "opiniones"})
+          <span className="home-caption text-[10px] sm:text-xs mt-0.5">
+            {reviewsData.rating} ({reviewsData.count})
           </span>
         </div>
 
         {/* Precio */}
-        <p className="text-base font-extrabold text-[#0D1B35] mb-5">
+        <p className="text-sm sm:text-base font-extrabold text-[#0D1B35] mb-3 sm:mb-5">
           {formatPrice(p.price, currency)}
         </p>
 
@@ -177,7 +177,7 @@ function ProductCard({
             e.preventDefault();
             onAdd();
           }}
-          className="relative z-[4] w-full inline-flex items-center justify-center gap-2 rounded-full bg-ocean px-8 py-3.5 text-[15px] font-bold text-white shadow-[0_4px_16px_rgba(0,80,136,0.3)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-ocean-dark active:scale-[0.97] cursor-pointer mt-auto"
+          className="relative z-[4] w-full inline-flex items-center justify-center gap-1.5 rounded-full bg-ocean px-3 py-2.5 sm:px-8 sm:py-3.5 text-xs sm:text-[15px] font-bold text-white shadow-[0_4px_16px_rgba(0,80,136,0.3)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-ocean-dark active:scale-[0.97] cursor-pointer mt-auto"
         >
           Agregar al carrito
         </button>
@@ -238,8 +238,8 @@ export default function BestsellersGrid({
 
         </div>
 
-        {/* 4 Column Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-10">
+        {/* 4 Column Grid (2 cols en móvil) */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 sm:gap-6 md:gap-10">
           {cards.map((p, idx) => (
             <ProductCard
               key={p.slug}
@@ -250,7 +250,7 @@ export default function BestsellersGrid({
             />
           ))}
 
-          {/* Columna 4: Arma tu Ritual */}
+          {/* Columna 4: Selecciona tu propio ritual */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -259,30 +259,30 @@ export default function BestsellersGrid({
               delay: 3 * 0.05,
               duration: 0.5,
             }}
-            className="relative flex flex-col justify-end h-full rounded-2xl overflow-hidden min-h-[420px] md:min-h-0 border border-black/[0.06] shadow-[0_4px_20px_rgba(0,0,0,0.04)] group"
+            className="relative flex flex-col justify-end h-full rounded-2xl overflow-hidden min-h-[260px] sm:min-h-[420px] md:min-h-0 border border-black/[0.06] shadow-[0_4px_20px_rgba(0,0,0,0.04)] group"
           >
             {/* Imagen de fondo */}
             <Image
               src="/productusers/build_your_ritual_banner.webp"
               alt="Selecciona tu propio ritual"
               fill
-              sizes="(max-w-768px) 100vw, 25vw"
+              sizes="(max-w-768px) 50vw, 25vw"
               className="object-cover group-hover:scale-[1.03] transition-transform duration-500"
             />
             {/* Degradado oscuro para asegurar legibilidad */}
             <div className="absolute inset-0 bg-gradient-to-t from-[#0D1B35]/95 via-[#0D1B35]/40 to-transparent z-[1]" />
 
             {/* Contenido sobrepuesto */}
-            <div className="relative z-[2] flex flex-col justify-end h-full p-6 md:p-8 flex-1 mt-40">
-              <h3 className="text-xl md:text-2xl font-black text-white leading-tight tracking-tight mb-2 uppercase">
+            <div className="relative z-[2] flex flex-col justify-end h-full p-3.5 sm:p-6 md:p-8 flex-1 mt-20 sm:mt-40">
+              <h3 className="text-sm sm:text-xl md:text-2xl font-black text-white leading-tight tracking-tight mb-1.5 sm:mb-2 uppercase">
                 Selecciona tu propio ritual
               </h3>
-              <p className="text-stone-200 text-sm leading-relaxed mb-6 font-medium">
+              <p className="text-stone-200 text-xs sm:text-sm leading-snug sm:leading-relaxed mb-3 sm:mb-6 font-medium line-clamp-2 sm:line-clamp-none">
                 Descubre los kits y parches que mejor se adaptan a tu día a día.
               </p>
               <Link
                 href={`/${locale}/tienda`}
-                className="w-full py-3.5 px-6 rounded-full text-xs font-extrabold uppercase text-center bg-white text-[#0D1B35] hover:bg-stone-50 active:scale-[0.98] transition-all tracking-wider shadow-md"
+                className="w-full py-2.5 sm:py-3.5 px-3 sm:px-6 rounded-full text-[11px] sm:text-xs font-extrabold uppercase text-center bg-white text-[#0D1B35] hover:bg-stone-50 active:scale-[0.98] transition-all tracking-wider shadow-md"
               >
                 Explorar Rituales
               </Link>
