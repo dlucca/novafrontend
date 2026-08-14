@@ -9,6 +9,7 @@ export type ProductMeta = {
   description: string;
   ingredients: string[];
   imgSrc: string;
+  hoverImgSrc?: string;
   howItWorksImage: string;
   color: string;
   bg: string;
@@ -34,7 +35,8 @@ export const PRODUCT_META: Record<string, ProductMeta> = {
       "Vitamin E",
     ],
     imgSrc: "/products/Energy_thumb.webp",
-    howItWorksImage: "/products/Energy_3.webp",
+    hoverImgSrc: "/products/Energy_2.webp",
+    howItWorksImage: "/products/Energy_4.webp",
     color: "#2B7CC1",
     bg: "#EBF4FB",
     taglineColor: "#1A5C9A",
@@ -57,7 +59,8 @@ export const PRODUCT_META: Record<string, ProductMeta> = {
       "Vitamin E",
     ],
     imgSrc: "/products/Glow_thumb.webp",
-    howItWorksImage: "/products/Glow_3.webp",
+    hoverImgSrc: "/products/Glow_2.webp",
+    howItWorksImage: "/products/Glow_4.webp",
     color: "#C94030",
     bg: "#FAF0EE",
     taglineColor: "#B83525",
@@ -77,7 +80,8 @@ export const PRODUCT_META: Record<string, ProductMeta> = {
       "Glycine",
     ],
     imgSrc: "/products/Sleep_thumb.webp",
-    howItWorksImage: "/products/Sleep_3.webp",
+    hoverImgSrc: "/products/Sleep_2.webp",
+    howItWorksImage: "/products/Sleep_4.webp",
     color: "#138A75",
     bg: "#EBF7F5",
     taglineColor: "#0F6B5C",
@@ -97,7 +101,8 @@ export const PRODUCT_META: Record<string, ProductMeta> = {
       "Vitamin B6",
     ],
     imgSrc: "/products/Zen_thumb.webp",
-    howItWorksImage: "/products/Zen_3.webp",
+    hoverImgSrc: "/products/Zen_2.webp",
+    howItWorksImage: "/products/Zen_4.webp",
     color: "#3A6FA8",
     bg: "#EBF0F9",
     taglineColor: "#2A5490",
@@ -117,7 +122,8 @@ export const PRODUCT_META: Record<string, ProductMeta> = {
       "Niacinamide",
     ],
     imgSrc: "/products/Shield_thumb.webp",
-    howItWorksImage: "/products/Shield_3.webp",
+    hoverImgSrc: "/products/Shield_2.webp",
+    howItWorksImage: "/products/Shield_4.webp",
     color: "#A07000",
     bg: "#FAF6E9",
     taglineColor: "#8C6000",
@@ -137,17 +143,113 @@ export const PRODUCT_META: Record<string, ProductMeta> = {
       "Iron (Bisglycinate)",
     ],
     imgSrc: "/products/Woman_thumb.webp",
-    howItWorksImage: "/products/Woman_3.webp",
+    hoverImgSrc: "/products/Woman_2.webp",
+    howItWorksImage: "/products/Woman_4.webp",
     color: "#8A3EBE",
     bg: "#F3EBF9",
     taglineColor: "#6B3080",
     quote: '"Escucharte también es una forma de cuidarte."',
     tags: ["Bienestar femenino", "Ritmos naturales"],
   },
+  "pack-dia-noche": {
+    slug: "pack-dia-noche",
+    name: "Ritual Día & Noche",
+    description:
+      "La combinación diseñada para acompañar tu ritmo biológico de 24 horas. Sostiene la claridad y el foco matutino con Energy y acompaña la transición hacia un descanso reparador con Sleep — con un 15% de ahorro permanente.",
+    ingredients: [
+      "Extracto de Té Verde & Ginseng (Energy)",
+      "L-Carnitina & Vitaminas B (Energy)",
+      "Triptófano & Bisglicinato de Magnesio (Sleep)",
+      "Inositol & Glicina (Sleep)",
+    ],
+    imgSrc: "/products/Bundle_dianoche_patches.webp",
+    howItWorksImage: "/products/Sleep_4.webp",
+    color: "#005088",
+    bg: "#EBF4FB",
+    taglineColor: "#005088",
+    quote: '"Energía para tu día. Descanso para tu noche."',
+    tags: ["Ritual 24h", "15% OFF"],
+    popular: true,
+  },
+  "pack-calma-sueno": {
+    slug: "pack-calma-sueno",
+    name: "Pack Calma & Sueño",
+    description:
+      "La combinación pensada para desacelerar la mente y preparar el descanso. Acompaña estados de calma funcional por la tarde con Zen y facilita la transición hacia un descanso reparador con Sleep — con un 15% de ahorro permanente.",
+    ingredients: [
+      "Triptófano & Taurato de Magnesio (Zen)",
+      "Taurina & Manzanilla (Zen)",
+      "Bisglicinato de Magnesio & Inositol (Sleep)",
+      "Glicina & Vitamina B6 (Sleep)",
+    ],
+    imgSrc: "/products/Bundle_calma_patches.webp",
+    howItWorksImage: "/products/Sleep_4.webp",
+    color: "#3A6FA8",
+    bg: "#EBF0F9",
+    taglineColor: "#3A6FA8",
+    quote: '"Desconecta la mente de día, descansa profundo de noche."',
+    tags: ["Anti-Estrés", "15% OFF"],
+  },
+  "pack-glow-balance": {
+    slug: "pack-glow-balance",
+    name: "Pack Glow & Balance",
+    description:
+      "Cuidado integral diseñado para la mujer. Acompaña el cuidado de la piel, uñas y cabello desde adentro con Glow y apoya el equilibrio de tus ritmos naturales con Woman — con un 15% de ahorro permanente.",
+    ingredients: [
+      "Colágeno Hidrolizado & Biotina (Glow)",
+      "Ácido Hialurónico & Vitamina C (Glow)",
+      "Extracto de Soya & Hierro (Woman)",
+      "Magnesio & Ácido Fólico (Woman)",
+    ],
+    imgSrc: "/products/Bundle_mujer_patches.webp",
+    howItWorksImage: "/products/Woman_4.webp",
+    color: "#8A3EBE",
+    bg: "#F3EBF9",
+    taglineColor: "#8A3EBE",
+    quote: '"Piel radiante y equilibrio biológico a tu ritmo."',
+    tags: ["Bienestar Femenino", "15% OFF"],
+  },
+  "pack-trio-vitalidad": {
+    slug: "pack-trio-vitalidad",
+    name: "Trío Vitalidad 360°",
+    description:
+      "El paquete completo de 3 parches para acompañar cada momento de tu día. Sostiene tu foco con Energy, acompaña la calma diurna con Zen y facilita el descanso reparador con Sleep — con un 20% de ahorro permanente.",
+    ingredients: [
+      "Té Verde & Ginseng (Energy)",
+      "Triptófano & Taurato de Magnesio (Zen)",
+      "Bisglicinato de Magnesio & Inositol (Sleep)",
+      "Vitaminas B, C & Glicina",
+    ],
+    imgSrc: "/products/Bundle_360_patches.webp",
+    howItWorksImage: "/products/Sleep_4.webp",
+    color: "#138A75",
+    bg: "#EBF7F5",
+    taglineColor: "#138A75",
+    quote: '"Energía matutina, calma diurna y descanso nocturno."',
+    tags: ["Trío 360°", "20% OFF"],
+  },
+};
+
+export const BUNDLE_ORIGINAL_PRICES: Record<string, number> = {
+  "pack-dia-noche": 1500,
+  "pack-calma-sueno": 1500,
+  "pack-glow-balance": 1500,
+  "pack-trio-vitalidad": 2250,
 };
 
 // Orden de aparición en grillas
-export const PRODUCT_ORDER = ["energy", "sleep", "glow", "shield", "zen", "woman"];
+export const PRODUCT_ORDER = [
+  "energy",
+  "sleep",
+  "glow",
+  "shield",
+  "zen",
+  "woman",
+  "pack-dia-noche",
+  "pack-calma-sueno",
+  "pack-glow-balance",
+  "pack-trio-vitalidad",
+];
 
 export function getOrderedMeta(): ProductMeta[] {
   return PRODUCT_ORDER.map((slug) => PRODUCT_META[slug]).filter(Boolean);
@@ -368,8 +470,120 @@ export const PDP_META: Record<string, PdpMeta> = {
     faq: [
       { q: "¿Contiene hormonas?", a: "No. Su fórmula se basa en nutrientes y extractos naturales, sin hormonas." },
       { q: "¿Puedo usarlo durante todo el ciclo?", a: "Sí, está pensado para acompañar el día a día de forma constante, en todos los momentos del ciclo." },
-      { q: "¿Es compatible con anticonceptivos u otra medicación?", a: "Ante cualquier situación particular o tratamiento en curso, lo mejor es consultarlo con un profesional de la salud." },
+      { q: "¿Es compatible con anticonceptivos u otra medicación?", a: "Ante cualquier situación particular o tratamiento en curso, lo mejor es consultarlo with un profesional de la salud." },
       { q: "¿Puedo usarlo todos los días?", a: "Sí, está diseñado como un gesto simple que se sostiene en el tiempo, a tu ritmo." },
+    ],
+  },
+  "pack-dia-noche": {
+    tagline: "Ritual 24 horas: Claridad de día y descanso de noche",
+    accompaniment: [
+      "Energy (Mañana): Acompaña la claridad mental y el foco diurno sin picos ni caídas",
+      "Sleep (Noche): Acompaña la bajada de ritmo y la transición al descanso nocturno",
+      "Acompaña tu rutina las 24 horas de forma simple, sin agua y sin cápsulas",
+      "Ahorro del 15% OFF permanente comparado con la compra individual",
+    ],
+    howItWorks:
+      "El Ritual Día & Noche acompaña tu jornada en dos momentos clave: por la mañana, el parche Energy libera gradualmente sus nutrientes asociados al foco; por la noche, el parche Sleep acompaña la bajada de ritmo para llegar a la cama con el cuerpo relajado.",
+    ingredientDetails: [
+      { name: "Extracto de Té Verde & Ginseng (Energy)", description: "Asociados con la energía equilibrada y el foco sostenido durante el día." },
+      { name: "L-Carnitina & Vitaminas B (Energy)", description: "Asociadas con el metabolismo energético normal y la claridad diurna." },
+      { name: "Triptófano & Bisglicinato de Magnesio (Sleep)", description: "Asociados con el apoyo a la relajación muscular y la calma nocturna." },
+      { name: "Inositol & Glicina (Sleep)", description: "Asociadas con el descanso reparador y la bajada de ritmo." },
+    ],
+    usageSteps: [
+      "Mañana (8:00 AM): Aplica 1 parche Energy en piel limpia y seca (brazo, abdomen o espalda).",
+      "Noche (10:00 PM): Retira el parche Energy y aplica 1 parche Sleep 1 hora antes de acostarte.",
+      "Mañana siguiente: Retira el parche Sleep. Mantén este hábito constante para acompañar tu rutina diaria.",
+    ],
+    faq: [
+      { q: "¿Puedo usar ambos parches el mismo día?", a: "Sí, están diseñados para acompañar tu día en dos momentos distintos: Energy durante la jornada laboral y Sleep antes de ir a dormir." },
+      { q: "¿Tengo un descuento comprando el kit?", a: "Sí, el Ritual Día & Noche incluye un 15% OFF de descuento permanente comparado con la compra individual de ambos sobres." },
+      { q: "¿Se pueden suspender o pausar las entregas si elijo suscripción?", a: "Totalmente. Puedes pausar, reprogramar o cancelar las entregas en un solo clic desde tu panel de usuario sin cargos ni compromisos." },
+      { q: "¿Interfieren las fórmulas entre sí?", a: "No. Al retirarse el parche Energy por la tarde, la absorción transdérmica finaliza, permitiendo que el parche Sleep actúe libremente por la noche." },
+    ],
+  },
+  "pack-calma-sueno": {
+    tagline: "Calma funcional de tarde y descanso reparador de noche",
+    accompaniment: [
+      "Zen (Tarde): Acompaña la calma funcional y ayuda a bajar la tensión en momentos de exigencia",
+      "Sleep (Noche): Acompaña la bajada de ritmo y la transición al descanso nocturno",
+      "Acompaña tu bienestar sin somnolencia diurna y sin cápsulas difíciles de tragar",
+      "Ahorro del 15% OFF permanente comparado con la compra individual",
+    ],
+    howItWorks:
+      "El Pack Calma & Sueño acompaña tu bienestar en dos etapas clave del día: por la tarde, Zen aporta nutrientes asociados a la calma funcional para continuar tus tareas con serenidad; por la noche, Sleep facilita la bajada de ritmo para preparar el cuerpo antes de ir a la cama.",
+    ingredientDetails: [
+      { name: "Triptófano & Taurato de Magnesio (Zen)", description: "Asociados con la calma funcional y la relajación del sistema nervioso durante el día." },
+      { name: "Taurina & Extracto de Manzanilla (Zen)", description: "Asociados tradicionalmente con la serenidad y la regulación de la tensión diurna." },
+      { name: "Bisglicinato de Magnesio & Inositol (Sleep)", description: "Asociados con la relajación muscular y el apoyo para la bajada de ritmo nocturna." },
+      { name: "Glicina, Triptófano & Vitamina B6 (Sleep)", description: "Asociados con el descanso nocturno reparador y la producción natural de serotonina." },
+    ],
+    usageSteps: [
+      "Tarde (4:00 PM - 6:00 PM): Aplica 1 parche Zen en piel limpia y seca (brazo, abdomen o espalda).",
+      "Noche (10:00 PM): Retira Zen y aplica 1 parche Sleep 1 hora antes de acostarte.",
+      "Mañana siguiente: Retira el parche Sleep. Mantén este hábito constante para acompañar tu rutina diaria.",
+    ],
+    faq: [
+      { q: "¿Zen me va a dar sueño durante el trabajo?", a: "No. Zen acompaña la calma funcional: ayuda a transitar el día con menos tensión encima sin generar somnolencia ni pesadez." },
+      { q: "¿Puedo usarlos todos los días?", a: "Sí, están diseñados para uso continuo como parte de tu rutina diaria de autocuidado." },
+      { q: "¿Cuál es la diferencia entre Zen y Sleep?", a: "Zen se usa por la tarde para estar presente con serenidad; Sleep se aplica 1h antes de dormir para preparar el descanso nocturno." },
+      { q: "¿Puedo pausar o modificar mi suscripción?", a: "Sí, desde tu panel de usuario puedes pausar, reprogramar o cancelar las entregas en cualquier momento con un solo clic." },
+    ],
+  },
+  "pack-glow-balance": {
+    tagline: "Nutrición de la piel y equilibrio de tus ritmos: Glow + Woman",
+    accompaniment: [
+      "Glow (Diario): Acompaña el cuidado de la piel, pelo y uñas desde adentro",
+      "Woman (Diario): Acompaña el equilibrio de los ritmos naturales femeninos",
+      "Acompaña tu bienestar con colágeno hidrolizado, fitoestrógenos vegetales y antioxidantes",
+      "Ahorro del 15% OFF permanente comparado con la compra individual",
+    ],
+    howItWorks:
+      "El Pack Glow & Balance acompaña la rutina de cuidado femenino desde dos ángulos complementarios: por un lado, Glow aporta nutrientes vinculados a la nutrición de la piel desde adentro; por otro, Woman aporta minerales y extractos botánicos asociados al equilibrio de los ritmos femeninos.",
+    ingredientDetails: [
+      { name: "Colágeno Hidrolizado, Ácido Hialurónico & Biotina (Glow)", description: "Asociados con la hidratación, elasticidad y mantenimiento normal de piel, pelo y uñas." },
+      { name: "Vitamina C, Niacinamida & Centella Asiática (Glow)", description: "Asociadas con la protección antioxidante y el cuidado de la piel desde adentro." },
+      { name: "Extracto de Soya & Fitoestrógenos (Woman)", description: "Asociados tradicionalmente con el apoyo al equilibrio natural del bienestar femenino." },
+      { name: "Bisglicinato de Hierro, Magnesio & Ácido Fólico (Woman)", description: "Asociados con el metabolismo energético normal y el aporte de nutrientes esenciales." },
+    ],
+    usageSteps: [
+      "Mañana: Aplica 1 parche Glow y 1 parche Woman en piel limpia y seca (brazo, abdomen o espalda).",
+      "Día: Déjalos actuar durante la jornada mientras sigues con tu rutina normal.",
+      "Noche: Retíralos y desecha. Lava suavemente la zona. Mantén el uso diario para acompañar tu bienestar.",
+    ],
+    faq: [
+      { q: "¿Puedo usar dos parches al mismo tiempo?", a: "Sí. La absorción transdérmica de ambas fórmulas es independiente y están diseñadas para aplicarse simultáneamente." },
+      { q: "¿Contienen hormonas sintéticas?", a: "No. Woman contiene únicamente extracto de soya con fitoestrógenos de origen vegetal y nutrientes puros." },
+      { q: "¿Glow reemplaza mi rutina de cuidado facial?", a: "No, la complementa. Tu rutina facial actúa por fuera; Glow acompaña la nutrición desde adentro." },
+      { q: "¿Puedo pausar o modificar mi suscripción?", a: "Sí, desde tu panel de usuario puedes pausar, reprogramar o cancelar las entregas en cualquier momento con un solo clic." },
+    ],
+  },
+  "pack-trio-vitalidad": {
+    tagline: "Cobertura 360° para tu rutina diaria: Energy + Zen + Sleep",
+    accompaniment: [
+      "Energy (Mañana): Acompaña la claridad mental y el foco sin picos ni caídas de cafeína",
+      "Zen (Tarde): Acompaña la calma funcional en momentos de exigencia diurna",
+      "Sleep (Noche): Acompaña la bajada de ritmo y la transición hacia un descanso reparador",
+      "Ahorro del 20% OFF permanente comparado con la compra individual de los 3 productos",
+    ],
+    howItWorks:
+      "El Trío Vitalidad 360° acompaña cada etapa clave de tu ciclo de 24 horas: por la mañana, Energy libera sus nutrientes de foco; por la tarde, Zen aporta calma funcional para transitar la jornada con serenidad; y por la noche, Sleep prepara el cuerpo para descansar.",
+    ingredientDetails: [
+      { name: "Extracto de Té Verde, Ginseng & Vitamina B12 (Energy)", description: "Asociados con la energía equilibrada y la claridad mental durante el día." },
+      { name: "Triptófano, Taurato de Magnesio & Taurina (Zen)", description: "Asociados con la calma funcional y la relajación del sistema nervioso por la tarde." },
+      { name: "Bisglicinato de Magnesio, Inositol & Glicina (Sleep)", description: "Asociados con el apoyo a la relajación muscular y el descanso nocturno reparador." },
+      { name: "Vitamina C, B6 & Manzanilla (Multinutrientes)", description: "Asociados con la protección antioxidante y el equilibrio integral del cuerpo." },
+    ],
+    usageSteps: [
+      "8:00 AM (Mañana): Aplica 1 parche Energy para acompañar el inicio de tu jornada.",
+      "5:00 PM (Tarde): Aplica 1 parche Zen para acompañar la calma en horas de alta exigencia.",
+      "10:00 PM (Noche): Aplica 1 parche Sleep 1 hora antes de acostarte para preparar el descanso.",
+    ],
+    faq: [
+      { q: "¿En qué orden me conviene usar los 3 parches?", a: "Energy por la mañana al despertar, Zen por la tarde en horas de exigencia, y Sleep por la noche 1h antes de dormir." },
+      { q: "¿Obtengo un descuento mayor con el Trío?", a: "Sí, el Trío Vitalidad 360° incluye un 20% OFF permanente de descuento respecto a la compra individual de los 3 sobres." },
+      { q: "¿Interfieren las fórmulas entre sí?", a: "No. Cada fórmula está pensada para actuar en un momento específico del día acompañando las necesidades de ese momento." },
+      { q: "¿Puedo pausar o modificar mi suscripción?", a: "Sí, puedes pausar, reprogramar o cancelar las entregas en cualquier momento desde tu cuenta con un solo clic." },
     ],
   },
 };

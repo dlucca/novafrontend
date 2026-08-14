@@ -15,7 +15,7 @@ export default function HowItWorksImage() {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % IMAGES.length);
-    }, 7000);
+    }, 3500);
 
     return () => clearInterval(timer);
   }, []);
@@ -28,7 +28,7 @@ export default function HowItWorksImage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.35, ease: "easeOut" }}
           className="absolute inset-0"
         >
           <Image

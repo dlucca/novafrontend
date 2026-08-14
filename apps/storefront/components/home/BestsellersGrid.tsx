@@ -17,7 +17,7 @@ const BESTSELLERS_META = [
     color: "#1EB1BC",
     bg: "#EBF7F5",
     imgSrc: "/products/Sleep_thumb.webp",
-    hoverImgSrc: "/products/Sleep_3.webp",
+    hoverImgSrc: "/products/Sleep_2.webp",
   },
   {
     name: "Energy",
@@ -26,7 +26,7 @@ const BESTSELLERS_META = [
     color: "#83B5F4",
     bg: "#EBF4FB",
     imgSrc: "/products/Energy_thumb.webp",
-    hoverImgSrc: "/products/Energy_3.webp",
+    hoverImgSrc: "/products/Energy_2.webp",
   },
   {
     name: "Zen",
@@ -35,7 +35,7 @@ const BESTSELLERS_META = [
     color: "#4E82BC",
     bg: "#EBF0F9",
     imgSrc: "/products/Zen_thumb.webp",
-    hoverImgSrc: "/products/Zen_3.webp",
+    hoverImgSrc: "/products/Zen_2.webp",
   },
 ];
 
@@ -264,7 +264,7 @@ export default function BestsellersGrid({
             {/* Imagen de fondo */}
             <Image
               src="/productusers/build_your_ritual_banner.webp"
-              alt="Arma tu propio ritual"
+              alt="Selecciona tu propio ritual"
               fill
               sizes="(max-w-768px) 100vw, 25vw"
               className="object-cover group-hover:scale-[1.03] transition-transform duration-500"
@@ -275,16 +275,16 @@ export default function BestsellersGrid({
             {/* Contenido sobrepuesto */}
             <div className="relative z-[2] flex flex-col justify-end h-full p-6 md:p-8 flex-1 mt-40">
               <h3 className="text-xl md:text-2xl font-black text-white leading-tight tracking-tight mb-2 uppercase">
-                Arma tu propio ritual
+                Selecciona tu propio ritual
               </h3>
               <p className="text-stone-200 text-sm leading-relaxed mb-6 font-medium">
-                Combina tus parches favoritos y ahorra hasta un 20%.
+                Descubre los kits y parches que mejor se adaptan a tu día a día.
               </p>
               <Link
                 href={`/${locale}/tienda`}
                 className="w-full py-3.5 px-6 rounded-full text-xs font-extrabold uppercase text-center bg-white text-[#0D1B35] hover:bg-stone-50 active:scale-[0.98] transition-all tracking-wider shadow-md"
               >
-                Crear Ritual
+                Explorar Rituales
               </Link>
             </div>
           </motion.div>

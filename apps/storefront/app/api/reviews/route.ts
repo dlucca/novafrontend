@@ -539,6 +539,13 @@ function mapMedusaReviewToFrontend(r: any): Review {
   };
 }
 
+const BUNDLE_COMPONENT_SLUGS: Record<string, string[]> = {
+  "pack-dia-noche": ["energy", "sleep"],
+  "pack-calma-sueno": ["zen", "sleep"],
+  "pack-glow-balance": ["glow", "woman"],
+  "pack-trio-vitalidad": ["energy", "sleep", "zen"],
+};
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const slug = searchParams.get("slug");
@@ -559,13 +566,27 @@ export async function GET(request: Request) {
 
     const data = await res.json();
     const reviews = data.map(mapMedusaReviewToFrontend);
+
+    if (slug && BUNDLE_COMPONENT_SLUGS[slug]) {
+      const extraSlugs = BUNDLE_COMPONENT_SLUGS[slug];
+      // Fetch extra component reviews if needed
+      const extraRes = await fetch(`${MEDUSA_BACKEND_URL}/store/custom/reviews`, { cache: "no-store" });
+      if (extraRes.ok) {
+        const extraData = await extraRes.json();
+        const allExtra = extraData.map(mapMedusaReviewToFrontend).filter((r: Review) => extraSlugs.includes(r.slug));
+        const combined = [...reviews, ...allExtra];
+        return NextResponse.json(combined);
+      }
+    }
+
     return NextResponse.json(reviews);
   } catch (e) {
     console.error("Failed to fetch reviews from Medusa:", e);
     // Fallback to local default reviews in case the backend is down/not deployed yet
     const reviews = getReviews();
     if (slug) {
-      const filtered = reviews.filter((r) => r.slug === slug);
+      const targetSlugs = BUNDLE_COMPONENT_SLUGS[slug] ? [slug, ...BUNDLE_COMPONENT_SLUGS[slug]] : [slug];
+      const filtered = reviews.filter((r) => targetSlugs.includes(r.slug));
       return NextResponse.json(filtered);
     }
     return NextResponse.json(reviews);

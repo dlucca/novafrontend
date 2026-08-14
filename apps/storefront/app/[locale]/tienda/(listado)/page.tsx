@@ -7,12 +7,26 @@ import type { Locale } from "@/i18n/routing"
 
 export const revalidate = 3600 // ISR: revalida productos cada hora
 
-const PRODUCT_ORDER = ["shield", "glow", "sleep", "energy", "zen", "woman"] as const
+const PRODUCT_ORDER = [
+  "energy",
+  "sleep",
+  "glow",
+  "shield",
+  "zen",
+  "woman",
+  "pack-dia-noche",
+  "pack-calma-sueno",
+  "pack-glow-balance",
+  "pack-trio-vitalidad",
+] as const
 
 function getOrderedProducts(products: Product[]) {
   return [...products].sort((a, b) => {
-    return PRODUCT_ORDER.indexOf(a.slug as (typeof PRODUCT_ORDER)[number]) -
-      PRODUCT_ORDER.indexOf(b.slug as (typeof PRODUCT_ORDER)[number])
+    const idxA = PRODUCT_ORDER.indexOf(a.slug as (typeof PRODUCT_ORDER)[number])
+    const idxB = PRODUCT_ORDER.indexOf(b.slug as (typeof PRODUCT_ORDER)[number])
+    const orderA = idxA === -1 ? 999 : idxA
+    const orderB = idxB === -1 ? 999 : idxB
+    return orderA - orderB
   })
 }
 

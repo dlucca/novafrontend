@@ -19,6 +19,46 @@ export type Product = {
   variantId?: string;    // ID de la variante default en Medusa (para cart)
 };
 
+const BUNDLE_PRICES: Record<string, number> = {
+  "pack-dia-noche": 1275,
+  "pack-calma-sueno": 1275,
+  "pack-glow-balance": 1275,
+  "pack-trio-vitalidad": 1800,
+};
+
+const BUNDLE_IMAGES: Record<string, string[]> = {
+  "pack-dia-noche": [
+    "/products/Bundle_dianoche_patches.webp",
+    "/products/Energy_ingredients.webp",
+    "/products/Sleep_ingredients.webp",
+    "/products/Energy_2.webp",
+    "/products/Sleep_2.webp",
+  ],
+  "pack-calma-sueno": [
+    "/products/Bundle_calma_patches.webp",
+    "/products/Zen_ingredients.webp",
+    "/products/Sleep_ingredients.webp",
+    "/products/Zen_2.webp",
+    "/products/Sleep_2.webp",
+  ],
+  "pack-glow-balance": [
+    "/products/Bundle_mujer_patches.webp",
+    "/products/Glow_ingredients.webp",
+    "/products/Woman_ingredients.webp",
+    "/products/Glow_2.webp",
+    "/products/Woman_2.webp",
+  ],
+  "pack-trio-vitalidad": [
+    "/products/Bundle_360_patches.webp",
+    "/products/Energy_ingredients.webp",
+    "/products/Zen_ingredients.webp",
+    "/products/Sleep_ingredients.webp",
+    "/products/Energy_2.webp",
+    "/products/Zen_2.webp",
+    "/products/Sleep_2.webp",
+  ],
+};
+
 // ─── Datos de fallback (mientras no hay backend) ──────────────────────────────
 // Usar descripciones reales de product-meta.ts
 
@@ -27,10 +67,10 @@ const FALLBACK_PRODUCTS: Product[] = PRODUCT_ORDER.map((slug) => {
   return {
     id: slug,
     slug,
-    title: meta.name,
-    description: meta.description,
-    price: 750,
-    image: meta.imgSrc,
+    title: meta?.name ?? slug,
+    description: meta?.description ?? "",
+    price: BUNDLE_PRICES[slug] ?? 750,
+    image: meta?.imgSrc ?? `/products/${slug}_thumb.webp`,
     variantId: undefined, // se asigna cuando Medusa esté disponible
   };
 });
@@ -56,7 +96,7 @@ function medusaToProduct(p: Awaited<ReturnType<typeof medusa.catalog.getProducts
     slug,
     title: p.title,
     description: meta?.description ?? p.description ?? "",
-    price: rawAmount ? Math.round(rawAmount) : 750,
+    price: rawAmount ? Math.round(rawAmount) : (BUNDLE_PRICES[slug] ?? 750),
     image: p.thumbnail ?? meta?.imgSrc ?? `/products/${slug}_thumb.webp`,
     variantId: variant?.id,
   };
@@ -91,7 +131,11 @@ export async function getProducts(regionId?: string, currencyCode?: string): Pro
     // Reordenar según PRODUCT_ORDER cuando sea posible
     const mapped = medusaProducts.map((p) => medusaToProduct(p, currency));
     const ordered = PRODUCT_ORDER
-      .map((slug) => mapped.find((p) => p.slug === slug))
+      .map((slug) => {
+        const found = mapped.find((p) => p.slug === slug);
+        if (found) return found;
+        return FALLBACK_PRODUCTS.find((f) => f.slug === slug);
+      })
       .filter((p): p is Product => Boolean(p));
 
     // Agregar productos de Medusa que no estén en PRODUCT_ORDER
@@ -143,14 +187,23 @@ const TIER_DEFS: { tier: PurchaseTier; label: string; freq: 30 | 60 | 90 | null;
 function fallbackDetail(slug: string): ProductDetail | null {
   const meta = PRODUCT_META[slug];
   if (!meta) return null;
-  const basePrice = 750;
+  const basePrice = BUNDLE_PRICES[slug] ?? 750;
+  const nameCap = slug.charAt(0).toUpperCase() + slug.slice(1);
+  const images = BUNDLE_IMAGES[slug] ?? [
+    meta.imgSrc,
+    `/products/${nameCap}_ingredients.webp`,
+    `/products/${nameCap}_2.webp`,
+    `/products/${nameCap}_3.webp`,
+    `/products/${nameCap}_4.webp`,
+  ];
+
   return {
     id: slug,
     slug,
     title: meta.name,
     description: meta.description,
     basePrice,
-    images: [meta.imgSrc],
+    images,
     options: TIER_DEFS.map((t) => ({
       tier: t.tier,
       label: t.label,

@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import type { Product } from "@/lib/commerce";
 import { formatPrice } from "@/lib/format";
-import { PRODUCT_META } from "@/lib/product-meta";
+import { PRODUCT_META, BUNDLE_ORIGINAL_PRICES } from "@/lib/product-meta";
 import { useCart } from "@/contexts/CartContext";
 
 // ─── UI metadata por producto ───────────────────────────────────────────────
@@ -63,6 +63,14 @@ const META: Record<string, {
     quote: '"Escucharte también es una forma de cuidarte."',
     tags: ["Bienestar femenino", "Ritmos naturales"],
   },
+  "pack-dia-noche": {
+    color: "#005088",
+    bg: "#EBF4FB",
+    taglineColor: "#005088",
+    quote: '"Energía para tu día. Descanso para tu noche."',
+    tags: ["Ritual 24h", "15% OFF INCLUIDO"],
+    popular: true,
+  },
 };
 
 // ─── Componentes internos ────────────────────────────────────────────────────
@@ -76,7 +84,7 @@ function ProductCard({
   ratingSummary?: { average: number; count: number };
   currency?: string;
 }) {
-  const meta = META[product.slug];
+  const meta = META[product.slug] ?? PRODUCT_META[product.slug];
   const { addToCart } = useCart();
   const params = useParams();
   const locale = typeof params?.locale === "string" ? params.locale : "mx";
@@ -85,7 +93,8 @@ function ProductCard({
   if (!meta) return null;
 
   const fallbackMeta = PRODUCT_META[product.slug];
-  const hoverImage = fallbackMeta?.howItWorksImage ?? product.image;
+  const isBundle = product.slug.startsWith("pack-");
+  const hoverImage = !isBundle ? fallbackMeta?.hoverImgSrc : undefined;
 
   const rating = ratingSummary?.average ?? 5.0;
   const count = ratingSummary?.count ?? 80;
@@ -109,19 +118,13 @@ function ProductCard({
     <Link
       href={`/${locale}/tienda/${product.slug}`}
       className="group bg-white rounded-[28px] overflow-hidden border border-[#E8E2D8]/60 shadow-[0_4px_24px_rgba(13,27,53,0.03)] hover:shadow-[0_16px_48px_rgba(13,27,53,0.07)] hover:-translate-y-1 transition-all duration-300 flex flex-col h-full"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
       {/* Imagen Box */}
       <div
         className="relative flex items-center justify-center p-2 aspect-square overflow-hidden bg-white"
+        onMouseEnter={() => { if (hoverImage) setIsHovered(true); }}
+        onMouseLeave={() => { if (hoverImage) setIsHovered(false); }}
       >
-        {meta.popular && (
-          <span className="absolute top-4 right-4 bg-coral text-white text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full z-10">
-            Más popular
-          </span>
-        )}
-
         <div className="relative w-full h-full">
           {/* Base Image */}
           <Image
@@ -130,20 +133,24 @@ function ProductCard({
             fill
             sizes="(max-width: 768px) 100vw, 350px"
             loading="lazy"
-            className={`object-contain drop-shadow-md transition-all duration-500 ease-in-out ${isHovered ? "opacity-0 scale-95" : "opacity-100 scale-100"
-              }`}
+            className={`object-contain drop-shadow-md transition-all duration-500 ease-in-out ${
+              hoverImage && isHovered ? "opacity-0 scale-95" : "opacity-100 scale-100"
+            }`}
           />
         </div>
         {/* Hover Image (Full bleed - absolute inset-0) */}
-        <Image
-          src={hoverImage}
-          alt={`Detalles de Novapatch ${product.title}`}
-          fill
-          sizes="(max-width: 768px) 100vw, 350px"
-          loading="lazy"
-          className={`object-cover transition-all duration-500 ease-in-out absolute inset-0 w-full h-full z-10 ${isHovered ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"
+        {hoverImage && (
+          <Image
+            src={hoverImage}
+            alt={`Detalles de Novapatch ${product.title}`}
+            fill
+            sizes="(max-width: 768px) 100vw, 350px"
+            loading="lazy"
+            className={`object-cover transition-all duration-500 ease-in-out absolute inset-0 w-full h-full z-10 ${
+              isHovered ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"
             }`}
-        />
+          />
+        )}
       </div>
 
       {/* Cuerpo */}
@@ -160,7 +167,7 @@ function ProductCard({
             </span>
           </div>
 
-          <h3 className="text-xl sm:text-2xl font-black tracking-tight text-[#0D1B35] leading-none group-hover:text-coral transition-colors duration-300">
+          <h3 className="text-xl sm:text-2xl font-black tracking-tight text-[#0D1B35] leading-none">
             {product.title}
           </h3>
 
@@ -173,22 +180,28 @@ function ProductCard({
         <div className="pt-4 border-t border-[#E8E2D8]/50">
           <div className="flex justify-between items-center mb-4">
             <span className="text-xs font-extrabold text-[#0D1B35]/60 uppercase tracking-wider">Precio</span>
-            <span className="text-xl font-black text-[#0D1B35]">{formatPrice(product.price, currency)}</span>
+            <div className="flex items-baseline gap-2">
+              {BUNDLE_ORIGINAL_PRICES[product.slug] && (
+                <span className="text-xs font-bold text-stone-400 line-through">
+                  {formatPrice(BUNDLE_ORIGINAL_PRICES[product.slug], currency)}
+                </span>
+              )}
+              <span className="text-xl font-black text-[#0D1B35]">{formatPrice(product.price, currency)}</span>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-2">
             <button
               onClick={handleAddToCart}
-              className="relative z-10 px-4 py-3 rounded-full text-white font-bold text-xs text-center transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-sm bg-coral hover:bg-coral-dark"
+              className="relative z-10 px-3 py-3 rounded-full text-white font-bold text-xs text-center shadow-[0_4px_16px_rgba(0,80,136,0.3)] transition-all duration-200 hover:-translate-y-0.5 bg-ocean hover:bg-ocean-dark active:scale-[0.97] cursor-pointer"
             >
               Comprar ahora
             </button>
 
             <div
-              className="px-4 py-3 rounded-full font-bold text-xs text-center border transition-all duration-200 hover:bg-[#FAF7F2] flex items-center justify-center gap-1"
-              style={{ borderColor: meta.color, color: meta.color }}
+              className="relative z-10 px-3 py-3 rounded-full font-bold text-xs text-center border border-[#E7E1D6] text-[#0D1B35] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#F0ECE1] active:scale-[0.97] flex items-center justify-center gap-1 cursor-pointer"
             >
-              Más detalles
+              Ver detalles
               <svg className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24" style={{ width: "12px", height: "12px" }}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
               </svg>
@@ -197,6 +210,56 @@ function ProductCard({
         </div>
       </div>
     </Link>
+  );
+}
+
+function InspirationBannerCard({
+  imgSrc,
+  eyebrow,
+  title,
+  text,
+  textPosition = "bottom",
+}: {
+  imgSrc: string;
+  eyebrow: string;
+  title: string;
+  text: string;
+  textPosition?: "top" | "bottom";
+}) {
+  const isTop = textPosition === "top";
+
+  return (
+    <div
+      className={`relative rounded-[28px] overflow-hidden min-h-[420px] w-full flex flex-col p-8 border border-[#E8E2D8]/60 shadow-[0_4px_24px_rgba(13,27,53,0.03)] h-full ${
+        isTop ? "justify-start" : "justify-end"
+      }`}
+    >
+      <Image
+        src={imgSrc}
+        alt={title}
+        fill
+        sizes="(max-width: 768px) 100vw, 350px"
+        className="object-cover object-center"
+      />
+      <div
+        className={`absolute inset-0 ${
+          isTop
+            ? "bg-gradient-to-b from-[#0D1B35]/90 via-[#0D1B35]/50 to-black/10"
+            : "bg-gradient-to-t from-[#0D1B35]/90 via-[#0D1B35]/50 to-black/10"
+        }`}
+      />
+      <div className="relative z-10 text-white">
+        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#5BA8D5] bg-[#5BA8D5]/20 px-3 py-1 rounded-full border border-[#5BA8D5]/30 inline-block mb-3">
+          {eyebrow}
+        </span>
+        <h3 className="text-2xl font-black tracking-tight leading-tight text-white mb-2">
+          {title}
+        </h3>
+        <p className="text-xs text-stone-200 leading-relaxed font-medium">
+          {text}
+        </p>
+      </div>
+    </div>
   );
 }
 
@@ -228,6 +291,28 @@ export default function TiendaExperience({ products, currency = "MXN" }: { produ
             };
           });
 
+          const BUNDLE_COMPONENT_SLUGS: Record<string, string[]> = {
+            "pack-dia-noche": ["energy", "sleep"],
+            "pack-calma-sueno": ["zen", "sleep"],
+            "pack-glow-balance": ["glow", "woman"],
+            "pack-trio-vitalidad": ["energy", "sleep", "zen"],
+          };
+
+          Object.entries(BUNDLE_COMPONENT_SLUGS).forEach(([bSlug, cSlugs]) => {
+            if (!summary[bSlug] || summary[bSlug].count === 0) {
+              const combinedRatings: number[] = [];
+              cSlugs.forEach((c) => {
+                if (groups[c]) combinedRatings.push(...groups[c]);
+              });
+              if (combinedRatings.length > 0) {
+                summary[bSlug] = {
+                  average: Number((combinedRatings.reduce((a, b) => a + b, 0) / combinedRatings.length).toFixed(1)),
+                  count: combinedRatings.length,
+                };
+              }
+            }
+          });
+
           setReviewsSummary(summary);
         }
       } catch (e) {
@@ -236,6 +321,10 @@ export default function TiendaExperience({ products, currency = "MXN" }: { produ
     }
     loadReviews();
   }, []);
+
+  const row1Products = products.slice(0, 3);
+  const row2Products = products.slice(3, 6);
+  const remainingProducts = products.slice(6);
 
   return (
     <main className="min-h-screen" style={{ background: "#F8F3EC" }}>
@@ -272,18 +361,78 @@ export default function TiendaExperience({ products, currency = "MXN" }: { produ
       </section>
 
       {/* ── Grid de productos ── */}
-      <section className="px-4 pb-24 max-w-[1200px] mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {products.map((product, i) => (
+      <section className="px-4 pb-24 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {/* Fila 1: 3 productos + 1 Banner a la Derecha */}
+          {row1Products.map((product, i) => (
             <motion.div
               key={product.slug}
               initial={{ opacity: 0, y: 28 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{
-                delay: i * 0.07,
-                duration: 0.55,
-                ease: [0.22, 1, 0.36, 1],
-              }}
+              transition={{ delay: i * 0.07, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+              className="flex"
+            >
+              <ProductCard
+                product={product}
+                ratingSummary={reviewsSummary[product.slug]}
+                currency={currency}
+              />
+            </motion.div>
+          ))}
+
+          <motion.div
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+            className="flex"
+          >
+            <InspirationBannerCard
+              imgSrc="/productusers/Banner_tienda_1.webp"
+              eyebrow="RITUAL NOCTURNO"
+              title="DORMIR MEJOR EMPIEZA BAJANDO EL RITMO"
+              text="Un gesto simple antes de acostarte para acompañar la transición al descanso y despertar renovado de verdad."
+              textPosition="top"
+            />
+          </motion.div>
+
+          {/* Fila 2: 1 Banner a la Izquierda + 3 productos */}
+          <motion.div
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+            className="flex"
+          >
+            <InspirationBannerCard
+              imgSrc="/productusers/Banner_tienda_2.webp"
+              eyebrow="LO SIMPLE SE SOSTIENE"
+              title="TU RITUAL DE CADA DÍA"
+              text="Cuidarte no debería sentirse como una obligación más. Combina tus parches favoritos y suma un hábito simple que sí mantenés."
+            />
+          </motion.div>
+
+          {row2Products.map((product, i) => (
+            <motion.div
+              key={product.slug}
+              initial={{ opacity: 0, y: 28 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: (i + 4) * 0.07, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+              className="flex"
+            >
+              <ProductCard
+                product={product}
+                ratingSummary={reviewsSummary[product.slug]}
+                currency={currency}
+              />
+            </motion.div>
+          ))}
+
+          {/* Filas siguientes: Bundles y resto de productos */}
+          {remainingProducts.map((product, i) => (
+            <motion.div
+              key={product.slug}
+              initial={{ opacity: 0, y: 28 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: (i + 7) * 0.07, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
               className="flex"
             >
               <ProductCard

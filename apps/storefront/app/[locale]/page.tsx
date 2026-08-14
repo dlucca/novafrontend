@@ -4,16 +4,17 @@ import Navbar from "@/components/Navbar";
 import HeroWithBar from "@/components/home/HeroWithBar";
 import HowItWorks from "@/components/home/HowItWorks";
 import ComparisonTable from "@/components/home/ComparisonTable";
-import SubscriptionBanner from "@/components/home/SubscriptionBanner";
+import FeaturesBanner from "@/components/home/FeaturesBanner";
 import { getProducts } from "@/lib/commerce";
 import { MARKETS } from "@/lib/markets";
 import type { Locale } from "@/i18n/routing";
 
 // Client Components: lazy-loaded to unblock LCP/FCP
-const AbsorptionSection = dynamic(() => import("@/components/home/AbsorptionSection"));
-const ProductGrid     = dynamic(() => import("@/components/home/ProductGrid"));
-const Testimonials    = dynamic(() => import("@/components/home/Testimonials"));
-const HomeFAQ         = dynamic(() => import("@/components/home/HomeFAQ"));
+const BestsellersGrid = dynamic(() => import("@/components/home/BestsellersGrid"));
+const SocialCommunity = dynamic(() => import("@/components/home/SocialCommunity"));
+const AbsorptionSectionV2 = dynamic(() => import("@/components/home/AbsorptionSectionV2"));
+const WomanBanner     = dynamic(() => import("@/components/home/WomanBanner"));
+const InstagramFeed   = dynamic(() => import("@/components/home/InstagramFeed"));
 const Footer          = dynamic(() => import("@/components/Footer"));
 
 export const revalidate = 3600;
@@ -45,22 +46,32 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     <>
       <Navbar />
       <main>
-        {/* 1. Hero + Features Bar — shared carousel state */}
+        {/* 1. Hero + Features Bar */}
         <HeroWithBar />
-        {/* 2. Cards de Producto — grilla 2×3, debajo del AttributeBar */}
-        <ProductGrid products={products} basePrice={basePrice} currency={currency} />
-        {/* 3. Cómo Funciona — how it works, 3 steps */}
-        <HowItWorks />
-        {/* 4. Absorción — science section, dark blue bg */}
-        <AbsorptionSection />
-        {/* 5. Comparativo — comparison table */}
+
+        {/* 2. Sección de Best Sellers (3 Columnas + Banner Ritual) */}
+        <BestsellersGrid products={products} basePrice={basePrice} currency={currency} />
+
+        {/* 3. Sección de Social & Comunidad UGC */}
+        <SocialCommunity />
+
+        {/* 4. Tabla Comparativa General */}
         <ComparisonTable />
-        {/* 6. Suscripciones — subscription plans */}
-        <SubscriptionBanner basePrice={basePrice} currency={currency} />
-        {/* 8. Social Proof — testimonials */}
-        <Testimonials />
-        {/* 9. FAQ */}
-        <HomeFAQ />
+
+        {/* 5. Banner de Atributos/Beneficios */}
+        <FeaturesBanner />
+
+        {/* 6. Cómo Funciona */}
+        <HowItWorks />
+
+        {/* 7. Absorción y Ciencia V2 */}
+        <AbsorptionSectionV2 />
+
+        {/* 8. Banner Promocional Woman */}
+        <WomanBanner />
+
+        {/* 9. Instagram Feed Banner */}
+        <InstagramFeed />
       </main>
       <Footer />
     </>

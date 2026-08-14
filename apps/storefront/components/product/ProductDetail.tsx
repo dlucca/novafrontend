@@ -155,17 +155,14 @@ function Gallery({
         )}
       </div>
       {media.length > 1 && (
-        <div
-          className="mt-4 grid gap-3 justify-center md:justify-start"
-          style={{ gridTemplateColumns: `repeat(${media.length}, minmax(0, 1fr))` }}
-        >
+        <div className="mt-4 flex flex-wrap gap-2.5 justify-center md:justify-start">
           {media.map((item, i) => (
             <button
               key={i}
               onClick={() => setActive(i)}
               aria-label={`Ver media ${i + 1}`}
               aria-current={i === active}
-              className={`relative aspect-[4/5] w-full max-w-[110px] overflow-hidden rounded-2xl border-2 transition-all duration-200 group ${
+              className={`relative aspect-[4/5] h-20 w-16 overflow-hidden rounded-2xl border-2 transition-all duration-200 group flex-shrink-0 ${
                 i === active 
                   ? 'border-black scale-105 shadow-md' 
                   : 'border-transparent hover:border-gray-300'
@@ -200,6 +197,200 @@ function Gallery({
   );
 }
 
+const BUNDLE_ORIGINAL_PRICES: Record<string, number> = {
+  "pack-dia-noche": 1500,
+  "pack-calma-sueno": 1500,
+  "pack-glow-balance": 1500,
+  "pack-trio-vitalidad": 2250,
+};
+
+const BUNDLE_PATCH_COUNTS: Record<string, string> = {
+  "pack-dia-noche": "60 parches en total (30 Energy + 30 Sleep) · 15% OFF INCLUIDO",
+  "pack-calma-sueno": "60 parches en total (30 Zen + 30 Sleep) · 15% OFF INCLUIDO",
+  "pack-glow-balance": "60 parches en total (30 Glow + 30 Woman) · 15% OFF INCLUIDO",
+  "pack-trio-vitalidad": "90 parches en total (30 Energy + 30 Sleep + 30 Zen) · 20% OFF INCLUIDO",
+};
+
+const BUNDLE_HOW_IT_WORKS_IMAGES: Record<string, string[]> = {
+  "pack-dia-noche": ["/products/Energy_4.webp", "/products/Sleep_4.webp"],
+  "pack-calma-sueno": ["/products/Zen_4.webp", "/products/Sleep_4.webp"],
+  "pack-glow-balance": ["/products/Glow_4.webp", "/products/Woman_4.webp"],
+  "pack-trio-vitalidad": ["/products/Energy_4.webp", "/products/Zen_4.webp", "/products/Sleep_4.webp"],
+};
+
+function HowItWorksPdpImage({
+  images,
+  title,
+  bg,
+}: {
+  images: string[];
+  title: string;
+  bg: string;
+}) {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (images.length <= 1) return;
+    const timer = setInterval(() => {
+      setIndex((prev) => (prev + 1) % images.length);
+    }, 3500);
+    return () => clearInterval(timer);
+  }, [images]);
+
+  if (images.length === 0) return null;
+
+  return (
+    <div
+      className="relative aspect-[4/5] overflow-hidden rounded-[24px]"
+      style={{ background: bg }}
+    >
+      <AnimatePresence mode="sync">
+        <motion.div
+          key={images[index]}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.35, ease: "easeInOut" }}
+          className="absolute inset-0 w-full h-full"
+        >
+          <Image
+            src={images[index]}
+            alt={`${title} en uso (${index + 1})`}
+            fill
+            sizes="(max-width: 1024px) 100vw, 40vw"
+            className="object-cover"
+          />
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
+const SYNERGY_SECTIONS: Record<string, {
+  eyebrow: string;
+  title: string;
+  desc: string;
+  cards: {
+    icon: string;
+    timeTag: string;
+    timeBg: string;
+    name: string;
+    text: string;
+    img: string;
+    ingredients: string;
+  }[];
+}> = {
+  "pack-dia-noche": {
+    eyebrow: "SINERGIA 24 HORAS",
+    title: "Tu Ritmo Diario de Mañana a Noche",
+    desc: "Energy y Sleep se complementan para acompañar tu jornada completa: claridad y foco de día, calma y descanso de noche.",
+    cards: [
+      {
+        icon: "",
+        timeTag: "MAÑANA · 8:00 AM",
+        timeBg: "#005088",
+        name: "Novapatch Energy",
+        text: "Acompaña tu jornada con foco sostenido y claridad mental. Sin cafeína extra, sin temblores ni picos repentinos.",
+        img: "/products/Energy_thumb.webp",
+        ingredients: "Té Verde, Ginseng, L-Carnitina, Vit B2 & C",
+      },
+      {
+        icon: "",
+        timeTag: "NOCHE · 10:00 PM",
+        timeBg: "#432360",
+        name: "Novapatch Sleep",
+        text: "Aplica 1 hora antes de acostarte para acompañar la bajada de ritmo y preparar el cuerpo para un descanso reparador.",
+        img: "/products/Sleep_thumb.webp",
+        ingredients: "Triptófano, Bisglicinato de Magnesio, Glicina",
+      },
+    ],
+  },
+  "pack-calma-sueno": {
+    eyebrow: "DESCONEXIÓN Y RESTAURACIÓN",
+    title: "Mente en Calma y Sueño Reparador",
+    desc: "Zen y Sleep se complementan para acompañar la desaceleración del día: calma funcional por la tarde y descanso reparador de noche.",
+    cards: [
+      {
+        icon: "",
+        timeTag: "TARDE · 5:00 PM",
+        timeBg: "#3A6FA8",
+        name: "Novapatch Zen",
+        text: "Acompaña la calma funcional por la tarde, ayudando a transitar horas de alta exigencia con serenidad sin somnolencia.",
+        img: "/products/Zen_thumb.webp",
+        ingredients: "Triptófano, Taurato de Magnesio, Taurina, Manzanilla",
+      },
+      {
+        icon: "",
+        timeTag: "NOCHE · 10:00 PM",
+        timeBg: "#432360",
+        name: "Novapatch Sleep",
+        text: "Aplica 1 hora antes de acostarte para acompañar la bajada de ritmo y preparar el cuerpo para un descanso reparador.",
+        img: "/products/Sleep_thumb.webp",
+        ingredients: "Triptófano, Bisglicinato de Magnesio, Glicina",
+      },
+    ],
+  },
+  "pack-glow-balance": {
+    eyebrow: "BIENESTAR Y SALUD FEMENINA",
+    title: "Piel Radiante y Equilibrio Femenino",
+    desc: "Glow y Woman se complementan para acompañar tu cuidado integral: nutrición de la piel desde adentro y apoyo al equilibrio de tus ritmos naturales.",
+    cards: [
+      {
+        icon: "",
+        timeTag: "MAÑANA · DÍA",
+        timeBg: "#C94030",
+        name: "Novapatch Glow",
+        text: "Acompaña la nutrición de la piel desde adentro con colágeno hidrolizado, ácido hialurónico, biotina y antioxidantes.",
+        img: "/products/Glow_thumb.webp",
+        ingredients: "Colágeno Hidrolizado, Ácido Hialurónico, Biotina, Vit C",
+      },
+      {
+        icon: "",
+        timeTag: "DIARIO · A TU RITMO",
+        timeBg: "#8A3EBE",
+        name: "Novapatch Woman",
+        text: "Acompaña la estabilidad natural del bienestar femenino con fitoestrógenos botánicos de soya y minerales esenciales.",
+        img: "/products/Woman_thumb.webp",
+        ingredients: "Extracto de Soya, Bisglicinato de Hierro, Magnesio, Vit B6",
+      },
+    ],
+  },
+  "pack-trio-vitalidad": {
+    eyebrow: "COBERTURA COMPLETA 360°",
+    title: "La Tríada de Bienestar 24 Horas",
+    desc: "Tres parches especializados para acompañar cada fase del día: foco matutino con Energy, calma vespertina con Zen y descanso nocturno con Sleep.",
+    cards: [
+      {
+        icon: "",
+        timeTag: "MAÑANA · 8:00 AM",
+        timeBg: "#005088",
+        name: "Novapatch Energy",
+        text: "Acompaña tu jornada con claridad mental y foco sostenido sin picos de cafeína.",
+        img: "/products/Energy_thumb.webp",
+        ingredients: "Té Verde, Ginseng, L-Carnitina, Vit B12 & C",
+      },
+      {
+        icon: "",
+        timeTag: "TARDE · 5:00 PM",
+        timeBg: "#3A6FA8",
+        name: "Novapatch Zen",
+        text: "Acompaña la calma funcional por la tarde en momentos de exigencia sin somnolencia.",
+        img: "/products/Zen_thumb.webp",
+        ingredients: "Triptófano, Taurato de Magnesio, Taurina, Manzanilla",
+      },
+      {
+        icon: "",
+        timeTag: "NOCHE · 10:00 PM",
+        timeBg: "#432360",
+        name: "Novapatch Sleep",
+        text: "Aplica 1 hora antes de acostarte para acompañar la bajada de ritmo y preparar el descanso.",
+        img: "/products/Sleep_thumb.webp",
+        ingredients: "Triptófano, Bisglicinato de Magnesio, Inositol, Glicina",
+      },
+    ],
+  },
+};
+
 function TierSelector({
   options,
   selected,
@@ -207,6 +398,7 @@ function TierSelector({
   currency,
   color,
   bg,
+  slug,
 }: {
   options: PurchaseOption[];
   selected: PurchaseOption;
@@ -214,35 +406,57 @@ function TierSelector({
   currency: string;
   color: string;
   bg: string;
+  slug?: string;
 }) {
+  const originalPrice = BUNDLE_ORIGINAL_PRICES[slug ?? ""] ?? null;
+  const isBundle = Boolean(originalPrice);
+
   return (
     <div>
       <p className="mb-3 text-sm font-semibold text-[#0D1B35]">¿Cómo quieres recibirlo?</p>
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         {options.map((o) => {
           const isActive = o.tier === selected.tier;
+          const totalDiscountPct = isBundle && originalPrice
+            ? Math.round((1 - o.price / originalPrice) * 100)
+            : o.discountPct;
+
           return (
             <button
               key={o.tier}
               onClick={() => onSelect(o)}
               aria-pressed={isActive}
-              className="rounded-2xl border-2 px-3 py-3 text-left transition"
+              className="rounded-2xl border-2 px-3.5 py-3 text-left transition flex flex-col justify-between"
               style={{
-                // Neutros cálidos (cream) en reposo; el tier activo toma un velo del tint del producto
                 borderColor: isActive ? color : "#E7E1D6",
                 background: isActive ? `color-mix(in srgb, ${bg} 45%, #fff)` : "#FCFAF6",
                 boxShadow: isActive ? "0 4px 16px rgba(13,27,53,0.08)" : "none",
               }}
             >
-              <span className="block text-xs font-semibold text-[#0D1B35]">{o.label}</span>
-              <span className="mt-1 block text-lg font-extrabold text-[#0D1B35]">
-                {formatPrice(o.price, currency)}
-              </span>
-              {o.discountPct > 0 && (
-                <span className="mt-0.5 block text-[11px] font-bold" style={{ color }}>
-                  {o.discountPct}% OFF
+              <div>
+                <span className="block text-xs font-semibold text-[#0D1B35]">{o.label}</span>
+                {isBundle && originalPrice && (
+                  <span className="block text-[11px] font-bold text-stone-400 line-through mt-0.5">
+                    {formatPrice(originalPrice, currency)}
+                  </span>
+                )}
+                <span className="mt-0.5 block text-lg font-extrabold text-[#0D1B35]">
+                  {formatPrice(o.price, currency)}
                 </span>
-              )}
+              </div>
+              <div>
+                {isBundle ? (
+                  <span className="mt-1 block text-[11px] font-extrabold uppercase tracking-tight" style={{ color }}>
+                    {totalDiscountPct}% OFF TOTAL
+                  </span>
+                ) : (
+                  o.discountPct > 0 && (
+                    <span className="mt-0.5 block text-[11px] font-bold" style={{ color }}>
+                      {o.discountPct}% OFF
+                    </span>
+                  )
+                )}
+              </div>
             </button>
           );
         })}
@@ -388,7 +602,63 @@ const QUICK_FAQS: Record<string, { q: string; a: string }[]> = {
       q: "¿Tiene hormonas sintéticas?",
       a: "No, es 100% libre de hormonas sintéticas, utilizando fitoestrógenos naturales y bisglicinatos de alta absorción."
     }
-  ]
+  ],
+  "pack-dia-noche": [
+    {
+      q: "¿Cómo combino ambos parches en mi rutina?",
+      a: "Aplicas 1 parche Energy por la mañana (ej. 8:00 AM) para acompañar tu enfoque y vitalidad. Lo retiras por la tarde/noche y aplicas 1 parche Sleep 1 hora antes de dormir para acompañar la bajada de ritmo y el descanso reparador."
+    },
+    {
+      q: "¿El descuento del 15% viene aplicado?",
+      a: "¡Sí! El precio del Ritual Día & Noche incluye un 15% OFF de descuento permanente comparado con la compra individual de ambos sobres."
+    },
+    {
+      q: "¿Se pueden suspender o pausar las entregas?",
+      a: "Totalmente. Si eliges la opción de suscripción (Mensual, Bimestral o Trimestral), puedes pausar, reprogramar o cancelar en 1 solo clic desde tu panel de usuario sin cargos adicionales."
+    }
+  ],
+  "pack-calma-sueno": [
+    {
+      q: "¿Cómo combino ambos parches en mi rutina?",
+      a: "Aplicas 1 parche Zen por la tarde (4:00 PM - 6:00 PM) para acompañar la calma funcional en horas de exigencia. Lo retiras por la noche y aplicas 1 parche Sleep 1 hora antes de acostarte."
+    },
+    {
+      q: "¿El descuento del 15% viene aplicado?",
+      a: "¡Sí! El precio del Pack Calma & Sueño incluye un 15% OFF de descuento permanente comparado con la compra individual de ambos sobres."
+    },
+    {
+      q: "¿Se pueden suspender o pausar las entregas?",
+      a: "Totalmente. Si eliges la opción de suscripción, puedes pausar, reprogramar o cancelar las entregas con 1 solo clic desde tu cuenta sin penalizaciones."
+    }
+  ],
+  "pack-glow-balance": [
+    {
+      q: "¿Puedo usar ambos parches al mismo tiempo?",
+      a: "Sí. Aplicas 1 parche Glow y 1 parche Woman por la mañana en piel limpia y seca. La absorción transdérmica de ambas fórmulas es totalmente independiente y complementaria."
+    },
+    {
+      q: "¿El descuento del 15% viene aplicado?",
+      a: "¡Sí! El precio del Pack Glow & Balance incluye un 15% OFF de descuento permanente comparado con la compra de ambos sobres por separado."
+    },
+    {
+      q: "¿Se pueden suspender o pausar las entregas?",
+      a: "Totalmente. Puedes administrar, pausar o cancelar tus entregas en cualquier momento desde tu panel de usuario sin costos adicionales."
+    }
+  ],
+  "pack-trio-vitalidad": [
+    {
+      q: "¿Cómo distribuyo los 3 parches en el día?",
+      a: "Aplicas Energy por la mañana al despertar (8:00 AM), Zen por la tarde en horas de exigencia mental (5:00 PM), y Sleep 1 hora antes de ir a dormir (10:00 PM)."
+    },
+    {
+      q: "¿El descuento del 20% viene aplicado?",
+      a: "¡Sí! El Trío Vitalidad 360° incluye un 20% OFF de ahorro permanente en comparación con la compra individual de los 3 productos."
+    },
+    {
+      q: "¿Se pueden suspender o pausar las entregas?",
+      a: "Totalmente. Puedes pausar, modificar la frecuencia o cancelar tu suscripción en cualquier momento desde tu cuenta con 1 solo clic."
+    }
+  ],
 };
 
 export default function ProductDetail({
@@ -461,14 +731,11 @@ export default function ProductDetail({
   const bg = meta?.bg ?? "#FFFFFF";
   // Shade del producto para texto/acentos sobre fondos claros (mejor contraste que el base)
   const accent = meta?.taglineColor ?? color;
-  // La galería muestra la primera imagen, un video UGC local en el 2º slot,
-  // y el resto de las imágenes.
-  const mediaList = [
-    { type: "image" as const, src: product.images[0] },
-    { type: "video" as const, src: "/videos/ugc_galeria.mp4", thumbnail: "/comunidad/9.webp" },
-    ...product.images.slice(1, 5).map((img) => ({ type: "image" as const, src: img }))
-  ];
-  const lifestyleA = meta?.howItWorksImage;         // Imagen seccion Como funciona
+  // La galería muestra las imágenes del producto.
+  const mediaList = product.images.map((img) => ({ type: "image" as const, src: img }));
+  
+  const bundleHowItWorks = BUNDLE_HOW_IT_WORKS_IMAGES[product.slug];
+  const howItWorksImages = bundleHowItWorks ?? (meta?.howItWorksImage ? [meta.howItWorksImage] : []);
   const lifestyleB = "/productusers/FAQ_image.webp";                   // Imagen FIJA para FAQ
 
   // Default: Compra única (freq === null)
@@ -525,7 +792,32 @@ export default function ProductDetail({
           {pdp && (
             <p className="mt-4 text-lg font-semibold text-[#0D1B35]">{pdp.tagline}</p>
           )}
-          <p className="mt-4 max-w-md text-sm leading-6 text-[#425066]">
+
+          {/* Precio y Ahorro en PDP */}
+          {(() => {
+            const originalPrice = BUNDLE_ORIGINAL_PRICES[product.slug] ?? product.basePrice;
+            const hasSavings = originalPrice > selected.price;
+            const savingsAmount = originalPrice - selected.price;
+            return (
+              <div className="mt-3 flex items-baseline gap-3">
+                <span className="text-3xl font-black text-[#0D1B35]">
+                  {formatPrice(selected.price, currency)}
+                </span>
+                {hasSavings && (
+                  <span className="text-lg font-bold text-stone-400 line-through">
+                    {formatPrice(originalPrice, currency)}
+                  </span>
+                )}
+                {hasSavings && (
+                  <span className="text-xs font-black uppercase text-[#005088] bg-[#005088]/10 px-3 py-1 rounded-full border border-[#005088]/20">
+                    ¡AHORRAS {formatPrice(savingsAmount, currency)}!
+                  </span>
+                )}
+              </div>
+            );
+          })()}
+
+          <p className="mt-3 max-w-md text-sm leading-6 text-[#425066]">
             {product.description}
           </p>
 
@@ -538,7 +830,7 @@ export default function ProductDetail({
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24" style={{ width: "12px", height: "12px" }}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              30 parches por sobre
+              {BUNDLE_PATCH_COUNTS[product.slug] ?? "30 parches por sobre"}
             </span>
           </div>
 
@@ -608,6 +900,7 @@ export default function ProductDetail({
               currency={currency}
               color={color}
               bg={bg}
+              slug={product.slug}
             />
           </div>
 
@@ -618,15 +911,38 @@ export default function ProductDetail({
           >
             {ctaLabel}
           </button>
-          {selected.freq === null ? (
-            <p className="mt-3 text-center text-xs text-[#0D1B35]/55">
-              Envío GRATIS · Llega en 2-4 días hábiles · 30 días de garantía total con tu primer pedido
-            </p>
-          ) : (
-            <p className="mt-3 text-center text-xs font-bold text-[#1E7D4F]">
-              Ahorras {formatPrice(product.basePrice - selected.price, currency)} · Pausa/cancela cuando quieras · Sin penalizaciones · Envío GRATIS siempre
-            </p>
-          )}
+          {(() => {
+            const origPrice = BUNDLE_ORIGINAL_PRICES[product.slug];
+            if (origPrice) {
+              const savings = origPrice - selected.price;
+              if (selected.freq === null) {
+                return (
+                  <p className="mt-3 text-center text-xs font-bold text-[#1E7D4F]">
+                    ¡Ahorras {formatPrice(savings, currency)} frente a la compra individual! · Envío GRATIS · 30 días de garantía
+                  </p>
+                );
+              }
+              return (
+                <p className="mt-3 text-center text-xs font-bold text-[#1E7D4F]">
+                  Ahorras {formatPrice(savings, currency)} · Pausa/cancela cuando quieras · Sin penalizaciones · Envío GRATIS siempre
+                </p>
+              );
+            }
+
+            if (selected.freq === null) {
+              return (
+                <p className="mt-3 text-center text-xs text-[#0D1B35]/55">
+                  Envío GRATIS · Llega en 2-4 días hábiles · 30 días de garantía total con tu primer pedido
+                </p>
+              );
+            }
+
+            return (
+              <p className="mt-3 text-center text-xs font-bold text-[#1E7D4F]">
+                Ahorras {formatPrice(product.basePrice - selected.price, currency)} · Pausa/cancela cuando quieras · Sin penalizaciones · Envío GRATIS siempre
+              </p>
+            );
+          })()}
 
           {/* Mini-FAQ interactivo (acordeón de 3 preguntas clave) */}
           {QUICK_FAQS[product.slug] && (
@@ -712,6 +1028,55 @@ export default function ProductDetail({
         )}
       </AnimatePresence>
 
+          {/* ── Sección de Sinergia exclusiva para paquetes/bundles ── */}
+          {SYNERGY_SECTIONS[product.slug] && (
+            <motion.section {...sectionReveal} className="bg-[#FAF7F2] py-20 px-6 border-t border-b border-[#E8E2D8]">
+              <div className="max-w-5xl mx-auto text-center mb-14">
+                <span className="text-xs font-black tracking-[0.2em] uppercase px-4 py-1.5 rounded-full bg-[#005088]/10 text-[#005088] border border-[#005088]/20">
+                  {SYNERGY_SECTIONS[product.slug].eyebrow}
+                </span>
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mt-4 tracking-tight text-[#0D1B35]">
+                  {SYNERGY_SECTIONS[product.slug].title}
+                </h2>
+                <p className="text-[#425066] max-w-2xl mx-auto mt-3 text-sm md:text-base leading-relaxed font-medium">
+                  {SYNERGY_SECTIONS[product.slug].desc}
+                </p>
+              </div>
+
+              <div className={`max-w-5xl mx-auto grid grid-cols-1 ${SYNERGY_SECTIONS[product.slug].cards.length === 3 ? "md:grid-cols-3" : "md:grid-cols-2"} gap-8`}>
+                {SYNERGY_SECTIONS[product.slug].cards.map((c, idx) => (
+                  <div key={idx} className="bg-white border border-[#E8E2D8]/80 shadow-[0_4px_24px_rgba(13,27,53,0.04)] rounded-3xl p-8 relative overflow-hidden flex flex-col justify-between hover:shadow-[0_12px_36px_rgba(13,27,53,0.08)] transition-shadow duration-300">
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        {c.icon ? <span className="text-3xl">{c.icon}</span> : <div />}
+                        <span className="text-xs font-bold px-3.5 py-1 rounded-full text-white shadow-sm" style={{ background: c.timeBg }}>
+                          {c.timeTag}
+                        </span>
+                      </div>
+                      <h3 className="text-2xl font-black text-[#0D1B35]">{c.name}</h3>
+                      <p className="text-[#425066] text-sm mt-2 leading-relaxed font-medium">
+                        {c.text}
+                      </p>
+                    </div>
+                    <div className="mt-8 pt-6 border-t border-[#E8E2D8]/70 flex items-center gap-4">
+                      <Image
+                        src={c.img}
+                        alt={c.name}
+                        width={72}
+                        height={72}
+                        className="w-18 h-18 rounded-2xl bg-[#FAF7F2] p-1.5 border border-[#E8E2D8] object-contain shadow-sm shrink-0"
+                      />
+                      <div>
+                        <p className="text-sm font-extrabold text-[#0D1B35]">Ingredientes activos clave</p>
+                        <p className="text-sm text-stone-600 mt-1 font-medium leading-snug">{c.ingredients}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.section>
+          )}
+
       {/* ── UgcMarquee — carrusel de fotos reales ── */}
       <UgcMarquee accent={accent} />
 
@@ -755,7 +1120,7 @@ export default function ProductDetail({
             <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 lg:grid-cols-12">
               
               {/* Texto a la izquierda */}
-              <div className={lifestyleA ? "lg:col-span-7" : "lg:col-span-8"}>
+              <div className={howItWorksImages.length > 0 ? "lg:col-span-7" : "lg:col-span-8"}>
                 <Eyebrow color={accent}>La ciencia del parche</Eyebrow>
                 <h2 className="mt-3 text-[clamp(28px,3vw,40px)] font-black leading-tight text-[#0D1B35]">
                   Cómo funciona
@@ -768,21 +1133,14 @@ export default function ProductDetail({
                 </p>
               </div>
 
-              {/* Imagen a la derecha */}
-              {lifestyleA && (
+              {/* Imagen a la derecha (Transición en Bundles) */}
+              {howItWorksImages.length > 0 && (
                 <div className="lg:col-span-5">
-                  <div
-                    className="relative aspect-[4/5] overflow-hidden rounded-[24px]"
-                    style={{ background: bg }}
-                  >
-                    <Image
-                      src={lifestyleA}
-                      alt={`${product.title} en uso`}
-                      fill
-                      sizes="(max-width: 1024px) 100vw, 40vw"
-                      className="object-cover"
-                    />
-                  </div>
+                  <HowItWorksPdpImage
+                    images={howItWorksImages}
+                    title={product.title}
+                    bg={bg}
+                  />
                 </div>
               )}
             </div>
