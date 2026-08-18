@@ -343,10 +343,10 @@ export default function CheckoutPage() {
     });
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [paymentStep, setPaymentStep] = useState<number>(0); // 0=idle, 1-4=processing
-  // Copy shown in the step-5 full-screen overlay. Defaults to the 3DS/bank
-  // redirect wording; the voucher (OXXO/SPEI) flow overrides it — "redirecting
-  // to your bank" is wrong when we're just generating a payment slip.
-  const [step5Copy, setStep5Copy] = useState<string>("Redirigiendo a tu banco…");
+  // Copy shown in the full-screen processing overlay. Defaults to the generic
+  // "processing" wording shown from the moment the user pays; the voucher
+  // (OXXO/SPEI) and 3DS branches override it right before they navigate away.
+  const [step5Copy, setStep5Copy] = useState<string>("Procesando tu pago…");
   // Total confirmed by Medusa after shipping is applied — authoritative for what gets charged
   const [confirmedTotal, setConfirmedTotal] = useState<number | null>(null);
   // Real shipping cost returned by Medusa after applying the shipping method
@@ -904,6 +904,7 @@ export default function CheckoutPage() {
         if (result.type === "redirect") {
           // Mostrar paso 5 para evitar el flash de vuelta al formulario mientras el
           // browser carga la página de Openpay
+          setStep5Copy("Redirigiendo a tu banco…");
           setPaymentStep(5);
           // Guardar cart_id para que la página de retorno pueda recuperar el contexto
           sessionStorage.setItem("novapatch_3ds_cart_id", cart_id);
@@ -1077,8 +1078,10 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-[#FAF7F2]">
-      {/* ── Overlay 3DS: tapa la pantalla mientras el browser navega a Openpay ── */}
-      {paymentStep === 5 && (
+      {/* Full-screen processing overlay: continuous feedback from the moment the
+          user pays until we navigate to /gracias (or the bank). Replaces the old
+          4-step stepper — one clean spinner, copy set per flow. */}
+      {submitting && (
         <div className="fixed inset-0 z-[9999] bg-[#FAF7F2] flex flex-col items-center justify-center gap-4">
           <span className="h-10 w-10 border-4 border-[#005088] border-t-transparent rounded-full animate-spin" />
           <p className="text-[16px] font-semibold text-[#005088]">{step5Copy}</p>
