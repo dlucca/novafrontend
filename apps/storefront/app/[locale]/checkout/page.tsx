@@ -48,6 +48,24 @@ function fmt(n: number, region: string = "mxn") {
   return formatPrice(n, region.toUpperCase());
 }
 
+// Let the step-5 overlay paint before we navigate away, but NEVER hang:
+// requestAnimationFrame is paused while the tab is in the background, so racing
+// it against a timeout guarantees the redirect (voucher → /gracias, or 3DS →
+// bank) always fires — even if the user tabbed away — instead of getting stuck
+// on the "Redirigiendo…" spinner.
+function waitForPaint(): Promise<void> {
+  return new Promise<void>((resolve) => {
+    let settled = false;
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      resolve();
+    };
+    requestAnimationFrame(() => requestAnimationFrame(finish));
+    setTimeout(finish, 300);
+  });
+}
+
 // ─── Sub-components ──────────────────────────────────────────────────────────
 
 function OrderItem({ item, region }: { item: CartItem; region: string }) {
@@ -325,6 +343,10 @@ export default function CheckoutPage() {
     });
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [paymentStep, setPaymentStep] = useState<number>(0); // 0=idle, 1-4=processing
+  // Copy shown in the step-5 full-screen overlay. Defaults to the 3DS/bank
+  // redirect wording; the voucher (OXXO/SPEI) flow overrides it — "redirecting
+  // to your bank" is wrong when we're just generating a payment slip.
+  const [step5Copy, setStep5Copy] = useState<string>("Redirigiendo a tu banco…");
   // Total confirmed by Medusa after shipping is applied — authoritative for what gets charged
   const [confirmedTotal, setConfirmedTotal] = useState<number | null>(null);
   // Real shipping cost returned by Medusa after applying the shipping method
@@ -860,6 +882,7 @@ export default function CheckoutPage() {
         // el webhook lo complete al pagar. NO disparamos Purchase acá (el pago
         // aún no ocurrió); /gracias muestra el voucher vía Status Screen Brick.
         if (result.type === "voucher") {
+          setStep5Copy("Generando tu comprobante de pago…");
           setPaymentStep(5);
           sessionStorage.setItem("novapatch_mp_payment_id", result.payment_id);
           sessionStorage.setItem("novapatch_mp_voucher", "1");
@@ -872,7 +895,7 @@ export default function CheckoutPage() {
           });
           clearCart();
           orderCompleted.current = true;
-          await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+          await waitForPaint();
           router.replace(`/${localeParam || "mx"}/checkout/gracias`);
           return;
         }
@@ -934,8 +957,8 @@ export default function CheckoutPage() {
               province: stateVal,
             },
           });
-          // Esperar 2 frames para que React renderice el overlay antes de navegar
-          await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+          // Paint the overlay before navigating, but never hang if backgrounded.
+          await waitForPaint();
           window.location.href = result.redirect_url;
           return; // el flujo continúa en /checkout/3ds-return
         }
@@ -1058,7 +1081,7 @@ export default function CheckoutPage() {
       {paymentStep === 5 && (
         <div className="fixed inset-0 z-[9999] bg-[#FAF7F2] flex flex-col items-center justify-center gap-4">
           <span className="h-10 w-10 border-4 border-[#005088] border-t-transparent rounded-full animate-spin" />
-          <p className="text-[16px] font-semibold text-[#005088]">Redirigiendo a tu banco…</p>
+          <p className="text-[16px] font-semibold text-[#005088]">{step5Copy}</p>
           <p className="text-[13px] text-[#9CA3AF]">No cierres esta página</p>
         </div>
       )}
