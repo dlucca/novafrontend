@@ -16,5 +16,13 @@ export default function PaymentStatusBrick({
     initMercadoPago(mpPublicKeyFor(country), { locale: mpLocaleFor(country) });
   }, [country]);
 
-  return <StatusScreen initialization={{ paymentId }} />;
+  // Hide the "Descripción" (status details) and "Operación" (transaction date)
+  // rows so the voucher fits on the confirmation page without scrolling — the
+  // amount, expiry and "Abrir ticket" button carry everything the user needs.
+  return (
+    <StatusScreen
+      initialization={{ paymentId }}
+      customization={{ visual: { hideStatusDetails: true, hideTransactionDate: true } }}
+    />
+  );
 }
