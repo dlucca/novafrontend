@@ -1713,57 +1713,25 @@ export default function CheckoutPage() {
                     )}
                   </AnimatePresence>
 
-                  {/* Submit + Progress Stepper */}
-                  {submitting && paymentStep > 0 ? (
-                    <div className="mt-6 space-y-3">
-                      {[
-                        { step: 1, label: "Verificando tarjeta" },
-                        { step: 2, label: "Guardando dirección" },
-                        { step: 3, label: "Preparando pago" },
-                        { step: 4, label: "Procesando cobro" },
-                      ].map(({ step, label }) => (
-                        <div key={step} className="flex items-center gap-3">
-                          <div className={`flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-[12px] font-bold transition-all duration-300 ${
-                            paymentStep > step
-                              ? "bg-green-500 text-white"
-                              : paymentStep === step
-                              ? "bg-[#005088] text-white"
-                              : "bg-[#E5E7EB] text-[#9CA3AF]"
-                          }`}>
-                            {paymentStep > step ? (
-                              <CheckCircle2 size={16} />
-                            ) : paymentStep === step ? (
-                              <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                            ) : (
-                              step
-                            )}
-                          </div>
-                          <span className={`text-[14px] font-medium transition-colors duration-300 ${
-                            paymentStep > step
-                              ? "text-green-600"
-                              : paymentStep === step
-                              ? "text-[#005088] font-bold"
-                              : "text-[#9CA3AF]"
-                          }`}>
-                            {label}
-                          </span>
-                        </div>
-                      ))}
-                      <p className="text-center text-[12px] text-[#9CA3AF] pt-2">
-                        No cierres esta página...
-                      </p>
-                    </div>
-                  ) : (
-                    <button
-                      type="submit"
-                      disabled={submitting}
-                      className="mt-6 w-full py-4 rounded-full text-[16px] font-black text-white transition-all duration-200 active:scale-[0.97] hover:brightness-95 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                      style={{ background: "#22c55e" }}
-                    >
-                      <Lock size={16} />
-                      Pagar {fmt(confirmedTotal ?? (finalTotal + displayShippingCost), cartRegion)}
-                    </button>
-                  )}
+                  {/* Submit */}
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="mt-6 w-full py-4 rounded-full text-[16px] font-black text-white transition-all duration-200 active:scale-[0.97] hover:brightness-95 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    style={{ background: "#22c55e" }}
+                  >
+                    {submitting ? (
+                      <>
+                        <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Procesando…
+                      </>
+                    ) : (
+                      <>
+                        <Lock size={16} />
+                        Pagar {fmt(confirmedTotal ?? (finalTotal + displayShippingCost), cartRegion)}
+                      </>
+                    )}
+                  </button>
                 </motion.div>
               )}
 
