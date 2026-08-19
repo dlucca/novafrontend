@@ -93,11 +93,8 @@ export async function POST(req: NextRequest) {
 
   if (custom_data.value !== undefined || isCommerceEvent) {
     custom_data.currency = resolvedCurrency;
-
-    if (custom_data.value !== undefined) {
-      const parsedVal = Number(custom_data.value);
-      custom_data.value = !isNaN(parsedVal) ? parsedVal : 0;
-    }
+    const parsedVal = Number(custom_data.value ?? 0);
+    custom_data.value = !isNaN(parsedVal) ? parsedVal : 0;
   }
 
   const payload = {

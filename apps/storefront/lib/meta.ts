@@ -88,11 +88,8 @@ export function trackMeta(
 
   if (customData.value !== undefined || isCommerceEvent) {
     customData.currency = resolvedCurrency;
-
-    if (customData.value !== undefined) {
-      const parsedVal = Number(customData.value);
-      customData.value = !isNaN(parsedVal) ? parsedVal : 0;
-    }
+    const parsedVal = Number(customData.value ?? 0);
+    customData.value = !isNaN(parsedVal) ? parsedVal : 0;
   }
   // ──────────────────────────────────────────────
 
