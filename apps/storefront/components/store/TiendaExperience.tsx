@@ -100,6 +100,7 @@ function ProductCard({
 }) {
   const meta = META[product.slug] ?? PRODUCT_META[product.slug];
   const { addToCart } = useCart();
+  const [added, setAdded] = useState(false);
 
   if (!meta) return null;
 
@@ -124,6 +125,8 @@ function ProductCard({
       mode: "once",
       freq: 30,
     });
+    setAdded(true);
+    setTimeout(() => setAdded(false), 2000);
   }
 
   return (
@@ -205,6 +208,16 @@ function ProductCard({
           <p className="text-xs font-sans text-[#3A3A37] font-normal leading-relaxed line-clamp-1 mt-1">
             {ingredientsList}
           </p>
+
+          {/* Mobile CTA Button */}
+          <div className="mt-2.5 sm:hidden">
+            <button
+              onClick={handleAddToCart}
+              className="w-full py-2.5 px-3 rounded-full bg-[#0F0F0F] text-white border border-[#0F0F0F] font-sans font-medium text-[11px] uppercase tracking-[0.12em] text-center active:scale-95 transition-all shadow-2xs cursor-pointer"
+            >
+              {added ? "¡Añadido!" : "Comprar ahora"}
+            </button>
+          </div>
         </div>
 
         {/* HOVER VIEW: Fades in & slides up smoothly from the bottom on hover */}
