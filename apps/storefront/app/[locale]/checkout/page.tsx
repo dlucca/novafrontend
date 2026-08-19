@@ -1707,56 +1707,25 @@ export default function CheckoutPage() {
                     )}
                   </AnimatePresence>
 
-                  {/* Submit + Progress Stepper */}
-                  {submitting && paymentStep > 0 ? (
-                    <div className="mt-6 space-y-3">
-                      {[
-                        { step: 1, label: "Verificando tarjeta" },
-                        { step: 2, label: "Guardando dirección" },
-                        { step: 3, label: "Preparando pago" },
-                        { step: 4, label: "Procesando cobro" },
-                      ].map(({ step, label }) => (
-                        <div key={step} className="flex items-center gap-3">
-                          <div className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-mono font-bold transition-all duration-300 ${
-                            paymentStep > step
-                              ? "bg-[#0F0F0F] text-white"
-                              : paymentStep === step
-                              ? "bg-[#0F0F0F] text-white"
-                              : "bg-[#FAF8F5] border border-[#E6E1D8] text-[#A8A29A]"
-                          }`}>
-                            {paymentStep > step ? (
-                              <CheckCircle2 size={16} />
-                            ) : paymentStep === step ? (
-                              <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                            ) : (
-                              step
-                            )}
-                          </div>
-                          <span className={`text-xs font-sans transition-colors duration-300 ${
-                            paymentStep > step
-                              ? "text-[#0F0F0F] font-medium"
-                              : paymentStep === step
-                              ? "text-[#0F0F0F] font-bold"
-                              : "text-[#A8A29A]"
-                          }`}>
-                            {label}
-                          </span>
-                        </div>
-                      ))}
-                      <p className="text-center text-xs font-sans text-[#A8A29A] pt-2">
-                        No cierres esta página...
-                      </p>
-                    </div>
-                  ) : (
-                    <button
-                      type="submit"
-                      disabled={submitting}
-                      className="mt-6 w-full py-4 rounded-full text-xs font-sans font-medium uppercase tracking-[0.14em] bg-[#0F0F0F] text-white border border-[#0F0F0F] hover:bg-white hover:text-[#0F0F0F] transition-all cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                    >
-                      <Lock size={15} />
-                      Pagar {fmt(confirmedTotal ?? (finalTotal + displayShippingCost), cartRegion)}
-                    </button>
-                  )}
+                  {/* Submit */}
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="mt-6 w-full py-4 rounded-full text-[16px] font-black text-white transition-all duration-200 active:scale-[0.97] hover:brightness-95 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    style={{ background: "#22c55e" }}
+                  >
+                    {submitting ? (
+                      <>
+                        <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Procesando…
+                      </>
+                    ) : (
+                      <>
+                        <Lock size={16} />
+                        Pagar {fmt(confirmedTotal ?? (finalTotal + displayShippingCost), cartRegion)}
+                      </>
+                    )}
+                  </button>
                 </motion.div>
               )}
 
