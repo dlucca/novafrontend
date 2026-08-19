@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Mail,
@@ -68,8 +68,27 @@ export default function EmailsPreviewPage() {
   const [sending, setSending] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
+  const [backendHtml, setBackendHtml] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (activeKey === "order") {
+      const backendUrl = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || "https://novabackend-production.up.railway.app";
+      fetch(`${backendUrl}/store/emails/preview`)
+        .then((res) => (res.ok ? res.text() : null))
+        .then((html) => {
+          if (html) setBackendHtml(html);
+        })
+        .catch(() => { /* silent fallback */ });
+    } else {
+      setBackendHtml(null);
+    }
+  }, [activeKey]);
+
   // Generate HTML for current template
   const getHtml = (key: EmailTemplateKey) => {
+    if (key === "order" && backendHtml) {
+      return backendHtml;
+    }
     const origin = typeof window !== "undefined" ? window.location.origin : "";
     switch (key) {
       case "order":
