@@ -55,18 +55,25 @@ export default async function ComparisonTable() {
             <div className="rounded-xl overflow-hidden border border-[#E6E1D8] bg-white h-full flex flex-col overflow-x-auto shadow-2xs">
 
               {/* Header row */}
-              <div className="grid border-b border-[#E6E1D8] [grid-template-columns:1fr_44px_44px_44px_44px_44px] sm:[grid-template-columns:1fr_64px_64px_64px_64px_64px] md:[grid-template-columns:1fr_88px_88px_88px_88px_88px] min-w-[320px]">
+              <div className="grid border-b border-[#E6E1D8] [grid-template-columns:1fr_44px_44px_44px_44px_44px] sm:[grid-template-columns:1fr_64px_64px_64px_64px_64px] md:[grid-template-columns:1fr_88px_88px_88px_88px_88px]">
                 {/* Feature label */}
-                <div className="px-3 sm:px-4 py-3 sm:py-4 text-[11px] sm:text-[12px] font-sans font-medium uppercase tracking-[0.14em] text-[#A8A29A] flex items-end">
-                  Características
+                <div className="px-2.5 sm:px-4 py-3 sm:py-4 text-[10px] sm:text-[12px] font-sans font-medium uppercase tracking-[0.1em] sm:tracking-[0.14em] text-[#A8A29A] flex items-end">
+                  <span className="hidden sm:inline">Características</span>
+                  <span className="sm:hidden">Beneficios</span>
                 </div>
 
                 {/* Novapatch */}
                 <div
-                  className="py-3 sm:py-4 px-1 flex flex-col items-center justify-end gap-1 bg-[#0F0F0F] text-[#FAF8F5]"
+                  className="py-2.5 sm:py-4 px-0.5 flex flex-col items-center justify-end gap-1 bg-[#0F0F0F] text-[#FAF8F5]"
                 >
-                  <span className="font-sans font-semibold text-[13px] tracking-tight">novapatch</span>
-                  <span className="text-[9.5px] sm:text-[10px] font-sans font-medium uppercase tracking-wider opacity-70">Parche</span>
+                  <Image
+                    src="/logos/logo.webp"
+                    alt="Novapatch"
+                    width={48}
+                    height={16}
+                    className="h-3 sm:h-4 w-auto object-contain brightness-0 invert"
+                  />
+                  <span className="text-[8.5px] sm:text-[10px] font-sans font-semibold uppercase tracking-wider text-white">Parche</span>
                 </div>
 
                 {/* Cápsulas */}
@@ -121,9 +128,9 @@ export default async function ComparisonTable() {
               {rows.map((row, i) => (
                 <div
                   key={row.feature}
-                  className={`grid border-b border-[#E6E1D8]/60 last:border-b-0 [grid-template-columns:1fr_44px_44px_44px_44px_44px] sm:[grid-template-columns:1fr_64px_64px_64px_64px_64px] md:[grid-template-columns:1fr_88px_88px_88px_88px_88px] min-w-[320px] ${i % 2 === 1 ? "bg-[#FAF8F5]/50" : "bg-white"}`}
+                  className={`grid border-b border-[#E6E1D8]/60 last:border-b-0 [grid-template-columns:1fr_44px_44px_44px_44px_44px] sm:[grid-template-columns:1fr_64px_64px_64px_64px_64px] md:[grid-template-columns:1fr_88px_88px_88px_88px_88px] ${i % 2 === 1 ? "bg-[#FAF8F5]/50" : "bg-white"}`}
                 >
-                  <div className="px-3 sm:px-4 py-3 sm:py-4 text-[12px] sm:text-[13px] md:text-[14px] font-sans font-normal text-[#0F0F0F] flex items-center leading-snug">
+                  <div className="px-2.5 sm:px-4 py-3 sm:py-4 text-[11.5px] sm:text-[13px] md:text-[14px] font-sans font-normal text-[#0F0F0F] flex items-center leading-snug">
                     {row.feature}
                   </div>
                   <div className="py-3 sm:py-4 flex items-center justify-center bg-[#0F0F0F]/5 border-x border-[#E6E1D8]/40">

@@ -34,9 +34,8 @@ export default function WomanBanner() {
           />
         </motion.div>
 
-        {/* Soft Background Gradient Mask for Text Legibility */}
-        <div className="absolute inset-0 bg-gradient-to-r from-white via-white/90 to-transparent md:w-[60%] z-[1]" />
-        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/75 to-transparent md:hidden z-[1]" />
+        {/* Soft Left Background Gradient Mask for Text Legibility (Keeps image crisp & vibrant on the right) */}
+        <div className="absolute inset-0 bg-gradient-to-r from-white via-white/60 to-transparent w-[85%] sm:w-[60%] z-[1]" />
 
         {/* Content Box */}
         <motion.div

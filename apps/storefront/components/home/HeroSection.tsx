@@ -30,7 +30,7 @@ export default function HeroSection() {
             fill
             priority
             sizes="(max-width: 1400px) 100vw, 1400px"
-            className="object-cover object-center"
+            className="object-cover object-[80%_center] sm:object-center"
           />
         </motion.div>
 

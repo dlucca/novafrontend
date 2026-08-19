@@ -59,8 +59,11 @@ export default function InstagramFeed() {
           </h2>
         </motion.div>
 
-        {/* 5-Column Grid of Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3.5 sm:gap-5">
+        {/* Carousel on Mobile (1 row, 2 images visible), Grid on Desktop */}
+        <div
+          className="flex gap-3.5 overflow-x-auto scrollbar-none snap-x snap-mandatory pb-2 -mx-6 px-6 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-3 md:grid-cols-5 sm:gap-5 sm:overflow-visible"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
           {posts.map((post, i) => (
             <motion.a
               key={post.id}
@@ -71,7 +74,7 @@ export default function InstagramFeed() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
-              className="relative aspect-[4/5] rounded-xl overflow-hidden border border-[#E6E1D8] bg-white group shadow-2xs block hover:border-[#0F0F0F]/30 transition-colors"
+              className="snap-start flex-shrink-0 w-[calc(50%-7px)] sm:w-auto sm:flex-shrink relative aspect-[4/5] rounded-xl overflow-hidden border border-[#E6E1D8] bg-white group shadow-2xs block hover:border-[#0F0F0F]/30 transition-colors"
               aria-label={post.alt}
             >
               {/* Post image with scroll-driven scale */}

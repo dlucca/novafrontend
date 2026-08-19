@@ -333,51 +333,96 @@ function HowItWorksBannerCard({
   detailText: string;
 }) {
   return (
-    <div className="relative w-full aspect-[16/9] sm:aspect-[21/9] sm:min-h-[340px] lg:min-h-[380px] rounded-2xl overflow-hidden bg-[#FAF8F5] border border-[#E6E1D8] shadow-md flex flex-col justify-end p-6 sm:p-9 lg:p-10 text-left">
-      {/* Background Image */}
-      <div className="absolute inset-0">
-        <Image
-          src="/infographic/Banner_howitworks_pdp.webp"
-          alt="Cómo funciona Novapatch"
-          fill
-          sizes="(max-width: 1400px) 100vw, 1240px"
-          className="object-cover object-center"
-          priority
-        />
-      </div>
+    <>
+      {/* ── MOBILE VIEW (< md): Text First, Image Second ── */}
+      <div className="md:hidden flex flex-col gap-5 w-full text-left">
+        {/* Text Content Card */}
+        <div className="bg-[#FAF8F5] border border-[#E6E1D8] rounded-2xl p-6 flex flex-col justify-center shadow-2xs">
+          <h2 className="text-3xl font-display font-semibold text-[#0F0F0F] tracking-[-0.035em] leading-tight lowercase mb-4">
+            cómo funciona.
+          </h2>
 
-      {/* Soft Bone (#FAF8F5) Gradient Overlay for Elegant Left Side Text Blend */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#FAF8F5] via-[#FAF8F5]/90 to-transparent sm:bg-gradient-to-r sm:from-[#FAF8F5] sm:via-[#FAF8F5]/85 sm:to-transparent z-[1] pointer-events-none" />
+          <div className="flex flex-wrap gap-2 mb-5">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[#E6E1D8] text-[11px] font-sans font-medium text-[#0F0F0F] shadow-2xs">
+              <span className="text-[#A8A29A]">✓</span> Liberación tópica gradual
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[#E6E1D8] text-[11px] font-sans font-medium text-[#0F0F0F] shadow-2xs">
+              <span className="text-[#A8A29A]">✓</span> 0% impacto digestivo
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[#E6E1D8] text-[11px] font-sans font-medium text-[#0F0F0F] shadow-2xs">
+              <span className="text-[#A8A29A]">✓</span> Absorción continua de 10h
+            </span>
+          </div>
 
-      {/* Hero Text Content Layer: 50% del espacio izquierdo en desktop */}
-      <div className="relative z-10 w-full lg:w-1/2 lg:max-w-[50%] flex flex-col justify-end">
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-semibold text-[#0F0F0F] tracking-[-0.035em] leading-tight lowercase mb-4">
-          cómo funciona.
-        </h2>
-
-        {/* Pill Badges */}
-        <div className="flex flex-wrap gap-2.5 mb-5">
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-[#E6E1D8] text-xs font-sans font-medium text-[#0F0F0F] shadow-2xs">
-            <span className="text-[#A8A29A]">✓</span> Liberación tópica gradual
-          </span>
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-[#E6E1D8] text-xs font-sans font-medium text-[#0F0F0F] shadow-2xs">
-            <span className="text-[#A8A29A]">✓</span> 0% impacto digestivo
-          </span>
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-[#E6E1D8] text-xs font-sans font-medium text-[#0F0F0F] shadow-2xs">
-            <span className="text-[#A8A29A]">✓</span> Absorción continua de 10h
-          </span>
+          <div className="space-y-3">
+            <p className="font-sans font-normal text-sm text-[#3A3A37] leading-relaxed">
+              {introText}
+            </p>
+            <p className="font-sans font-normal text-sm text-[#3A3A37] leading-relaxed">
+              {detailText}
+            </p>
+          </div>
         </div>
 
-        <div className="space-y-3">
-          <p className="font-sans font-normal text-sm sm:text-base text-[#3A3A37] leading-relaxed">
-            {introText}
-          </p>
-          <p className="font-sans font-normal text-sm sm:text-base text-[#3A3A37] leading-relaxed">
-            {detailText}
-          </p>
+        {/* Dedicated 1:1 Mobile Infographic Image Card */}
+        <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-white border border-[#E6E1D8] shadow-2xs">
+          <Image
+            src="/infographic/Infografia_movil.webp"
+            alt="Cómo funciona Novapatch"
+            fill
+            sizes="100vw"
+            className="object-contain p-2"
+            priority
+          />
         </div>
       </div>
-    </div>
+
+      {/* ── DESKTOP VIEW (md+): Original Integrated Full-Width Banner ── */}
+      <div className="hidden md:flex relative w-full aspect-[21/9] min-h-[340px] lg:min-h-[380px] rounded-2xl overflow-hidden bg-[#FAF8F5] border border-[#E6E1D8] shadow-md flex-col justify-end p-9 lg:p-10 text-left">
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <Image
+            src="/infographic/Banner_howitworks_pdp.webp"
+            alt="Cómo funciona Novapatch"
+            fill
+            sizes="1240px"
+            className="object-cover object-center"
+            priority
+          />
+        </div>
+
+        {/* Soft Bone Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#FAF8F5] via-[#FAF8F5]/85 to-transparent z-[1] pointer-events-none" />
+
+        {/* Text Content Layer */}
+        <div className="relative z-10 w-full lg:w-1/2 lg:max-w-[50%] flex flex-col justify-end">
+          <h2 className="text-4xl lg:text-5xl font-display font-semibold text-[#0F0F0F] tracking-[-0.035em] leading-tight lowercase mb-4">
+            cómo funciona.
+          </h2>
+
+          <div className="flex flex-wrap gap-2.5 mb-5">
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-[#E6E1D8] text-xs font-sans font-medium text-[#0F0F0F] shadow-2xs">
+              <span className="text-[#A8A29A]">✓</span> Liberación tópica gradual
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-[#E6E1D8] text-xs font-sans font-medium text-[#0F0F0F] shadow-2xs">
+              <span className="text-[#A8A29A]">✓</span> 0% impacto digestivo
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-[#E6E1D8] text-xs font-sans font-medium text-[#0F0F0F] shadow-2xs">
+              <span className="text-[#A8A29A]">✓</span> Absorción continua de 10h
+            </span>
+          </div>
+
+          <div className="space-y-3">
+            <p className="font-sans font-normal text-base text-[#3A3A37] leading-relaxed">
+              {introText}
+            </p>
+            <p className="font-sans font-normal text-base text-[#3A3A37] leading-relaxed">
+              {detailText}
+            </p>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
 

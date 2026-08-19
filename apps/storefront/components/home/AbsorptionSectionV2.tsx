@@ -67,7 +67,7 @@ function JourneyColumn({
     <div className="flex flex-col items-center w-full h-full">
       {/* Column header */}
       <div
-        className="w-full text-center py-2.5 px-3 rounded-lg mb-4 font-sans font-medium text-[11px] uppercase tracking-[0.14em]"
+        className="w-full text-center py-2 px-1.5 sm:py-2.5 sm:px-3 rounded-lg mb-3 sm:mb-4 font-sans font-medium text-[9.5px] sm:text-[11px] uppercase tracking-[0.08em] sm:tracking-[0.14em] truncate"
         style={{ background: accent, color: "#FAF8F5" }}
       >
         {title}
@@ -96,14 +96,14 @@ function JourneyColumn({
         {stops.map((stop, i) => (
           <div
             key={i}
-            className="relative z-10 flex flex-col items-center text-center my-1.5 sm:my-2 group"
+            className="relative z-10 flex flex-col items-center text-center my-1 sm:my-2 group"
           >
-            {/* Icon circle (Enlarged for Novapatch Infographic 2) */}
+            {/* Icon circle */}
             <div
               className={`rounded-full flex items-center justify-center p-0.5 transition-transform duration-300 ${
                 stop.highlight
-                  ? "w-16 h-16 sm:w-20 sm:h-20 bg-white border-2 border-[#0F0F0F] shadow-xs"
-                  : "w-11 h-11 sm:w-12 sm:h-12 bg-white border border-[#E6E1D8]"
+                  ? "w-12 h-12 sm:w-20 sm:h-20 bg-white border-2 border-[#0F0F0F] shadow-xs"
+                  : "w-9 h-9 sm:w-12 sm:h-12 bg-white border border-[#E6E1D8]"
               }`}
             >
               {stop.icon}
@@ -111,8 +111,8 @@ function JourneyColumn({
 
             {/* Label */}
             <span
-              className={`font-sans font-semibold text-[#0F0F0F] mt-1.5 leading-tight ${
-                stop.highlight ? "text-xs sm:text-sm max-w-[160px]" : "text-[11px] sm:text-xs max-w-[140px]"
+              className={`font-sans font-semibold text-[#0F0F0F] mt-1 leading-tight ${
+                stop.highlight ? "text-[11px] sm:text-sm max-w-[110px] sm:max-w-[160px]" : "text-[10px] sm:text-xs max-w-[100px] sm:max-w-[140px]"
               }`}
             >
               {stop.label}
@@ -120,14 +120,14 @@ function JourneyColumn({
 
             {/* Sublabel */}
             {stop.sublabel && (
-              <span className="text-[9.5px] sm:text-[10px] font-sans text-[#A8A29A] mt-0.5 max-w-[140px] leading-tight">
+              <span className="text-[8.5px] sm:text-[10px] font-sans text-[#A8A29A] mt-0.5 max-w-[100px] sm:max-w-[140px] leading-tight">
                 {stop.sublabel}
               </span>
             )}
 
-            {/* Loss badge (Updated to Brand Kit Definitivo neutrals) */}
+            {/* Loss badge */}
             {stop.loss && (
-              <span className="mt-0.5 px-2 py-0.5 rounded-full text-[9.5px] sm:text-[10px] font-sans font-medium text-[#3A3A37] bg-[#FAF8F5] border border-[#E6E1D8]">
+              <span className="mt-0.5 px-1.5 py-0.5 rounded-full text-[8.5px] sm:text-[10px] font-sans font-medium text-[#3A3A37] bg-[#FAF8F5] border border-[#E6E1D8]">
                 {stop.loss}
               </span>
             )}
@@ -306,15 +306,15 @@ export default function AbsorptionSectionV2() {
             </div>
           </motion.div>
 
-          {/* Comparison Area (Span 7): 2 equal-width columns */}
+          {/* Comparison Area (Span 7): 2 equal-width columns side-by-side on all screens */}
           <motion.div
-            className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-[1fr_auto_1fr] gap-4 sm:gap-3 items-stretch"
+            className="lg:col-span-7 grid grid-cols-[1fr_auto_1fr] gap-2 sm:gap-3 items-stretch"
             initial={{ opacity: 0, y: 24 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            animate={inView ? { opacity: 1, x: 0, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           >
-            {/* Infographic 1: Suplemento oral (Updated to Brand Kit Definitivo palette neutral #3A3A37) */}
-            <div className="rounded-xl p-4 sm:p-4.5 bg-white border border-[#E6E1D8] shadow-2xs flex flex-col justify-between">
+            {/* Infographic 1: Suplemento oral */}
+            <div className="rounded-xl p-2.5 sm:p-4.5 bg-white border border-[#E6E1D8] shadow-2xs flex flex-col justify-between">
               <JourneyColumn
                 title="Suplemento oral"
                 accent="#3A3A37"
@@ -326,16 +326,16 @@ export default function AbsorptionSectionV2() {
             </div>
 
             {/* VS Divider Line & Badge */}
-            <div className="flex sm:flex-col items-center justify-center gap-2 py-2 sm:py-0 px-1">
-              <div className="flex-1 sm:w-[1px] h-[1px] sm:h-full bg-[#E6E1D8]" />
-              <span className="text-[10px] font-sans font-medium uppercase tracking-[0.14em] px-2.5 py-1 rounded-full flex-shrink-0 bg-white text-[#A8A29A] border border-[#E6E1D8] shadow-2xs">
+            <div className="flex flex-col items-center justify-center gap-2 py-0 px-0.5">
+              <div className="flex-1 w-[1px] h-full bg-[#E6E1D8]" />
+              <span className="text-[9px] sm:text-[10px] font-sans font-medium uppercase tracking-[0.1em] sm:tracking-[0.14em] px-1.5 sm:px-2.5 py-1 rounded-full flex-shrink-0 bg-white text-[#A8A29A] border border-[#E6E1D8] shadow-2xs">
                 VS
               </span>
-              <div className="flex-1 sm:w-[1px] h-[1px] sm:h-full bg-[#E6E1D8]" />
+              <div className="flex-1 w-[1px] h-full bg-[#E6E1D8]" />
             </div>
 
             {/* Infographic 2: Novapatch */}
-            <div className="rounded-xl p-4 sm:p-4.5 bg-white border border-[#0F0F0F] shadow-2xs flex flex-col justify-between">
+            <div className="rounded-xl p-2.5 sm:p-4.5 bg-white border border-[#0F0F0F] shadow-2xs flex flex-col justify-between">
               <JourneyColumn
                 title="Novapatch"
                 accent="#0F0F0F"

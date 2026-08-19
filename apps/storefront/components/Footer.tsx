@@ -49,14 +49,14 @@ export default function Footer() {
 
   return (
     <footer className="bg-white text-[#0F0F0F] border-t border-[#E6E1D8]">
-      <div className="max-w-[1240px] mx-auto px-6 lg:px-10 py-16 sm:py-20">
-        <div className="grid grid-cols-1 md:grid-cols-6 gap-8 lg:gap-10 pb-16 border-b border-[#E6E1D8]">
+      <div className="max-w-[1240px] mx-auto px-6 lg:px-10 py-10 sm:py-20">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-x-4 gap-y-8 md:gap-8 lg:gap-10 pb-10 md:pb-16 border-b border-[#E6E1D8]">
           {/* Brand Block */}
-          <div className="md:col-span-2 space-y-3 pr-4">
+          <div className="col-span-2 md:col-span-2 space-y-2 pr-0 md:pr-4">
             <Link
               href="/"
               aria-label="Novapatch"
-              className="font-sans font-bold text-[24px] tracking-[-0.035em] text-[#0F0F0F] hover:opacity-85 transition-opacity inline-block lowercase"
+              className="font-sans font-bold text-[22px] sm:text-[24px] tracking-[-0.035em] text-[#0F0F0F] hover:opacity-85 transition-opacity inline-block lowercase"
             >
               novapatch
             </Link>
@@ -65,11 +65,11 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Links Columns (4 Columns: Comprar, Ayuda, Nosotros, Legal) */}
+          {/* Links Columns (2 Columns on mobile, 4 Columns on desktop: Comprar, Ayuda, Nosotros, Legal) */}
           {Object.entries(footerLinks).map(([cat, items]) => (
-            <div key={cat} className="md:col-span-1">
-              <h4 className="text-[11px] font-sans font-medium uppercase tracking-[0.14em] text-[#A8A29A] mb-4">{cat}</h4>
-              <ul className="flex flex-col gap-2.5">
+            <div key={cat} className="col-span-1 md:col-span-1">
+              <h4 className="text-[10.5px] font-sans font-medium uppercase tracking-[0.14em] text-[#A8A29A] mb-3">{cat}</h4>
+              <ul className="flex flex-col gap-2">
                 {items.map((item) => (
                   <li key={item.label}>
                     <Link href={item.href} className="text-xs font-sans text-[#3A3A37] hover:text-[#0F0F0F] transition-colors">
@@ -82,8 +82,8 @@ export default function Footer() {
           ))}
 
           {/* Newsletter Subscription Block */}
-          <div className="md:col-span-2 space-y-3">
-            <h4 className="text-[11px] font-sans font-medium uppercase tracking-[0.14em] text-[#A8A29A]">boletín</h4>
+          <div className="col-span-2 md:col-span-2 space-y-3 pt-4 border-t border-[#E6E1D8] md:border-t-0 md:pt-0">
+            <h4 className="text-[10.5px] font-sans font-medium uppercase tracking-[0.14em] text-[#A8A29A]">boletín</h4>
             <p className="text-xs font-sans text-[#3A3A37] leading-relaxed">
               Un solo correo cuando haya novedades o lanzamientos. Sin spam.
             </p>

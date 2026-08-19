@@ -162,7 +162,7 @@ function ProductCard({
       </Link>
 
       {/* ── Card Footer Area (Default Info vs Hover Actions) ── */}
-      <div className="p-5 border-t border-[#E6E1D8] bg-white relative min-h-[140px] flex flex-col justify-between overflow-hidden text-left">
+      <div className="p-3.5 sm:p-5 border-t border-[#E6E1D8] bg-white relative min-h-[140px] flex flex-col justify-between overflow-hidden text-left">
         
         {/* DEFAULT VIEW: Visible when NOT hovered, smoothly fades out & slides slightly up on hover */}
         <div className="flex flex-col justify-between h-full transition-all duration-300 ease-out group-hover:opacity-0 group-hover:-translate-y-2 group-hover:pointer-events-none">
@@ -259,7 +259,7 @@ function InspirationBannerCard({
   return (
     <div
       ref={cardRef}
-      className={`relative rounded-xl overflow-hidden min-h-[360px] sm:min-h-[420px] w-full flex flex-col p-6 sm:p-8 border border-[#E6E1D8] shadow-2xs hover:border-[#AEAEAF] hover:shadow-md transition-all duration-300 h-full text-left ${
+      className={`relative rounded-xl overflow-hidden min-h-[360px] sm:min-h-[420px] w-full flex flex-col p-4 sm:p-8 border border-[#E6E1D8] shadow-2xs hover:border-[#AEAEAF] hover:shadow-md transition-all duration-300 h-full text-left ${
         isTop ? "justify-start" : "justify-end"
       }`}
     >
@@ -417,8 +417,8 @@ export default function TiendaExperience({
       </section>
 
       {/* ── Grid de Productos de 3 Columnas con Banners Intercalados ── */}
-      <section className="px-6 sm:px-10 pb-24 max-w-[1240px] mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+      <section className="px-4 sm:px-10 pb-24 max-w-[1240px] mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 lg:gap-8">
           
           {/* Fila 1: 2 productos + 1 Banner a la Derecha */}
           {row1Products.map((product, i) => (
@@ -441,7 +441,7 @@ export default function TiendaExperience({
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-            className="flex flex-col h-full"
+            className="col-span-1 flex flex-col h-full"
           >
             <InspirationBannerCard
               imgSrc="/productusers/Banner_tienda_1.webp"
@@ -457,7 +457,7 @@ export default function TiendaExperience({
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-            className="flex flex-col h-full"
+            className="col-span-1 flex flex-col h-full"
           >
             <InspirationBannerCard
               imgSrc="/productusers/Banner_tienda_2.webp"

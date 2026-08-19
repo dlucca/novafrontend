@@ -186,7 +186,7 @@ function CleanProductCard({ item, locale, currency }: { item: ProductMeta; local
         </div>
       </div>
 
-      <div className="p-4 sm:p-5 border-t border-[#E6E1D8] bg-white flex flex-col justify-between flex-1">
+      <div className="p-3.5 sm:p-5 border-t border-[#E6E1D8] bg-white flex flex-col justify-between flex-1">
         <div>
           <div className="flex items-center gap-1.5 mb-2">
             <div className="flex gap-0.5">
@@ -372,13 +372,13 @@ export default function ProductCarousel({
           {/* Carousel Track */}
           <div
             ref={scrollRef}
-            className="flex gap-6 overflow-x-auto scrollbar-none snap-x snap-mandatory pb-4 pt-2 -mx-1 px-1"
+            className="flex gap-4 sm:gap-6 overflow-x-auto scrollbar-none snap-x snap-mandatory pb-4 pt-2 -mx-1 px-1"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {carouselItems.map((item) => (
               <div
                 key={item.type === "product" ? item.slug : item.id}
-                className="snap-start flex-shrink-0 w-[85vw] sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]"
+                className="snap-start flex-shrink-0 w-[calc(50%-8px)] sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]"
               >
                 {item.type === "product" ? (
                   <CleanProductCard item={item} locale={locale} currency={currency} />
