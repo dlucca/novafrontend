@@ -588,7 +588,13 @@ export const PDP_META: Record<string, PdpMeta> = {
   },
 };
 
-const BUNDLE_THUMBNAILS: Record<string, string> = {
+const PRODUCT_THUMBNAILS_1_1: Record<string, string> = {
+  energy: "/products/Energy_1_1.webp",
+  sleep: "/products/Sleep_1_1.webp",
+  zen: "/products/Zen_1_1.webp",
+  shield: "/products/Shield_1_1.webp",
+  glow: "/products/Glow_1_1.webp",
+  woman: "/products/Woman_1_1.webp",
   "pack-dia-noche": "/products/Bundle_dianoche_patches.webp",
   "pack-calma-sueno": "/products/Bundle_calma_patches.webp",
   "pack-glow-balance": "/products/Bundle_mujer_patches.webp",
@@ -599,12 +605,10 @@ const BUNDLE_THUMBNAILS: Record<string, string> = {
  * Devuelve la miniatura 1:1 exclusivamente para el minicart y checkout
  */
 export function getCartThumbnail(slug: string, fallbackImage?: string): string {
-  if (BUNDLE_THUMBNAILS[slug]) {
-    return BUNDLE_THUMBNAILS[slug];
+  const normalizedSlug = (slug || "").toLowerCase();
+  if (PRODUCT_THUMBNAILS_1_1[normalizedSlug]) {
+    return PRODUCT_THUMBNAILS_1_1[normalizedSlug];
   }
-  if (slug && !slug.startsWith("pack-")) {
-    const slugClean = slug.toLowerCase();
-    return `/products/${slugClean}_1_1.webp`;
-  }
-  return fallbackImage ?? `/products/${slug}_1_1.webp`;
+  const nameCap = normalizedSlug.charAt(0).toUpperCase() + normalizedSlug.slice(1);
+  return fallbackImage ?? `/products/${nameCap}_1_1.webp`;
 }
