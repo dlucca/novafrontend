@@ -587,3 +587,24 @@ export const PDP_META: Record<string, PdpMeta> = {
     ],
   },
 };
+
+const BUNDLE_THUMBNAILS: Record<string, string> = {
+  "pack-dia-noche": "/products/Bundle_dianoche_patches.webp",
+  "pack-calma-sueno": "/products/Bundle_calma_patches.webp",
+  "pack-glow-balance": "/products/Bundle_mujer_patches.webp",
+  "pack-trio-vitalidad": "/products/Bundle_360_patches.webp",
+};
+
+/**
+ * Devuelve la miniatura 1:1 exclusivamente para el minicart y checkout
+ */
+export function getCartThumbnail(slug: string, fallbackImage?: string): string {
+  if (BUNDLE_THUMBNAILS[slug]) {
+    return BUNDLE_THUMBNAILS[slug];
+  }
+  if (slug && !slug.startsWith("pack-")) {
+    const slugClean = slug.toLowerCase();
+    return `/products/${slugClean}_1_1.webp`;
+  }
+  return fallbackImage ?? `/products/${slug}_1_1.webp`;
+}

@@ -11,6 +11,7 @@ import { medusa } from "@/lib/medusa";
 import { useMarket } from "@/lib/useMarket";
 import { formatPrice } from "@/lib/format";
 import { FREE_SHIPPING } from "@/lib/free-shipping";
+import { getCartThumbnail } from "@/lib/product-meta";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -167,9 +168,9 @@ function CartItemRow({ item }: { item: CartItem }) {
       <Link
         href={`/tienda/${item.slug}`}
         onClick={closeCart}
-        className="relative w-14 h-14 rounded-xl flex-shrink-0 flex items-center justify-center overflow-hidden border border-[#E6E1D8] bg-[#FAF8F5] group/item hover:border-[#0F0F0F] transition-colors"
+        className="relative w-14 h-14 rounded-xl flex-shrink-0 flex items-center justify-center overflow-hidden border border-[#E6E1D8] bg-white group/item hover:border-[#0F0F0F] transition-colors"
       >
-        <Image src={item.image} alt={item.title} fill className="object-contain p-1 group-hover/item:scale-105 transition-transform" />
+        <Image src={getCartThumbnail(item.slug, item.image)} alt={item.title} fill className="object-cover group-hover/item:scale-105 transition-transform" />
       </Link>
 
       {/* Info */}
@@ -442,7 +443,7 @@ export default function CartDrawer() {
                               className="flex items-center gap-3 min-w-0 group/upsell"
                             >
                               <div className="relative w-12 h-12 shrink-0 overflow-hidden rounded-lg border border-[#E6E1D8] bg-white p-1 group-hover/upsell:border-[#0F0F0F] transition-colors">
-                                <Image src={candidate.image} alt={candidate.name} fill className="object-contain group-hover/upsell:scale-105 transition-transform" />
+                                <Image src={getCartThumbnail(candidate.slug, candidate.image)} alt={candidate.name} fill className="object-contain group-hover/upsell:scale-105 transition-transform" />
                               </div>
                               <div className="min-w-0">
                                 <p className="text-xs font-sans font-semibold text-[#0F0F0F] truncate group-hover/upsell:underline">{candidate.name}</p>
@@ -589,7 +590,7 @@ export default function CartDrawer() {
 
                     {/* Trust badges */}
                     <div className="flex items-center justify-center gap-2 flex-wrap">
-                      {["🔒 Pago seguro", "Visa", "Mastercard"].map((b) => (
+                      {["🔒 Pago seguro", "Visa", "Mastercard", "AMEX", "BBVA"].map((b) => (
                         <span key={b} className="text-[10px] text-[#3A3A37] font-sans font-medium bg-white border border-[#E6E1D8] px-2.5 py-0.5 rounded-full">
                           {b}
                         </span>

@@ -18,6 +18,7 @@ import { tokenizeCardMP, parseCardFormMP } from "@/lib/mercadopago";
 import { useCopomex } from "@/hooks/useCopomex";
 import { useGooglePlaces } from "@/hooks/useGooglePlaces";
 import { FREE_SHIPPING } from "@/lib/free-shipping";
+import { getCartThumbnail } from "@/lib/product-meta";
 import {
   CartItem,
   FREQ_LABELS,
@@ -66,13 +67,13 @@ function OrderItem({ item, region }: { item: CartItem; region: string }) {
         className="relative shrink-0 w-14 h-14 block group/item"
       >
         <div
-          className="w-full h-full rounded-xl overflow-hidden flex items-center justify-center border border-[#E6E1D8] bg-[#FAF8F5] group-hover/item:border-[#0F0F0F] transition-colors"
+          className="relative w-full h-full rounded-xl overflow-hidden flex items-center justify-center border border-[#E6E1D8] bg-white group-hover/item:border-[#0F0F0F] transition-colors"
         >
           <Image
-            src={item.image}
+            src={getCartThumbnail(item.slug, item.image)}
             alt={item.title}
             fill
-            className="object-contain p-1 group-hover/item:scale-105 transition-transform"
+            className="object-cover group-hover/item:scale-105 transition-transform"
           />
         </div>
         <span
@@ -1605,8 +1606,8 @@ export default function CheckoutPage() {
                   />
 
                   {/* card brand logos */}
-                  <div className="flex items-center gap-2 mb-5">
-                    {["VISA", "MC", "AMEX"].map((b) => (
+                  <div className="flex items-center gap-2 mb-5 flex-wrap">
+                    {["VISA", "MASTERCARD", "AMEX", "BBVA"].map((b) => (
                       <span
                         key={b}
                         className="px-2.5 py-1 rounded-md border border-[#E6E1D8] text-[10px] font-mono font-bold text-[#3A3A37] bg-[#FAF8F5]"
@@ -1785,7 +1786,7 @@ export default function CheckoutPage() {
                         className="flex items-center gap-3 min-w-0 group/upsell"
                       >
                         <div className="relative w-11 h-11 shrink-0 overflow-hidden rounded-lg border border-[#E6E1D8] bg-[#FAF8F5] p-1 group-hover/upsell:border-[#0F0F0F] transition-colors">
-                          <Image src={candidate.image} alt={candidate.name} fill className="object-contain group-hover/upsell:scale-105 transition-transform" />
+                          <Image src={getCartThumbnail(candidate.slug, candidate.image)} alt={candidate.name} fill className="object-contain group-hover/upsell:scale-105 transition-transform" />
                         </div>
                         <div className="min-w-0">
                           <p className="text-xs font-sans font-semibold text-[#0F0F0F] truncate group-hover/upsell:underline">{candidate.name}</p>

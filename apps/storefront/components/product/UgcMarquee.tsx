@@ -24,7 +24,7 @@ export default function UgcMarquee({ accent }: { accent: string }) {
       `}</style>
 
       <div className="text-left max-w-6xl mx-auto mb-8 px-6">
-        <h2 className="text-4xl sm:text-5xl lg:text-6xl font-display font-semibold text-[#0F0F0F] tracking-[-0.03em] leading-tight lowercase">
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-semibold text-[#0F0F0F] tracking-[-0.03em] leading-tight lowercase">
           comunidad novapatch.
         </h2>
       </div>
