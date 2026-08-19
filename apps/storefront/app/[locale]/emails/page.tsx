@@ -22,7 +22,19 @@ import {
   KeyRound,
   ChevronDown,
 } from "lucide-react";
-import { renderOrderConfirmationEmail } from "@/lib/emails/templates";
+import {
+  renderOrderConfirmationEmail,
+  renderOrderShippedEmail,
+  renderOrderDeliveredEmail,
+  renderOrderDeliveryFailedEmail,
+  renderSubscriptionWelcomeEmail,
+  renderSubscriptionUpcomingChargeEmail,
+  renderSubscriptionRenewedEmail,
+  renderSubscriptionPaymentFailedEmail,
+  renderCartRecoveryEmail,
+  renderInfluencerSamplesEmail,
+  renderAdminInviteEmail,
+} from "@/lib/emails/templates";
 
 type BackendTemplateKey =
   | "order_confirmation"
@@ -160,25 +172,101 @@ export default function EmailsPreviewPage() {
   // Fallback HTML generator if backend preview is loading or unreachable
   const getFallbackHtml = (key: BackendTemplateKey) => {
     const origin = typeof window !== "undefined" ? window.location.origin : "";
-    return renderOrderConfirmationEmail({
-      orderNumber: "NV-84920",
-      customerName: "Esteban",
-      customerEmail: "esteban@ejemplo.com",
-      items: [
-        { title: "Novapatch Energy", quantity: 1, price: 750, image: "/products/Energy_thumb.webp" },
-        { title: "Novapatch Sleep", quantity: 1, price: 750, image: "/products/Sleep_thumb.webp" },
-      ],
-      subtotal: 1500,
-      bundleDiscount: 225,
-      bundleName: "Pack Día & Noche (15% OFF)",
-      total: 1275,
-      shippingAddress: {
-        address: "Av. Insurgentes Sur 1602, Piso 4",
-        city: "Ciudad de México",
-        state: "CDMX",
-        postalCode: "03940",
-      },
-    }, origin);
+    switch (key) {
+      case "order_shipped":
+        return renderOrderShippedEmail({
+          name: "Cristian",
+          displayId: "120",
+          trackingNumber: "ENVIA-98420194",
+          carrier: "Envía.com Express",
+          trackingUrl: "https://www.envia.com/tracking?id=ENVIA-98420194",
+        }, origin);
+
+      case "order_delivered":
+        return renderOrderDeliveredEmail({
+          name: "Cristian",
+          displayId: "120",
+          trackingNumber: "ENVIA-98420194",
+        }, origin);
+
+      case "order_delivery_failed":
+        return renderOrderDeliveryFailedEmail({
+          name: "Cristian",
+          displayId: "120",
+          trackingNumber: "ENVIA-98420194",
+          reason: "Dirección incompleta o sin respuesta en domicilio",
+        }, origin);
+
+      case "subscription_welcome":
+        return renderSubscriptionWelcomeEmail({
+          name: "Cristian",
+          planName: "Suscripción Pack Día & Noche",
+        }, origin);
+
+      case "subscription_upcoming_charge":
+        return renderSubscriptionUpcomingChargeEmail({
+          name: "Cristian",
+          planName: "Suscripción Pack Día & Noche",
+          chargeDate: "25 de Agosto, 2026",
+          amount: "$1,275.00 MXN",
+        }, origin);
+
+      case "subscription_renewed":
+        return renderSubscriptionRenewedEmail({
+          name: "Cristian",
+          planName: "Suscripción Pack Día & Noche",
+          amount: "$1,275.00 MXN",
+        }, origin);
+
+      case "subscription_payment_failed":
+        return renderSubscriptionPaymentFailedEmail({
+          name: "Cristian",
+          planName: "Suscripción Pack Día & Noche",
+          updateUrl: "https://www.novapatch.care/mx/cuenta",
+        }, origin);
+
+      case "cart_recovery":
+        return renderCartRecoveryEmail("Cristian", [
+          { title: "Novapatch Glow", quantity: 1, price: 750 },
+        ], 750, origin);
+
+      case "influencer_samples":
+        return renderInfluencerSamplesEmail({
+          name: "Valeria",
+          trackingNumber: "ENVIA-PR-39201",
+          carrier: "Envía.com Express",
+          trackingUrl: "https://www.envia.com/tracking?id=ENVIA-PR-39201",
+        }, origin);
+
+      case "admin_invite":
+        return renderAdminInviteEmail({
+          email: "nuevoadmin@novapatch.care",
+          inviteUrl: "https://admin.novapatch.care/invite?token=xyz",
+        }, origin);
+
+      case "order_confirmation":
+      default:
+        return renderOrderConfirmationEmail({
+          orderNumber: "NV-84920",
+          customerName: "Cristian",
+          customerEmail: "cristian@ejemplo.com",
+          items: [
+            { title: "Novapatch Sleep", quantity: 1, price: 750 },
+            { title: "Novapatch Energy", quantity: 1, price: 750 },
+          ],
+          subtotal: 1500,
+          bundleDiscount: 225,
+          bundleName: "Pack Día & Noche (15% OFF)",
+          total: 1275,
+          shippingAddress: {
+            name: "Cristian Dlucca",
+            address: "Laguna de Mayran 166 Int C704",
+            city: "Ciudad de México",
+            state: "Ciudad de México",
+            postalCode: "11320",
+          },
+        }, origin);
+    }
   };
 
   const currentTemplate = BACKEND_TEMPLATES.find((t) => t.key === activeKey) || BACKEND_TEMPLATES[0];
