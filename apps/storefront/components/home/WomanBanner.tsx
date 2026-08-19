@@ -1,62 +1,72 @@
 "use client";
 
+import { useRef } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { useParams } from "next/navigation";
-import { motion } from "framer-motion";
+import { Link } from "@/lib/i18n-navigation";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 export default function WomanBanner() {
-  const params = useParams();
-  const locale = typeof params?.locale === "string" ? params.locale : "mx";
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Rhode Skin Scroll Effect: Starts slightly scaled up (1.15) and scales down smoothly to (1.0) on scroll
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"],
+  });
+  const imageScale = useTransform(scrollYProgress, [0, 0.6], [1.18, 1.0]);
 
   return (
-    <section className="relative w-full min-h-[560px] sm:min-h-[640px] md:min-h-[700px] lg:min-h-[750px] flex items-center overflow-hidden bg-[#FAF7F2]">
-      {/* Background Image Full Width */}
-      <Image
-        src="/productusers/bannerwoman.webp"
-        alt="Novapatch Woman"
-        fill
-        className="object-cover object-[82%_top] sm:object-top md:object-[center_top]"
-        sizes="100vw"
-        priority
-      />
-
-      {/* Light Cream Gradient Mask for Seamless Alignment with Website */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#FAF7F2] via-[#FAF7F2]/80 to-transparent md:w-[62%]" />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#FAF7F2] via-[#FAF7F2]/40 to-transparent md:hidden" />
-
-      {/* Content Container over Image */}
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        className="relative z-10 max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 py-16 w-full flex flex-col items-start"
+    <section className="py-16 sm:py-24 px-4 sm:px-8 max-w-[1400px] mx-auto bg-[#FAF8F5]">
+      {/* Boxy Editorial Card Container with Rounded Corners */}
+      <div
+        ref={containerRef}
+        className="relative w-full min-h-[560px] sm:min-h-[660px] lg:min-h-[720px] rounded-xl sm:rounded-2xl overflow-hidden bg-white border border-[#E6E1D8] shadow-2xs flex flex-col justify-center p-8 sm:p-14 lg:p-16"
       >
-        <span className="inline-block text-xs font-black tracking-[0.18em] uppercase text-[#9B489A] bg-[#c693c4]/15 border border-[#c693c4]/30 px-3.5 py-1.5 rounded-full mb-4 backdrop-blur-sm">
-          NOVAPATCH WOMAN
-        </span>
+        {/* Background Image with Scroll-Driven Scale (No Hover Zoom) */}
+        <motion.div style={{ scale: imageScale }} className="absolute inset-0">
+          <Image
+            src="/productusers/Banner_woman.webp"
+            alt="Novapatch Woman"
+            fill
+            priority
+            sizes="(max-width: 1400px) 100vw, 1400px"
+            className="object-cover object-[82%_center] md:object-center"
+          />
+        </motion.div>
 
-        {/* Título de 3 líneas con acento token #9B489A */}
-        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-[#0D1B35] leading-[1.1] tracking-tight mb-4 uppercase max-w-2xl">
-          Sigue tu ritmo.<br />
-          <span className="text-[#9B489A]">Siente tu bienestar.</span><br />
-          Disfruta tus días.
-        </h2>
+        {/* Soft Background Gradient Mask for Text Legibility */}
+        <div className="absolute inset-0 bg-gradient-to-r from-white via-white/90 to-transparent md:w-[60%] z-[1]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/75 to-transparent md:hidden z-[1]" />
 
-        {/* Descripción */}
-        <p className="text-stone-600 max-w-lg mb-8 leading-relaxed text-sm md:text-base font-medium">
-          Conoce el parche Woman de Novapatch — diseñado para acompañar el día a día de tus ciclos y apoyar tu bienestar femenino de forma natural.
-        </p>
-
-        {/* Botón Principal */}
-        <Link
-          href={`/${locale}/tienda/woman`}
-          className="inline-flex items-center justify-center bg-[#0D1B35] hover:bg-[#1D3461] text-white px-8 py-3.5 rounded-full text-sm md:text-[15px] font-bold transition-all hover:-translate-y-0.5 active:scale-[0.98] duration-200 shadow-md"
+        {/* Content Box */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="relative z-10 max-w-xl flex flex-col items-start"
         >
-          Conoce Novapatch Woman
-        </Link>
-      </motion.div>
+
+          {/* Headline in Space Grotesk (Brand Kit Definitivo — lowercase, left aligned, font-display) */}
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-display font-semibold text-[#0F0F0F] tracking-[-0.03em] leading-tight mb-4 lowercase">
+            sigue tu ritmo,<br />
+            siente tu bienestar.
+          </h2>
+
+          {/* Subtitle */}
+          <p className="font-sans font-normal text-base sm:text-lg text-[#3A3A37] max-w-md mb-8 leading-relaxed">
+            Fórmula diseñada para acompañar cada fase de tu ciclo y brindar soporte natural en tu día a día.
+          </p>
+
+          {/* Action Button */}
+          <Link
+            href="/tienda/woman"
+            className="inline-flex items-center justify-center bg-[#0F0F0F] text-white border border-[#0F0F0F] hover:bg-white hover:text-[#0F0F0F] px-8 py-4 rounded-full text-[12px] font-sans font-medium uppercase tracking-[0.12em] transition-all shadow-2xs active:scale-95"
+          >
+            conocer novapatch woman
+          </Link>
+        </motion.div>
+      </div>
     </section>
   );
 }

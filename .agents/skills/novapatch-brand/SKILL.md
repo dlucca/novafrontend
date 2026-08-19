@@ -1,364 +1,189 @@
 ---
 name: novapatch-brand
 description: >
-  Guía completa de identidad visual y comunicación de marca de Novapatch. Úsala SIEMPRE que el usuario
-  pida crear, revisar o validar cualquier pieza de diseño, copy, post de redes sociales, componente de UI,
-  email, landing page, banner, template, card de producto, o cualquier otro activo visual o textual
-  relacionado con Novapatch. También úsala cuando el usuario mencione colores, tipografía, tokens,
-  espaciado, voz de marca, claims, tono por producto (Energy, Sleep, Zen, Shield, Glow, Woman),
-  o cuando pregunte "¿esto está bien para la marca?". Si hay cualquier duda de si aplica, úsala.
+  Guía completa de identidad visual y comunicación de marca de Novapatch (Brand Kit v3 · Master).
+  Úsala SIEMPRE que el usuario pida crear, revisar o validar cualquier pieza de diseño, copy,
+  post de redes sociales, componente de UI, email, landing page, banner, template, card de producto,
+  o cualquier otro activo visual o textual relacionado con Novapatch. También úsala cuando el usuario
+  mencione colores, tipografía, tokens, espaciado, voz de marca, claims, tono por producto (Energy,
+  Sleep, Zen, Shield, Glow, Woman), o cuando pregunte "¿esto está bien para la marca?". Si hay cualquier
+  duda de si aplica, úsala.
 ---
 
-# Novapatch Brand Skill
+# Novapatch Brand Skill — Brand Kit v3 · Master
 
-**Versión 1.0 · Mayo 2026 · novapatch.care**
+**Versión Master · Agosto 2026 · novapatch.care/mx · @novapatch.mx**
 
-Esta skill contiene el sistema de diseño y comunicación completo de Novapatch. Antes de generar cualquier
-pieza de diseño o copy, consulta las secciones relevantes de esta guía.
-
----
-
-## Estructura de la guía
-
-- **[00a — Fundamento de marca](#fundamento-marca)** → Posicionamiento, pilares, regla de oro
-- **[00b — Fundamento de producto](#fundamento-producto)** → Ciencia transdérmica, atributos compartidos
-- **[01 — Paleta de color](#color)** → Tokens de logo, institucional y los 6 productos
-- **[02 — Tipografía](#typo)** → Outfit, escala, pesos y tracking
-- **[03 — Spacing & grid](#spacing)** → Base 4px, grids por formato, zonas seguras
-- **[04 — Componentes de UI](#ui)** → Botones, badges, inputs, cards, notificaciones
-- **[05 — Templates social media](#social)** → Feed 1:1, 4:5, Story 9:16, Carrusel
-- **[06 — Voz visual por producto](#voice)** → Brand voice cards por parche
-- **[07 — Do's & don'ts + Checklist](#donts)** → Reglas, claims y checklist de validación
-
-Para detalle exhaustivo de cada sección, lee `references/brand-detail.md`.
+Esta skill define el sistema visual, tipográfico, técnico y de comunicación canónico de Novapatch ("bienestar silencioso").
 
 ---
 
-## 00a — Fundamento de marca {#fundamento-marca}
+## 01 — Filosofía y Regla de Oro
 
-> Novapatch no vende parches. Vende una nueva forma de incorporar bienestar a la rutina diaria.
+> Novapatch no vende parches. Vende una nueva forma de incorporar bienestar a la rutina diaria: íntima, limpia y en silencio.
 
-El parche es el medio. El valor está en cómo el bienestar se integra al día a día — sin promesas exageradas, sin fricción, sin ser una rutina más que sostener.
+### Regla de Oro (Canónica)
+> **"Novapatch no promete cambiar tu cuerpo. Te acompaña a cuidarlo mejor todos los días."**
 
-### Pilares de marca
+- **Filtro decisivo:** Si la pieza promete transformación → se reescribe. Si acompaña un hábito → va bien. Este filtro corre antes que cualquier decisión de diseño o copy.
 
-| # | Pilar | Descripción |
-|---|---|---|
-| 01 | **Simplicidad** | Un solo gesto diario. Sin agua, sin horarios, sin pasos. |
-| 02 | **Constancia** | Lo simple se repite. La adherencia vale más que la potencia. |
-| 03 | **Integración real** | Se adapta a la vida que ya tenés. No la reorganiza. |
-| 04 | **Wellness sin fricción** | Cuidarse no debería sentirse como una obligación. |
+### Los 6 Principios de Diseño
+1. **01 · Restricción:** Un solo color por pieza (el del sachet), y **únicamente** sobre el packaging real o como micro-dot ≤ 8px.
+2. **02 · Sistema Tripartito de Fuentes:** Open Sauce Sans + Space Grotesk + JetBrains Mono. Cada una en su rol estricto, nunca invertidas.
+3. **03 · Respiración:** Márgenes generosos (mínimo 80px sobre lienzo 1080). Left aligned siempre. Si dudas, más aire.
+4. **04 · Honestidad:** No prometemos transformación inmediata ni milagros en X días. Acompañamos una rutina cotidiana.
+5. **05 · Cero Efectos:** Sin sombras, gradientes, bordes decorativos, outlines, emojis, stickers ni adornos.
+6. **06 · Un Mensaje:** Una pieza = un producto = una idea = un CTA.
 
-### Regla de oro
-> Novapatch no promete cambiar tu cuerpo. Te acompaña a cuidarlo mejor todos los días.
-
----
-
-## 00b — Fundamento de producto {#fundamento-producto}
-
-### La ciencia detrás del parche — Regla de los 500 Daltons
-
-No cualquier ingrediente sirve para un parche. El tamaño molecular define qué atraviesa la piel y qué no. Las fórmulas de Novapatch se diseñan desde cero para uso transdérmico, no son adaptaciones de suplementos orales.
-
-- **< 500 Daltons + bien formuladas** → atraviesan la piel · biodisponibles
-- **> 500 Daltons** → no atraviesan · no aptas para parche
-
-> La piel es un órgano activo, no una pared. Filtra por tamaño y formulación.
-
-### Atributos compartidos — todos los parches
-
-Estos datos son canónicos y aplican a Energy, Sleep, Zen, Shield, Glow y Woman. Cualquier copy puede citarlos sin reinventar la formulación.
-
-| Atributo | Descripción |
-|---|---|
-| 100% vegano | Sin ingredientes de origen animal |
-| Sin azúcar | No afecta glucemia ni hábitos |
-| Libre de gluten | Apto para sensibilidades |
-| Resistente al agua | Ducha, ejercicio, vida normal |
-| Sin látex | Adhesivo hipoalergénico |
-| Alta absorción | Transdérmica · biodisponible |
+### Descriptores y Concepto
+- **Frase-madre:** `bienestar silencioso.` (Space Grotesk, minúsculas, tracking -0.035em).
+- **Descriptor secundario:** `Parches con vitaminas · 6 fórmulas.`
+- **Qué es el producto:** `Un parche con vitaminas que se pega en la piel y te acompaña el día.`
+- **Cómo se resume:** `Se pega, se olvida, funciona.`
+- **Mercado:** `MÉXICO · ESPAÑOL NEUTRO MX`
+- **Canales:** `NOVAPATCH.CARE/MX · @NOVAPATCH.MX`
 
 ---
 
-## 01 — Paleta de color {#color}
+## 02 — Paleta de Colores
 
-### Identidad de logo · Institucional
+### Fondos Oficiales
+- **Paper:** `--paper` (`#FFFFFF`) — Fondo blanco puro. Usos: hero web, cards de producto, emails.
+- **Bone:** `--bone` (`#FAF8F5`) — Fondo cremita cálido. Usos: posts de feed, stories claras, secciones web alternadas.
+- **Gris:** `--gray` (`#AEAEAF`) — Fondo institucional. Usos: editorial, carruseles, mood serio, manifiestos.
+- **Ink:** `--ink` (`#0F0F0F`) — Texto sobre paper/bone, o fondo de **Reels covers** (único formato con negro como fondo dominante).
 
-| Token | Hex | Uso |
-|---|---|---|
-| Azul Principal | `#1a4b8c` | Wordmark · ícono |
-| Petróleo | `#1e3a5f` | Fondo institucional |
-| Azul Medio | `#6b8fc7` | Cuadrado interior |
-| Turquesa | `#1ec8c8` | Acento flotante |
-| Crema | `#f5ece6` | Logo sobre oscuro |
-| Blanco | `#ffffff` | Fondos claros |
-| Negro | `#111111` | Logo sobre negro |
+### Texto y Superficies de Apoyo
+- **Shadow:** `--shadow` (`#3A3A37`) — Texto secundario, párrafos.
+- **Stone:** `--stone` (`#A8A29A`) — Meta, captions, eyebrows, specs.
+- **Line:** `--line` (`#E6E1D8`) — Hairlines, divisores 1px, bordes de cards.
+- **Linen:** `--linen` (`#F2EEE7`) — Superficie secundaria sobre bone.
 
-### Tokens de producto
+### Acentos de Producto (SOLO SOBRE EL SACHET O DOT ≤ 8PX)
+| Producto | Hex | Claim Marco | Tono de Voz |
+|---|---|---|---|
+| **Energy** | `#83B5F4` | *"No te acelera. Te acompaña."* | Energía celular sostenida. Frescura, vitalidad, claridad. |
+| **Sleep** | `#1EB1BC` | *"Dormir mejor empieza bajando el ritmo."* | Sueño profundo y reparador. Calma, pausa, noche. |
+| **Zen** | `#4E82BC` | *"Calma para seguir, no para frenar."* | Calma mental diaria. Estabilidad, orden, aire. |
+| **Shield** | `#FFA849` | *"Cuidarse antes es cuidarse mejor."* | Apoyo a las defensas naturales. Protección, constancia. |
+| **Glow** | `#F25C54` | *"Glow no se fuerza. Se acompaña."* [Más popular] | Piel visiblemente renovada. Luz desde adentro, proceso. |
+| **Woman** | `#C693C4` | *"Respetar los propios ritmos."* | Bienestar hormonal femenino. Equilibrio, suavidad. |
 
-| Producto | Hex | Descripción |
-|---|---|---|
-| Energy | `#83b5f4` | Energía celular sostenida |
-| Sleep | `#1eb1bc` | Sueño reparador |
-| Zen | `#4e82bc` | Calma mental |
-| Shield | `#ffa849` | Defensas naturales |
-| Glow | `#f25c54` | Piel renovada |
-| Woman | `#c693c4` | Bienestar femenino |
-
-**Regla clave:** Máximo 2 colores de marca por pieza. Un institucional + un acento de producto. Los colores son identificadores, no decoración.
-
----
-
-## 02 — Tipografía {#typo}
-
-**Única fuente del sistema: Outfit** (Google Fonts). No mezclar con otras fuentes.
-
-### Escala tipográfica
-
-| Nivel | Peso | Tamaño | Tracking | Uso |
-|---|---|---|---|---|
-| Hero | 800 | 64px | −0.025em | Headlines principales |
-| Title | 700 | 44px | −0.015em | Títulos de sección |
-| Heading | 600 | 30px | — | Encabezados |
-| Subheading | 500 | 22px | — | Sub-encabezados |
-| Body | 400 | 17px | — | Line-height 1.65 |
-| Caption | 400 | 14px | — | Textos de apoyo |
-| Label | 600 | 11px | 0.12em | Tags, subscripts |
-
-### Pesos disponibles
-`300 Light` · `400 Regular` · `500 Medium` · `600 SemiBold` · `700 Bold` · `800 ExtraBold`
-
-### Combinaciones sobre fondos
-- Fondo claro (blanco/crema): Azul Principal o Negro
-- Fondo petróleo: Crema o Blanco
-- Fondo negro: Crema o Blanco
+### Regla Estricta para Colores de Producto
+- **SÍ:** Sobre el packshot / foto del sachet real, o como micro-dot ≤ 8px al lado del nombre del producto en listados de tienda.
+- **NO:** Fondos, botones, títulos, íconos, tintes al 5%, H1 rojo, CTA teal. Cero.
 
 ---
 
-## 03 — Spacing & grid {#spacing}
+## 03 — Sistema Tipográfico Tripartito
 
-### Base unit: 4px
+| Fuente | Rol | Tamaños | Reglas & Restricciones |
+|---|---|---|---|
+| **Open Sauce Sans** | **Primaria (80% del texto)** — Body, UI, botones, eyebrows, navigation, H1/H2 estándar, wordmark. | 11px a 88px (Weights 300–900) | La voz por defecto de la marca. Sin itálicas. |
+| **Space Grotesk** | **Display & Headings (100px+)** — Covers, hero, portadas. | 100px a 150px (Weights 300–700, lowercase, tracking -0.035em) | Rasgos geométricos, terminaciones en **a · g · t**. NUNCA en body, botones, captions ni por debajo de 100px. |
+| **JetBrains Mono** | **Datos & Specs** — Precios, duraciones, URLs, listas de ingredientes en mayúscula. | 11px a 16px (Weights 300–700, tracking 0.06em–0.08em uppercase) | Monospaced. NUNCA en headlines ni párrafos narrativos. |
 
-Toda decisión de espaciado usa múltiplos de 4px.
-
-| Token | Valor | Uso típico |
-|---|---|---|
-| space-1 | 4px | Separación mínima · íconos inline |
-| space-2 | 8px | Gap entre badge y texto |
-| space-3 | 12px | Padding interno compacto |
-| space-4 | 16px | Padding de card · gap entre elementos |
-| space-6 | 24px | Margen entre secciones |
-| space-8 | 32px | Separación de bloques |
-| space-12 | 48px | Márgenes de layout |
-| space-16 | 64px | Margen de página |
-
-### Grids por formato social
-
-| Formato | Resolución | Columnas | Gutter | Zona segura |
-|---|---|---|---|---|
-| Feed 1:1 | 1080×1080 | 12 | 16px | 64px todos lados |
-| Feed 4:5 | 1080×1350 | 12 | 16px | 80px todos lados |
-| Story 9:16 | 1080×1920 | 6 | — | 230px sup./inf., 54px lat. |
-| Reel cover | 1080×1920 | — | — | 300px sup./inf. |
-| LinkedIn banner | 1584×396 | — | — | 80px laterales |
-
-### Border radius
-
-| Valor | Uso |
-|---|---|
-| 4px | Sutil |
-| 8px | Card |
-| 12px | Componente |
-| 16px | Modal |
-| 24px | Imagen |
-| 9999px | Pill · botones |
+### Fuentes Descontinuadas / Prohibidas
+- ❌ **Outfit:** Se carga ÚNICAMENTE en el packaging físico de los sachets actuales. No forma parte del sistema web/social. No usar fuera de mockups de sachet.
+- ❌ **Instrument Serif, Playfair, Fraunces:** Descontinuadas.
+- ❌ **Itálicas:** Cero itálicas en todo el sistema Novapatch.
 
 ---
 
-## 04 — Componentes de UI {#ui}
+## 04 — Wordmark (`novapatch.`)
 
-### Botones — variantes
-- **Primary**: fondo Azul Principal (`#1a4b8c`) · texto blanco · radius 9999px
-- **Secondary**: borde Azul Principal · texto Azul Principal · fondo transparente · radius 9999px
-- **Ghost**: sin borde · texto Azul Principal · hover underline
-- **CTA arrow**: texto + "→" · sin fondo
-- **Disabled**: opacidad 40% · cursor not-allowed
-- **Icon add**: círculo `+`
-
-### Badges — productos
-Cada producto tiene su color de token como fondo, texto blanco, `600 · 11px · 0.12em tracking`, `radius 9999px`.
-
-### Badges — estado
-- `Suscripción activa` · `Nuevo` · `Promo` · `Envío gratis`
-
-### Inputs
-- **Default**: borde 1px `#d0d8e4` · placeholder gris
-- **Active/Focus**: borde 2px Azul Principal · sin sombra exterior
-- **Error**: borde 2px rojo · mensaje de error debajo
-
-### Cards de producto
-Fondo blanco · `radius 8px` · sombra sutil. Estructura: badge de producto → nombre → precio (`$750 / mes`).
-
-### Selector de frecuencia
-Tabs: `Mensual` · `Bimestral` · `Trimestral` · `Semestral`. Activo: fondo Azul Principal · texto blanco. Inactivo: fondo claro · texto Azul Principal.
-
-### Plan recomendado (Bimestral)
-`$637 / envío · Ahorrás 15% · ✓ Envío incluido · ✓ Cancelás cuando quieras · ✓ Pausa sin costo`
-
-### Notificaciones del sistema
-- ✓ Éxito: fondo verde claro · ícono check
-- ✕ Error: fondo rojo claro · ícono X
-- i Info: fondo azul claro · ícono i
+- **Fuente:** Open Sauce Sans 700 u 800, minúsculas, tracking `-0.035em`.
+- **Colores permitidos:** Únicamente **Ink (`#0F0F0F`)** o **Blanco (`#FFFFFF`)**, según el fondo. Nunca en color de producto.
+- **Clear Space:** Reservar como mínimo el alto de la "n" en los cuatro lados.
+- **Tamaño Mínimo:** Digital 96px de ancho.
+- **Isotipo:** El isotipo **NO** se reproduce hasta que llegue el SVG oficial. Hoy la marca es solo wordmark.
 
 ---
 
-## 05 — Templates social media {#social}
+## 05 — Fórmulas de Producto, Precios y Formatos
 
-### Feed 1:1 · 1080×1080
-Estructura: fondo color institucional o petróleo → badge de producto (esquina superior) → headline principal (Outfit 700–800) → sub-claim (Outfit 400) → handle `@novapatch.care` (inferior).
+### Especificaciones Comunes
+- **Pack:** 30 parches por sobre (`sobre`, nunca `caja`).
+- **Uso:** 1 parche por día.
+- **Duración:** 10–12 horas (rango continuo 8–12h).
+- **Aplicación:** Piel limpia y seca, donde te quede cómodo (antebrazos, hombros, espalda alta). Sin agua, sin mezclas.
+- **Garantía:** 30 días (`novapatch.care/reembolso`).
 
-### Feed 4:5 · 1080×1350
-Igual que 1:1 pero con más espacio vertical. Ideal para texto más largo o imágenes de producto.
+### Fórmulas e Ingredientes Clave
+1. **Energy (`#83B5F4`):** Vitamina C · L-Carnitina · Té Verde · Ginseng · Vitamina B2 · Ácido Fólico · Vitamina E.
+2. **Sleep (`#1EB1BC`):** Triptófano · Magnesio · Inositol · Vitamina B6 · Glicina.
+3. **Zen (`#4E82BC`):** Triptófano · Magnesio · Taurina · Manzanilla · Vitamina B6.
+4. **Shield (`#FFA849`):** Vitamina C · Zinc · Vitamina D3 · Vitamina E · Niacinamida.
+5. **Glow (`#F25C54`):** Vitamina C · Ácido Hialurónico · Colágeno Hidrolizado · Biotina · Vitamina B3 · Centella Asiática · Vitamina E.
+6. **Woman (`#C693C4`):** Extracto de Soya · Vitamina B6 · Magnesio · Ácido Fólico · Hierro.
 
-### Story 9:16 · 1080×1920
-Zona segura 230px sup./inf. Estructura: badge superior → headline grande centrado → sub-claim → CTA arrow centrado inferior (`Conocé [Producto] →`).
-
-### Carrusel (hasta 10 slides)
-- **Portada**: "¿Qué parche es para vos?" + "Deslizá →" · hook fuerte
-- **Slides 2–N**: Un producto por slide con badge + headline + insight clave
-- **Último slide**: CTA + logo + handle
-
----
-
-## 06 — Voz visual por producto {#voice}
-
-| Producto | Frase marco | Insight | Mood | Tono |
-|---|---|---|---|---|
-| **Energy** | No te acelera. Te acompaña. | La gente quiere rendir bien sin estrellarse. | Frescura · Vitalidad · Claridad | Funcional · Confiable · Vida real |
-| **Sleep** | Dormir mejor empieza bajando el ritmo. | Dormir mejor empieza antes de acostarse. | Calma · Pausa · Frescura nocturna | Sereno · Cálido · Nocturno |
-| **Zen** | Calma para seguir, no para frenar. | Estar mejor mientras seguís haciendo. | Estabilidad · Orden · Aire | Equilibrado · Claridad · Presencia |
-| **Shield** | Cuidarse antes es cuidarse mejor. | El cuidado que importa se hace antes. | Protección · Confianza · Constancia | Cálido · Preventivo · Responsable |
-| **Glow** | Glow no se fuerza. Se acompaña. | Glow no es un efecto. Es un proceso. | Vitalidad · Luz desde adentro | Adulto · Consciente · Realista |
-| **Woman** | Respetar los propios ritmos. | El bienestar femenino no es lineal. Es cíclico. | Equilibrio · Suavidad · Conexión | Empático · Respetuoso · Sin estereotipos |
-
-### Targets por producto
-
-**Energy**
-- Primario: 25–45 años. Profesionales, emprendedores, creativos con rutinas intensas. Fatiga mental más que física.
-- Secundario: Personas que quieren reducir café, tienen sensibilidad gástrica o buscan energía sin afectar el sueño.
-
-**Sleep**
-- Primario: 25–55 años. Profesionales con estrés, emprendedores, padres. Les cuesta desconectar a la noche.
-- Secundario: Personas que duermen pero se despiertan cansadas, viajeros frecuentes, quienes evitan pastillas.
-
-**Zen**
-- Primario: 25–50 años. Alta carga mental, trabajan bajo presión. Profesionales, emprendedores, creativos.
-- Secundario: Practitioners casuales de mindfulness/yoga, quienes buscan reducir estrés sin soluciones fuertes.
-
-**Shield**
-- Primario: 30–55 años. Padres, viajeros frecuentes, profesionales con rutinas exigentes. Perfil más adulto que el resto.
-- Secundario: Personas que toman suplementos de forma estacional y buscan alternativas fáciles de sostener.
-
-**Glow**
-- Primario: 25–45 años, principalmente mujeres. Interesadas en skincare integral, poco tiempo para rutinas complejas.
-- Secundario: Quienes ya usan suplementos para piel/pelo/uñas y buscan un formato más simple.
-
-**Woman**
-- Primario: 25–50 años, mujeres. Profesionales, madres, emprendedoras. Conectadas con el autocuidado consciente.
-- Secundario: Mujeres que ya consumen suplementos de bienestar femenino y buscan algo más fácil de sostener.
+### Estructura de Precios & Suscripción (MXN)
+- **Compra Única:** `$750 MXN`
+- **Suscripción Mensual (cada 30 días):** `−20%` ➔ **`$600 MXN`** *(Destacada como "Más popular")*
+- **Suscripción Bimestral (cada 60 días):** `−15%` ➔ **`$638 MXN`**
+- **Suscripción Trimestral (cada 90 días):** `−10%` ➔ **`$675 MXN`**
 
 ---
 
-## Assets de logo {#logos}
+## 06 — Botones (CTA) & Badges
 
-Los archivos SVG oficiales están en `assets/logos/`. Usar siempre estos archivos — no recrear el logo.
+### Botones (CTA)
+- **Forma:** Píldora completa (`rounded-full`).
+- **Borde:** `border 1px` (`border-[#0F0F0F]`).
+- **Tipografía:** Open Sauce Sans 500, uppercase, `+12% tracking` (`tracking-[0.12em]`, text 11px–13px).
+- **Botón Principal (Primary):** Relleno Ink (`bg-[#0F0F0F] text-white border border-[#0F0F0F] hover:bg-white hover:text-[#0F0F0F] transition-all`).
+- **Botón Secundario (Ghost):** Transparente (`bg-transparent text-[#0F0F0F] border border-[#0F0F0F] hover:bg-[#0F0F0F] hover:text-white transition-all`).
+- **REGLA DE ORO:** Hover invierte el fill. NUNCA usar color de producto en botones.
 
-| Archivo | Variante | Uso |
-|---|---|---|
-| `Logo_Color.svg` | Wordmark completo · colores corporativos | Fondos blancos/crema |
-| `Logo_White.svg` | Wordmark completo · todo blanco/crema | Fondos oscuros (petróleo, negro) |
-| `Icon_Color.svg` | Ícono solo · colores corporativos | Avatar, favicon, uso compacto en fondos claros |
-| `Icon_White.svg` | Ícono solo · todo blanco/crema | Avatar, favicon, uso compacto en fondos oscuros |
-
-**Regla de selección rápida:**
-- Fondo claro → `Logo_Color.svg` o `Icon_Color.svg`
-- Fondo oscuro (petróleo `#1e3a5f`, negro `#111111`) → `Logo_White.svg` o `Icon_White.svg`
-- Nunca sobre color de producto directo sin fondo de marca intermedio
+### Badges & Tags (Meta)
+- **Outline Default:** (`bg-white border border-[#E6E1D8] text-[#3A3A37] font-sans font-medium uppercase tracking-[0.12em] px-3 py-1 rounded-full text-[11px]`).
+- **Badge Promos / Descuentos:** Sólido en Ink (`bg-[#0F0F0F] text-[#FAF8F5] font-sans font-medium uppercase tracking-[0.12em] px-3 py-1 rounded-full text-[11px]`).
 
 ---
 
-## 07 — Do's & Don'ts + Checklist {#donts}
+## 07 — Claims Prohibidos y Normativa COFEPRIS (México)
 
-### Logo
-- ✅ DO: Logo crema/blanco sobre fondos oscuros (petróleo, negro). Máximo contraste.
-- ❌ DON'T: Logo sobre color de producto. Solo sobre fondos de marca.
+### Términos Estrictamente Prohibidos ❌
+- ❌ **`transdérmico / transdérmica`** → Reemplazar siempre por: **`vía tópica de liberación continua`**, **`absorción tópica`**, o **`nutrición cutánea`**.
+- ❌ **`refuerza el sistema inmunológico`** → Reemplazar por: **`apoya tus defensas naturales`**.
+- ❌ **`cura, previene, sana, elimina, trata, soluciona`**
+- ❌ **`garantizado / resultados en X días`**
+- ❌ **`efecto inmediato / picos de energía / preworkout / sedante`**
+- ❌ Describir mecanismos invasivos ("atraviesa el torrente sanguíneo", "capas de la piel", "500 Daltons" en anuncios de pauta o social media).
 
-### Color
-- ✅ DO: Un institucional + un acento de producto. Máximo 2 colores por pieza.
-- ❌ DON'T: Mezclar múltiples colores de producto en una sola pieza. Los colores son identificadores, no decoración.
-
-### Tipografía
-- ✅ DO: Outfit 800 + 400. Jerarquía con peso, no con fuentes distintas.
-- ❌ DON'T: Mezclar Outfit con otras fuentes. Outfit es la única fuente del sistema.
-
-### Composición
-- ✅ DO: Jerarquía clara. Badge → headline → logo. Logo en esquina dentro de zona segura.
-- ❌ DON'T: Logo centrado dominante. Texto amontonado. El mensaje es el protagonista.
-
-### Claims permitidos ✅
-Siempre seguros — usar sin restricción:
-
-- Acompaña el bienestar diario
-- Pensado para la vida real
-- Bienestar sin fricción
-- Uso diario y constante
-- Ingredientes naturales seleccionados
-- Se integra a tu rutina
-- No requiere agua · Alternativa a las cápsulas
-- Formato práctico y discreto
-- Bienestar como hábito, no como excepción
-- Diseñado para acompañar, no para forzar
-
-### Claims prohibidos ❌
-Evitar siempre — incluso con disclaimers. Requieren respaldo regulatorio que Novapatch no comunica:
-
-- Cura · Trata · Previene enfermedades
-- Reemplaza medicación o tratamiento
-- Resultados garantizados
-- Efectos inmediatos
-- Clínicamente probado para X condición
-- Aprobado para tratar X
-- 100% efectivo · Funciona en todos los casos
-- Solución mágica · Transformación garantizada
-- Lenguaje clínico o médico
-- Promesas anti-edad o de cambio corporal
-
-> Si dudás de un claim, reescribilo desde la regla de oro: **acompañamos, no transformamos.**
-
-### Regla de oro
-> Novapatch no promete cambiar tu cuerpo. Te acompaña a cuidarlo mejor todos los días.
-
-### Checklist antes de publicar
-
-- [ ] ¿Usa algún claim prohibido? → Reescribir
-- [ ] ¿Promete resultados inmediatos? → Eliminar
-- [ ] ¿Usa lenguaje clínico? → Simplificar
-- [ ] ¿Respeta el tono del producto? → Verificar
-- [ ] ¿Logo en zona segura con contraste? → Verificar
-- [ ] ¿Un solo producto por pieza? → Confirmar
+### Expresiones Permitidas y Recomendadas ✓
+- ✓ *"Parche con vitaminas."*
+- ✓ *"Acompaña tu rutina diaria."*
+- ✓ *"Se pega, se olvida, funciona."*
+- ✓ *"Sin pastillas · sin agua · sin azúcar · sin gluten · sin látex."*
+- ✓ *"0% carga digestiva · nutrición cutánea de liberación continua."*
 
 ---
 
-## Cómo aplicar esta guía
+## 08 — Español Neutro MX (Reglas de Lenguaje)
 
-Al recibir una solicitud de diseño o copy de Novapatch:
+Aplica obligatoriamente a todo copy, landing, ad, email, DM y social post:
+- **Aquí / Allí** (nunca *acá / allá*)
+- **Tú / Eres** (nunca *vos / sos*)
+- **Tienes / Quieres / Puedes** (nunca *tenés / querés / podés*)
+- **Mantén / Elige / Empieza** (nunca *mantené / elegí / empezá*)
+- **Pégatelo / Conoce** (nunca *pegátelo / conocé*)
 
-1. **Identifica el producto** (Energy / Sleep / Zen / Shield / Glow / Woman / institucional)
-2. **Consulta la voz del producto** en la sección 06
-3. **Aplica los tokens de color** del producto correspondiente
-4. **Usa Outfit** en los pesos correctos según la jerarquía
-5. **Respeta el espaciado** en múltiplos de 4px
-6. **Verifica con el checklist** antes de entregar
-7. **Jamás uses claims prohibidos** — si el copy los incluye, reescríbelo
+---
 
-Para referencia detallada de cada sección, consulta `references/brand-detail.md`.
+## 09 — Checklist Pre-Publicación (10 Chequeos Canónicos)
+
+Antes de dar por finalizada cualquier pieza (web, social, ad, email), verifica los 10 puntos:
+
+1. **[ ] 01 — Un solo producto:** ¿La pieza tiene un solo producto (o es puramente institucional)?
+2. **[ ] 02 — Color restringido:** ¿El color solo aparece sobre el sachet real o como micro-dot ≤ 8px?
+3. **[ ] 03 — Tipografía tripartita:** ¿Se usaron las 3 fuentes oficiales en sus roles correctos, y ninguna más?
+4. **[ ] 04 — Cero claims prohibidos:** ¿Cero uso de *transdérmico*, *refuerza*, *cura*, *garantizado*, o mecanismos farmacológicos?
+5. **[ ] 05 — Frase marco:** ¿La voz coincide exactamente con la frase marco del producto?
+6. **[ ] 06 — Fondos canónicos:** ¿El fondo es Paper (`#FFFFFF`), Bone (`#FAF8F5`), Gris (`#AEAEAF`), o Ink (`#0F0F0F` solo en Reels covers)?
+7. **[ ] 07 — Contraste limpio:** ¿El texto es blanco sobre gris/ink e ink sobre paper/bone?
+8. **[ ] 08 — Alineación Left:** ¿La alineación de texto es LEFT en toda la pieza?
+9. **[ ] 09 — Cero efectos:** ¿Cero sombras, gradientes, bordes decorativos, emojis, stickers o gifs?
+10. **[ ] 10 — Regla de oro:** ¿La pieza cumple *"Novapatch no promete cambiar tu cuerpo. Te acompaña a cuidarlo mejor todos los días."*?
+
+> **Si los 10 checks pasan → listo para publicar.**

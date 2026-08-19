@@ -1,0 +1,1337 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>novapatch — brand kit v3 · master</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sauce+Sans:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<!-- Outfit se carga ÚNICAMENTE para reproducir el packaging actual de los sachets.
+     No es parte del sistema web/social. No usar fuera de los mockups de packaging. -->
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:   #ffffff;
+    --bone:    #faf8f5;
+    --gray:    #aeaeaf;
+    --ink:     #0f0f0f;
+    --stone:   #a8a29a;
+    --shadow:  #3a3a37;
+    --line:    #e6e1d8;
+    --linen:   #f2eee7;
+
+    --energy:  #83b5f4;
+    --sleep:   #1eb1bc;
+    --zen:     #4e82bc;
+    --shield:  #ffa849;
+    --glow:    #f25c54;
+    --woman:   #c693c4;
+
+    --sans: "Open Sauce Sans", "Inter", "Helvetica Neue", "Arial", sans-serif;
+    --display: "Space Grotesk", "Open Sauce Sans", sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+    --max: 1280px;
+    --gutter: clamp(24px, 5vw, 80px);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family: var(--sans);
+    background: var(--bone);
+    color: var(--ink);
+    font-weight: 400;
+    line-height: 1.4;
+    -webkit-font-smoothing: antialiased;
+  }
+  a{color:inherit;text-decoration:none}
+  img,svg{display:block;max-width:100%}
+
+  /* ── Type system ─────────────────────────────── */
+  .display{font-weight:800;font-size:clamp(64px,10vw,140px);line-height:0.95;letter-spacing:-0.035em;text-transform:lowercase}
+  .h1{font-weight:700;font-size:clamp(48px,6vw,88px);line-height:1;letter-spacing:-0.03em;text-transform:lowercase}
+  .h2{font-weight:600;font-size:clamp(32px,3.5vw,52px);line-height:1.05;letter-spacing:-0.02em;text-transform:lowercase}
+  .h3{font-weight:600;font-size:22px;line-height:1.2;letter-spacing:-0.01em}
+  .body{font-weight:400;font-size:16px;line-height:1.55;letter-spacing:-0.005em;max-width:60ch}
+  .body-lg{font-weight:500;font-size:24px;line-height:1.35;letter-spacing:-0.01em;max-width:32ch}
+  .meta{font-weight:500;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--stone)}
+  .caps{font-weight:500;font-size:12px;letter-spacing:0.14em;text-transform:uppercase}
+  .mono{font-family:var(--mono);font-weight:400;font-size:12px;letter-spacing:0.06em;text-transform:uppercase}
+
+  /* ── Sections ────────────────────────────────── */
+  section{padding:clamp(80px,10vw,140px) 0}
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 var(--gutter)}
+  .stack > * + *{margin-top:24px}
+  .stack-lg > * + *{margin-top:48px}
+  .rule{height:1px;background:var(--line)}
+
+  .bg-paper{background:var(--paper);color:var(--ink)}
+  .bg-bone{background:var(--bone);color:var(--ink)}
+  .bg-gray{background:var(--gray);color:var(--paper)}
+  .bg-ink{background:var(--ink);color:var(--paper)}
+
+  .bg-gray .meta,.bg-ink .meta{color:rgba(255,255,255,0.65)}
+  .bg-gray .rule,.bg-ink .rule{background:rgba(255,255,255,0.15)}
+
+  /* ── Nav ─────────────────────────────────────── */
+  nav.top{
+    position:sticky;top:0;z-index:50;
+    background:color-mix(in srgb, var(--bone) 92%, transparent);
+    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--line);
+  }
+  nav.top .row{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:16px var(--gutter);max-width:var(--max);margin:0 auto;
+  }
+  nav.top .brand{font-weight:700;font-size:20px;letter-spacing:-0.03em}
+  nav.top ul{list-style:none;display:flex;gap:20px;flex-wrap:wrap}
+  nav.top ul a{font-size:13px;color:var(--shadow);font-weight:500}
+  nav.top ul a:hover{color:var(--ink)}
+  nav.top .tag{font-family:var(--mono);font-size:11px;color:var(--stone);letter-spacing:0.06em}
+  @media(max-width:1000px){nav.top ul{display:none}}
+
+  /* ── Grid helpers ────────────────────────────── */
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px,5vw,80px);align-items:start}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+  .grid-5{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+  .grid-6{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
+  @media(max-width:900px){
+    .grid-2{grid-template-columns:1fr}
+    .grid-3,.grid-4,.grid-5{grid-template-columns:repeat(2,1fr)}
+    .grid-6{grid-template-columns:repeat(3,1fr)}
+  }
+
+  /* ── Swatch ──────────────────────────────────── */
+  .swatch{border-radius:2px;overflow:hidden;border:1px solid var(--line)}
+  .bg-gray .swatch,.bg-ink .swatch{border-color:rgba(255,255,255,0.2)}
+  .swatch .chip{aspect-ratio:1/1;display:block}
+  .swatch .info{padding:14px 16px;background:var(--paper);color:var(--ink);border-top:1px solid var(--line)}
+  .swatch .info .name{font-weight:600;font-size:14px}
+  .swatch .info .hex{font-family:var(--mono);font-size:11px;color:var(--stone);letter-spacing:0.06em;text-transform:uppercase;margin-top:2px}
+  .swatch .info .role{font-size:11px;color:var(--stone);margin-top:4px;line-height:1.35}
+
+  /* ── Specimen ────────────────────────────────── */
+  .specimen{
+    padding:clamp(28px,4vw,56px);
+    border:1px solid var(--line);
+    border-radius:2px;
+    background:var(--paper);
+  }
+  .bg-gray .specimen,.bg-ink .specimen{border-color:rgba(255,255,255,0.2);background:transparent;color:var(--paper)}
+  .waterfall > div{padding:8px 0;line-height:1}
+
+  /* ── Tiles ───────────────────────────────────── */
+  .tile{padding:24px;border:1px solid var(--line);border-radius:2px;background:var(--paper)}
+  .bg-gray .tile,.bg-ink .tile{border-color:rgba(255,255,255,0.15);background:transparent;color:var(--paper)}
+  .tile .tile-h{font-weight:600;font-size:15px;margin-bottom:10px;line-height:1.3}
+  .tile .tile-b{font-size:14px;color:var(--shadow);line-height:1.5}
+  .bg-gray .tile .tile-b,.bg-ink .tile .tile-b{color:rgba(255,255,255,0.75)}
+  .tile .tag{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--stone);font-weight:500;margin-bottom:12px}
+  .bg-gray .tile .tag,.bg-ink .tile .tag{color:rgba(255,255,255,0.7)}
+  .tile.yes .tag::before{content:"✓ ";color:var(--ink)}
+  .tile.no .tag::before{content:"✕ ";color:var(--ink)}
+  .bg-gray .tile.yes .tag::before,.bg-gray .tile.no .tag::before,
+  .bg-ink .tile.yes .tag::before,.bg-ink .tile.no .tag::before{color:var(--paper)}
+
+  /* ── Copy do/don't ───────────────────────────── */
+  .copy-card{padding:28px;border:1px solid var(--line);border-radius:2px;background:var(--paper)}
+  .bg-gray .copy-card,.bg-ink .copy-card{border-color:rgba(255,255,255,0.15);background:transparent;color:var(--paper)}
+  .copy-card .tag{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--stone);font-weight:500;margin-bottom:16px}
+  .bg-gray .copy-card .tag,.bg-ink .copy-card .tag{color:rgba(255,255,255,0.7)}
+  .copy-card.yes .tag::before{content:"✓ "}
+  .copy-card.no .tag::before{content:"✕ "}
+  .copy-card .frase{font-weight:600;font-size:21px;line-height:1.3;letter-spacing:-0.02em}
+  .copy-card .why{font-size:13px;color:var(--stone);margin-top:16px;line-height:1.55}
+  .bg-gray .copy-card .why,.bg-ink .copy-card .why{color:rgba(255,255,255,0.7)}
+
+  /* ── IG mocks ────────────────────────────────── */
+  .post-mock{
+    aspect-ratio:4/5;padding:44px;
+    display:flex;flex-direction:column;justify-content:space-between;
+    border-radius:2px;overflow:hidden;
+    font-weight:800;line-height:0.98;letter-spacing:-0.035em;
+  }
+  .post-mock.g{background:var(--gray);color:var(--paper)}
+  .post-mock.b{background:var(--bone);color:var(--ink);border:1px solid var(--line)}
+  .post-mock.p{background:var(--paper);color:var(--ink);border:1px solid var(--line)}
+  .post-mock.k{background:var(--ink);color:var(--paper)}
+  .post-mock .top{display:flex;justify-content:space-between;font-size:16px;font-weight:700;letter-spacing:-0.02em;text-transform:lowercase;line-height:1.1}
+  .post-mock .bottom{font-family:var(--display);font-size:44px;text-transform:lowercase;font-weight:700}
+  .post-mock .spec{font-family:var(--mono);font-size:11px;font-weight:400;letter-spacing:0.08em;text-transform:uppercase;margin-top:14px;opacity:0.7}
+
+  /* ── Voice cards ─────────────────────────────── */
+  .voice-card{padding:28px;background:var(--paper);border:1px solid var(--line);border-radius:2px}
+  .bg-gray .voice-card,.bg-ink .voice-card{border-color:rgba(255,255,255,0.15);background:transparent;color:var(--paper)}
+  .voice-card .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px;vertical-align:middle}
+  .voice-card .name{font-weight:600;font-size:14px;letter-spacing:0.02em;text-transform:lowercase}
+  .voice-card .frase{font-weight:600;font-size:22px;line-height:1.25;letter-spacing:-0.02em;margin-top:16px}
+  .voice-card .target{font-size:12px;color:var(--stone);margin-top:14px;line-height:1.45}
+  .bg-gray .voice-card .target,.bg-ink .voice-card .target{color:rgba(255,255,255,0.65)}
+  .voice-card .kw{font-family:var(--mono);font-size:10.5px;letter-spacing:0.05em;line-height:1.6;margin-top:14px;color:var(--shadow);text-transform:lowercase}
+  .bg-gray .voice-card .kw,.bg-ink .voice-card .kw{color:rgba(255,255,255,0.7)}
+
+  /* ── Wordmark ────────────────────────────────── */
+  .wm-block{padding:60px 40px;border:1px solid var(--line);border-radius:2px;display:flex;align-items:center;justify-content:flex-start}
+  .wm-block.dark{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .wm-block.light{background:var(--paper)}
+  .wm-block.gray{background:var(--gray);color:var(--paper);border-color:var(--gray)}
+  .wm-block .wm{font-weight:700;font-size:56px;letter-spacing:-0.035em;line-height:1}
+
+  /* ── Product strip ───────────────────────────── */
+  .product-strip{display:grid;grid-template-columns:repeat(6,1fr);border:1px solid var(--line);border-radius:2px;overflow:hidden}
+  .product-strip > div{aspect-ratio:1/1;display:flex;flex-direction:column;justify-content:flex-end;padding:14px;color:#fff;font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase}
+  .product-strip > div small{display:block;font-family:var(--mono);font-weight:400;font-size:10px;opacity:0.78;margin-top:4px;letter-spacing:0.06em}
+  @media(max-width:700px){.product-strip{grid-template-columns:repeat(3,1fr)}}
+
+  /* ── Product cards ───────────────────────────── */
+  .product-card{background:var(--paper);border:1px solid var(--line);border-radius:2px;overflow:hidden}
+  .product-card .stage{aspect-ratio:4/5;display:flex;align-items:center;justify-content:center;padding:32px 24px;background:var(--paper)}
+  .product-card .stage svg{height:100%;width:auto}
+  .product-card .caption{padding:18px 20px 22px;border-top:1px solid var(--line)}
+  .product-card .caption .row{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+  .product-card .caption .name{font-size:15px;font-weight:600;text-transform:lowercase}
+  .product-card .caption .price{font-family:var(--mono);font-size:13px;font-weight:500}
+  .product-card .caption .claim{font-size:13px;color:var(--shadow);margin-top:8px;line-height:1.4}
+  .product-card .caption .ingr{font-family:var(--mono);font-size:9.5px;color:var(--stone);margin-top:10px;line-height:1.7;letter-spacing:0.05em;text-transform:uppercase}
+
+  /* ── Tables ──────────────────────────────────── */
+  table.spec{width:100%;border-collapse:collapse;font-size:14px}
+  table.spec th{text-align:left;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--stone);font-weight:500;padding:0 16px 12px 0;border-bottom:1px solid var(--line)}
+  table.spec td{padding:13px 16px 13px 0;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.45}
+  table.spec td.m{font-family:var(--mono);font-size:12.5px;letter-spacing:0.03em;white-space:nowrap}
+  table.spec tr:last-child td{border-bottom:none}
+  .bg-gray table.spec th,.bg-ink table.spec th{color:rgba(255,255,255,0.65);border-color:rgba(255,255,255,0.2)}
+  .bg-gray table.spec td,.bg-ink table.spec td{border-color:rgba(255,255,255,0.15)}
+
+  /* ── Buttons ─────────────────────────────────── */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;
+    padding:16px 28px;font-family:var(--sans);font-size:13px;font-weight:500;
+    letter-spacing:0.12em;text-transform:uppercase;border-radius:999px;
+    border:1px solid var(--ink);cursor:pointer;transition:all .2s ease;
+  }
+  .btn.primary{background:var(--ink);color:var(--paper)}
+  .btn.primary:hover{background:transparent;color:var(--ink)}
+  .btn.ghost{background:transparent;color:var(--ink)}
+  .btn.ghost:hover{background:var(--ink);color:var(--paper)}
+  .btn.small{padding:12px 22px;font-size:11px}
+  .badge{padding:6px 12px;border:1px solid var(--line);border-radius:999px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--shadow);display:inline-block}
+  .badge.solid{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+  /* ── Web mock ────────────────────────────────── */
+  .mock{background:var(--paper);border:1px solid var(--line);border-radius:2px;overflow:hidden}
+  .mock-nav{display:flex;justify-content:space-between;align-items:center;padding:18px 32px;border-bottom:1px solid var(--line);font-size:12px}
+  .mock-nav .brand{font-weight:700;font-size:17px;letter-spacing:-0.03em}
+  .mock-nav ul{list-style:none;display:flex;gap:24px;color:var(--shadow)}
+  .mock-nav .cart{font-family:var(--mono);font-size:11px;letter-spacing:0.06em}
+  .mock-hero{padding:72px 32px 64px;display:grid;grid-template-columns:1.35fr 1fr;gap:32px;align-items:center;background:var(--bone)}
+  .mock-hero h3{font-family:var(--display);font-weight:700;font-size:54px;line-height:0.98;letter-spacing:-0.035em;max-width:11ch;margin-bottom:20px;text-transform:lowercase}
+  .mock-hero p{color:var(--shadow);font-size:14px;max-width:38ch;margin-bottom:26px;line-height:1.55}
+  .mock-hero .img{display:flex;justify-content:center}
+  .mock-hero .img svg{height:250px}
+  .mock-sec{padding:48px 32px;border-top:1px solid var(--line)}
+  @media(max-width:800px){.mock-hero{grid-template-columns:1fr}.mock-hero h3{font-size:38px}.mock-nav ul{display:none}}
+
+  /* ── Email mock ──────────────────────────────── */
+  .email-mock{max-width:600px;border:1px solid var(--line);border-radius:2px;overflow:hidden;background:var(--paper);color:var(--ink)}
+  .email-mock .e-head{padding:22px 32px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+  .email-mock .e-head .wm{font-weight:700;font-size:18px;letter-spacing:-0.03em}
+  .email-mock .e-body{padding:40px 32px}
+  .email-mock .e-foot{padding:24px 32px;border-top:1px solid var(--line);background:var(--bone);font-size:11px;color:var(--stone);line-height:1.7}
+
+  /* ── Ads mock ────────────────────────────────── */
+  .ad{border:1px solid var(--line);border-radius:2px;overflow:hidden;background:var(--paper)}
+  .ad .frame{padding:26px;display:flex;flex-direction:column;justify-content:space-between;background:var(--bone)}
+  .ad .frame.g{background:var(--gray);color:var(--paper)}
+  .ad .frame.k{background:var(--ink);color:var(--paper)}
+  .ad .frame .wmk{font-weight:700;font-size:13px;letter-spacing:-0.02em;text-transform:lowercase}
+  .ad .frame .hl{font-family:var(--display);font-weight:700;font-size:26px;line-height:1;letter-spacing:-0.035em;text-transform:lowercase;margin-top:auto}
+  .ad .frame .sl{font-size:11.5px;margin-top:10px;line-height:1.4;opacity:0.8}
+  .ad .under{padding:14px 16px;border-top:1px solid var(--line);font-family:var(--mono);font-size:10.5px;letter-spacing:0.06em;text-transform:uppercase;color:var(--stone)}
+
+  /* ── Checklist ───────────────────────────────── */
+  ol.check{list-style:none;margin:0}
+  ol.check li{padding:12px 0;border-bottom:1px solid var(--line);display:flex;gap:16px;font-size:15px;line-height:1.45}
+  ol.check li:last-child{border-bottom:none}
+  ol.check li span.n{font-family:var(--mono);font-weight:500;color:var(--stone);width:34px;flex:none;font-size:13px}
+
+  /* ── Footer ──────────────────────────────────── */
+  footer{padding:70px 0 40px;background:var(--paper);border-top:1px solid var(--line)}
+  footer .cols{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:52px}
+  footer h4{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--stone);margin-bottom:16px;font-weight:500}
+  footer ul{list-style:none}
+  footer ul li{margin-bottom:8px;font-size:14px;color:var(--shadow)}
+  footer .wm{font-weight:700;font-size:26px;letter-spacing:-0.03em;margin-bottom:14px}
+  footer .base{display:flex;justify-content:space-between;align-items:center;padding-top:26px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--stone);letter-spacing:0.06em}
+  @media(max-width:800px){footer .cols{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="row">
+    <a class="brand" href="#top">novapatch</a>
+    <ul>
+      <li><a href="#filosofia">filosofía</a></li>
+      <li><a href="#paleta">paleta</a></li>
+      <li><a href="#tipo">tipografía</a></li>
+      <li><a href="#wordmark">wordmark</a></li>
+      <li><a href="#producto">producto</a></li>
+      <li><a href="#social">social</a></li>
+      <li><a href="#ads">ads</a></li>
+      <li><a href="#web">web</a></li>
+      <li><a href="#email">email</a></li>
+      <li><a href="#voz">voz</a></li>
+      <li><a href="#reglas">reglas</a></li>
+    </ul>
+    <span class="tag">v3 · master</span>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════════════════════ HERO -->
+<section class="bg-gray" id="top" style="padding-top:clamp(60px,8vw,120px)">
+  <div class="wrap stack-lg">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px">
+      <span class="meta">novapatch méxico</span>
+      <span class="meta">brand kit · v3 master · agosto 2026</span>
+    </div>
+    <h1 class="display">bienestar<br/>silencioso.</h1>
+    <p class="body-lg">Un solo sistema visual — tres fuentes, tres fondos, cero decoración. Todo lo que necesitas para producir cualquier pieza: social, ads, web, email, packaging.</p>
+    <div class="grid-4" style="max-width:900px">
+      <div><div class="meta">fuentes</div><div style="font-weight:600;font-size:15px;margin-top:6px">3 con roles fijos</div></div>
+      <div><div class="meta">fondos</div><div style="font-weight:600;font-size:15px;margin-top:6px">paper · bone · gris</div></div>
+      <div><div class="meta">productos</div><div style="font-weight:600;font-size:15px;margin-top:6px">6 fórmulas</div></div>
+      <div><div class="meta">precio base</div><div style="font-family:var(--mono);font-weight:500;font-size:15px;margin-top:6px">$750 MXN</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════ 01 FILOSOFÍA -->
+<section class="bg-bone" id="filosofia">
+  <div class="wrap">
+    <div class="grid-2">
+      <div>
+        <span class="meta">01 · filosofía</span>
+        <h2 class="h1" style="margin-top:20px">regla de oro.</h2>
+      </div>
+      <div class="stack-lg" style="padding-top:12px">
+        <p class="body-lg" style="color:var(--ink)">
+          "Novapatch no promete cambiar tu cuerpo. Te acompaña a cuidarlo mejor todos los días."
+        </p>
+        <p class="body" style="color:var(--shadow)">
+          Si la pieza promete transformación → se reescribe. Si acompaña un hábito → va bien. Este filtro corre antes que cualquier decisión de diseño.
+        </p>
+        <div class="grid-2" style="gap:24px">
+          <div class="tile"><div class="tile-h">01 · restricción</div><div class="tile-b">Un solo color por pieza (el del sachet), y solo sobre el packaging o foto real.</div></div>
+          <div class="tile"><div class="tile-h">02 · sistema tripartito</div><div class="tile-b">Open Sauce Sans + Space Grotesk + JetBrains Mono. Cada una en su rol, nunca invertidas.</div></div>
+          <div class="tile"><div class="tile-h">03 · respiración</div><div class="tile-b">Márgenes generosos — mínimo 80px sobre 1080. Left aligned siempre. Si dudas, más aire.</div></div>
+          <div class="tile"><div class="tile-h">04 · honestidad</div><div class="tile-b">No prometemos transformación. Acompañamos una rutina.</div></div>
+          <div class="tile"><div class="tile-h">05 · cero efectos</div><div class="tile-b">Sin sombras, gradientes, bordes decorativos, outlines ni adornos.</div></div>
+          <div class="tile"><div class="tile-h">06 · un mensaje</div><div class="tile-b">Una pieza = un producto = una idea = un CTA.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule" style="margin:clamp(48px,7vw,88px) 0"></div>
+
+    <div class="grid-2">
+      <div>
+        <span class="meta">frase-madre y descriptores</span>
+        <div style="margin-top:20px;font-family:var(--display);font-weight:700;font-size:clamp(40px,5vw,64px);letter-spacing:-0.035em;line-height:0.98;text-transform:lowercase">bienestar<br/>silencioso.</div>
+      </div>
+      <div class="stack">
+        <table class="spec">
+          <tr><td style="width:38%;color:var(--stone)">Descriptor secundario</td><td>Parches con vitaminas · 6 fórmulas.</td></tr>
+          <tr><td style="color:var(--stone)">Qué es el producto</td><td>Un parche con vitaminas que se pega en la piel y te acompaña el día.</td></tr>
+          <tr><td style="color:var(--stone)">Cómo se resume</td><td>Se pega, se olvida, funciona.</td></tr>
+          <tr><td style="color:var(--stone)">Mercado</td><td class="m">MÉXICO · ESPAÑOL NEUTRO MX</td></tr>
+          <tr><td style="color:var(--stone)">Canales</td><td class="m">NOVAPATCH.CARE/MX · @NOVAPATCH.MX</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════ 02 PALETA -->
+<section class="bg-paper" id="paleta">
+  <div class="wrap stack-lg">
+    <div class="grid-2" style="align-items:end">
+      <div>
+        <span class="meta">02 · paleta</span>
+        <h2 class="h1" style="margin-top:20px">tres fondos.<br/>una regla.</h2>
+      </div>
+      <p class="body">
+        La marca vive en tres neutros. Ink solo se usa para texto o para reels covers — nunca fondo dominante de un post normal. Los 6 colores de producto solo aparecen sobre el sachet real. Esa disciplina es lo que hace que un solo parche naranja se lea como un evento.
+      </p>
+    </div>
+
+    <div>
+      <span class="meta">fondos oficiales</span>
+      <div class="grid-3" style="margin-top:16px">
+        <div class="swatch"><div class="chip" style="background:#ffffff;border-bottom:1px solid var(--line)"></div><div class="info"><div class="name">Paper</div><div class="hex">#FFFFFF</div><div class="role">fondo blanco puro · hero web, cards de producto</div></div></div>
+        <div class="swatch"><div class="chip" style="background:#faf8f5"></div><div class="info"><div class="name">Bone</div><div class="hex">#FAF8F5</div><div class="role">fondo cremita · posts de feed, stories claras</div></div></div>
+        <div class="swatch"><div class="chip" style="background:#aeaeaf"></div><div class="info"><div class="name">Gris</div><div class="hex">#AEAEAF</div><div class="role">fondo institucional · editorial, carruseles, mood serio</div></div></div>
+      </div>
+    </div>
+
+    <div>
+      <span class="meta">texto y superficies de apoyo</span>
+      <div class="grid-5" style="margin-top:16px">
+        <div class="swatch"><div class="chip" style="background:#0f0f0f"></div><div class="info"><div class="name">Ink</div><div class="hex">#0F0F0F</div><div class="role">texto sobre paper/bone · reels covers</div></div></div>
+        <div class="swatch"><div class="chip" style="background:#3a3a37"></div><div class="info"><div class="name">Shadow</div><div class="hex">#3A3A37</div><div class="role">texto secundario, párrafos</div></div></div>
+        <div class="swatch"><div class="chip" style="background:#a8a29a"></div><div class="info"><div class="name">Stone</div><div class="hex">#A8A29A</div><div class="role">meta, captions, eyebrows</div></div></div>
+        <div class="swatch"><div class="chip" style="background:#e6e1d8"></div><div class="info"><div class="name">Line</div><div class="hex">#E6E1D8</div><div class="role">hairlines, dividers 1px</div></div></div>
+        <div class="swatch"><div class="chip" style="background:#f2eee7"></div><div class="info"><div class="name">Linen</div><div class="hex">#F2EEE7</div><div class="role">superficie secundaria sobre bone</div></div></div>
+      </div>
+    </div>
+
+    <div>
+      <span class="meta">acentos de producto — solo sobre el sachet</span>
+      <div class="product-strip" style="margin-top:16px">
+        <div style="background:#83b5f4">energy<small>#83B5F4</small></div>
+        <div style="background:#1eb1bc">sleep<small>#1EB1BC</small></div>
+        <div style="background:#4e82bc">zen<small>#4E82BC</small></div>
+        <div style="background:#ffa849;color:#0f0f0f">shield<small style="color:#0f0f0f;opacity:0.65">#FFA849</small></div>
+        <div style="background:#f25c54">glow<small>#F25C54</small></div>
+        <div style="background:#c693c4">woman<small>#C693C4</small></div>
+      </div>
+    </div>
+
+    <div>
+      <span class="meta">combinaciones canónicas por tipo de pieza</span>
+      <div class="specimen" style="margin-top:16px;padding:clamp(20px,3vw,36px)">
+        <table class="spec">
+          <tr><th>pieza</th><th>fondo</th><th>texto</th></tr>
+          <tr><td>Landing hero editorial</td><td class="m">BONE #FAF8F5</td><td class="m">INK #0F0F0F</td></tr>
+          <tr><td>IG post institucional / manifiesto</td><td class="m">GRIS #AEAEAF</td><td class="m">BLANCO #FFFFFF</td></tr>
+          <tr><td>IG post de producto</td><td class="m">PAPER #FFFFFF</td><td class="m">INK #0F0F0F</td></tr>
+          <tr><td>Story quote</td><td class="m">GRIS #AEAEAF</td><td class="m">BLANCO #FFFFFF</td></tr>
+          <tr><td>Reel cover</td><td class="m">INK #0F0F0F</td><td class="m">BLANCO #FFFFFF</td></tr>
+          <tr><td>Highlights cover</td><td class="m">GRIS o INK</td><td class="m">BLANCO #FFFFFF</td></tr>
+          <tr><td>Ad estático / display</td><td class="m">BONE o GRIS</td><td class="m">SEGÚN FONDO</td></tr>
+          <tr><td>Email</td><td class="m">PAPER #FFFFFF</td><td class="m">INK #0F0F0F</td></tr>
+          <tr><td>Sachet / packaging</td><td class="m" colspan="2">FUERA DEL SISTEMA — mantiene su diseño y tipografía actual</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div>
+      <span class="meta">dónde puede aparecer el color de producto</span>
+      <div class="grid-3" style="margin-top:16px">
+        <div class="tile yes"><div class="tag">sí</div><div class="tile-h">Sobre el packshot del sachet.</div><div class="tile-b">La foto o el mockup del sachet mantiene su color real. Es el único lugar donde el color vive intacto.</div></div>
+        <div class="tile yes"><div class="tag">sí</div><div class="tile-h">Como micro-dot ≤ 8px.</div><div class="tile-b">Un punto al lado del nombre del producto en cards de tienda o listados. Nunca más grande que eso.</div></div>
+        <div class="tile no"><div class="tag">no</div><div class="tile-h">Fondos, botones, títulos, íconos.</div><div class="tile-b">Ni tintes al 5%. Ni un H1 rojo. Ni un CTA teal. Ni gradientes entre productos. Cero.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════ 03 TIPOGRAFÍA -->
+<section class="bg-gray" id="tipo">
+  <div class="wrap stack-lg">
+    <div class="grid-2" style="align-items:end">
+      <div>
+        <span class="meta">03 · tipografía</span>
+        <h2 class="h1" style="margin-top:20px">tres fuentes.<br/>tres jobs.</h2>
+      </div>
+      <p class="body-lg" style="color:var(--paper)">
+        Sistema tripartito con roles claros. Todas gratis en Google Fonts, nativas en Canva y Figma. Máximo 3 por pieza, aplicadas en orden de necesidad. Sin itálica, nunca.
+      </p>
+    </div>
+
+    <!-- Specimen 01 -->
+    <div class="specimen">
+      <div style="display:flex;justify-content:space-between;margin-bottom:28px;align-items:flex-end;gap:16px;flex-wrap:wrap">
+        <div>
+          <div style="font-weight:700;font-size:28px;letter-spacing:-0.03em">Open Sauce Sans</div>
+          <div class="meta" style="margin-top:4px">01 · primaria · body, ui, headings · 300–900</div>
+        </div>
+        <span class="caps" style="opacity:0.7">80% del texto</span>
+      </div>
+      <div class="waterfall">
+        <div style="font-weight:700;font-size:52px;letter-spacing:-0.03em;line-height:1">seis parches. seis necesidades.</div>
+        <div style="font-weight:600;font-size:30px;letter-spacing:-0.02em;line-height:1;padding-top:14px">un parche por día, sobre piel limpia.</div>
+        <div style="font-weight:500;font-size:22px;letter-spacing:-0.01em;line-height:1.3;padding-top:14px">Woman es un parche con vitaminas y minerales.</div>
+        <div style="font-weight:400;font-size:16px;letter-spacing:-0.005em;line-height:1.55;padding-top:14px">Uno por la mañana, sobre piel limpia, donde te quede cómodo. Sin agua, sin mezclas, sin ritual. El día sigue tu ritmo.</div>
+      </div>
+    </div>
+
+    <!-- Specimen 02 -->
+    <div class="specimen">
+      <div style="display:flex;justify-content:space-between;margin-bottom:28px;align-items:flex-end;gap:16px;flex-wrap:wrap">
+        <div>
+          <div style="font-family:var(--display);font-weight:700;font-size:28px;letter-spacing:-0.03em">Space Grotesk</div>
+          <div class="meta" style="margin-top:4px">02 · display · solo titulares 100px+ · 300–700</div>
+        </div>
+        <span class="caps" style="opacity:0.7">covers · hero · portadas</span>
+      </div>
+      <div class="waterfall">
+        <div style="font-family:var(--display);font-weight:700;font-size:64px;letter-spacing:-0.035em;line-height:0.98">bienestar silencioso.</div>
+        <div style="font-family:var(--display);font-weight:500;font-size:38px;letter-spacing:-0.03em;line-height:1;padding-top:16px">para las que sostienen.</div>
+        <div style="font-family:var(--display);font-weight:400;font-size:22px;letter-spacing:-0.01em;line-height:1.3;padding-top:16px;color:var(--paper);opacity:0.8">Diferencia clave: rasgos geométricos, terminaciones cortadas en <strong style="font-weight:700">a · g · t</strong>. Mood brand-forward.</div>
+      </div>
+    </div>
+
+    <!-- Specimen 03 -->
+    <div class="specimen">
+      <div style="display:flex;justify-content:space-between;margin-bottom:28px;align-items:flex-end;gap:16px;flex-wrap:wrap">
+        <div>
+          <div style="font-family:var(--mono);font-weight:600;font-size:26px;letter-spacing:-0.02em">JetBrains Mono</div>
+          <div class="meta" style="margin-top:4px">03 · datos · specs, precios, urls · 300–700</div>
+        </div>
+        <span class="caps" style="opacity:0.7">diferencia dato de copy</span>
+      </div>
+      <div class="waterfall">
+        <div style="font-family:var(--mono);font-weight:500;font-size:44px;letter-spacing:-0.02em;line-height:1">10—12 h · $750 MXN</div>
+        <div style="font-family:var(--mono);font-weight:400;font-size:20px;letter-spacing:0em;line-height:1;padding-top:16px">novapatch.care/mx · @novapatch.mx</div>
+        <div style="font-family:var(--mono);font-weight:400;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;line-height:1.6;padding-top:16px;color:var(--paper);opacity:0.75">VITAMINA C · L-CARNITINA · EXTRACTO DE TÉ VERDE · EXTRACTO DE GINSENG · VITAMINA B2 · ÁCIDO FÓLICO · VITAMINA E</div>
+      </div>
+    </div>
+
+    <!-- Escala -->
+    <div class="specimen">
+      <div style="display:flex;justify-content:space-between;margin-bottom:24px;align-items:flex-end">
+        <div class="h3">escala jerárquica canónica</div>
+        <span class="caps" style="opacity:0.7">base 1080</span>
+      </div>
+      <table class="spec">
+        <tr><th>estilo</th><th>fuente</th><th>peso</th><th>tamaño</th><th>tracking</th></tr>
+        <tr><td>Display hero</td><td>Space Grotesk</td><td class="m">700</td><td class="m">120–150PX</td><td class="m">−0.035EM</td></tr>
+        <tr><td>Display secundario</td><td>Space Grotesk</td><td class="m">500</td><td class="m">80–100PX</td><td class="m">−0.03EM</td></tr>
+        <tr><td>H1</td><td>Open Sauce Sans</td><td class="m">700</td><td class="m">64–88PX</td><td class="m">−0.03EM</td></tr>
+        <tr><td>H2</td><td>Open Sauce Sans</td><td class="m">600</td><td class="m">40–52PX</td><td class="m">−0.02EM</td></tr>
+        <tr><td>H3</td><td>Open Sauce Sans</td><td class="m">600</td><td class="m">22–28PX</td><td class="m">−0.01EM</td></tr>
+        <tr><td>Body</td><td>Open Sauce Sans</td><td class="m">400–500</td><td class="m">16–24PX</td><td class="m">−0.005EM · LH 1.5</td></tr>
+        <tr><td>Meta / eyebrow</td><td>Open Sauce Sans</td><td class="m">500</td><td class="m">11–13PX</td><td class="m">0.18EM · UPPER</td></tr>
+        <tr><td>Spec / dato</td><td>JetBrains Mono</td><td class="m">400</td><td class="m">12–14PX</td><td class="m">0.06EM · UPPER</td></tr>
+        <tr><td>URL / código</td><td>JetBrains Mono</td><td class="m">400</td><td class="m">14–16PX</td><td class="m">0EM · LOWER</td></tr>
+      </table>
+    </div>
+
+    <div class="grid-3">
+      <div class="tile"><div class="tile-h">Solo body</div><div class="tile-b">Solo Open Sauce Sans. Es la voz por defecto — cuando no hace falta display ni datos.</div></div>
+      <div class="tile"><div class="tile-h">Body + display</div><div class="tile-b">Sumas Space Grotesk para el título grande. El body sigue en Open Sauce Sans.</div></div>
+      <div class="tile"><div class="tile-h">Body + display + datos</div><div class="tile-b">Las 3 trabajan juntas: Space Grotesk arriba, Open Sauce en el medio, JetBrains abajo.</div></div>
+      <div class="tile no"><div class="tag">no</div><div class="tile-h">Space Grotesk chica.</div><div class="tile-b">Nunca en body corrido, botones, captions ni por debajo de 100px.</div></div>
+      <div class="tile no"><div class="tag">no</div><div class="tile-h">Mono narrativa.</div><div class="tile-b">JetBrains Mono nunca en headlines ni párrafos. Solo dato.</div></div>
+      <div class="tile no"><div class="tag">no</div><div class="tile-h">Fuentes fuera del sistema.</div><div class="tile-b">Instrument Serif, Outfit, Playfair, Fraunces: descontinuadas. Cero itálicas.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════ 04 WORDMARK -->
+<section class="bg-bone" id="wordmark">
+  <div class="wrap stack-lg">
+    <div class="grid-2" style="align-items:end">
+      <div>
+        <span class="meta">04 · wordmark</span>
+        <h2 class="h1" style="margin-top:20px">novapatch.</h2>
+      </div>
+      <p class="body">
+        Open Sauce Sans 700 u 800, minúsculas, tracking −0.03em. Solo en 2 colores: <strong>ink #0F0F0F</strong> o <strong>blanco #FFFFFF</strong>, según el fondo. Nunca en color de producto. El isotipo no se reproduce hasta que llegue el SVG oficial — hoy la marca es solo wordmark.
+      </p>
+    </div>
+
+    <div class="grid-3">
+      <div class="wm-block light"><div class="wm">novapatch</div></div>
+      <div class="wm-block gray"><div class="wm">novapatch</div></div>
+      <div class="wm-block dark"><div class="wm">novapatch</div></div>
+    </div>
+
+    <div class="grid-3">
+      <div class="tile">
+        <div class="tag">clear space</div>
+        <div style="font-weight:700;font-size:30px;letter-spacing:-0.03em;margin-bottom:12px">novapatch</div>
+        <div class="tile-b">Reservar como mínimo el alto de la "n" en los cuatro lados. Nada entra en esa zona: ni texto, ni bordes, ni foto.</div>
+      </div>
+      <div class="tile">
+        <div class="tag">tamaño mínimo</div>
+        <div style="font-weight:700;font-size:14px;letter-spacing:-0.03em;margin-bottom:12px">novapatch</div>
+        <div class="tile-b">Digital: 96px de ancho. Print: 20mm. Por debajo el kerning colapsa y la marca se ensucia.</div>
+      </div>
+      <div class="tile no">
+        <div class="tag">no permitido</div>
+        <div style="font-weight:700;font-size:30px;letter-spacing:-0.03em;margin-bottom:12px;color:var(--stone);text-decoration:line-through">novapatch</div>
+        <div class="tile-b">Serif, itálica, sombras, contornos, rotaciones, color de producto, o reproducción del isotipo.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════ 05 PRODUCTO -->
+<section class="bg-paper" id="producto">
+  <div class="wrap stack-lg">
+    <div class="grid-2" style="align-items:end">
+      <div>
+        <span class="meta">05 · producto</span>
+        <h2 class="h1" style="margin-top:20px">seis sachets.<br/>seis colores.<br/>cero decoración.</h2>
+      </div>
+      <p class="body">
+        Cada sachet se fotografía o compone sobre fondo bone o paper, sin sombras dramáticas, sin reflejos, sin props alrededor. La foto es el producto, no la escena. <strong>El packaging mantiene su diseño y su tipografía original (Outfit)</strong> — es la única excepción viva al sistema de 3 fuentes, y no se replica en ninguna otra pieza.
+      </p>
+    </div>
+
+    <div class="grid-3">
+
+      <!-- ENERGY -->
+      <div class="product-card">
+        <div class="stage">
+          <svg viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sachet Energy">
+            <rect x="8" y="8" width="184" height="244" rx="8" fill="#83b5f4"/>
+            <rect x="8" y="14" width="184" height="16" fill="#ffffff" opacity=".18"/>
+            <text x="100" y="72" text-anchor="middle" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="600" font-size="24" fill="#ffffff" letter-spacing="-0.5">novapatch</text>
+            <rect x="118" y="152" width="72" height="60" rx="12" fill="#ffffff"/>
+            <text x="154" y="192" text-anchor="middle" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="600" font-size="20" fill="#83b5f4">Energy</text>
+            <text x="20" y="184" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="500" font-size="10" fill="#ffffff">Acompaña tus niveles</text>
+            <text x="20" y="196" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="500" font-size="10" fill="#ffffff">de energía de forma</text>
+            <text x="20" y="208" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="500" font-size="10" fill="#ffffff">natural</text>
+          </svg>
+        </div>
+        <div class="caption">
+          <div class="row">
+            <div class="name"><span style="display:inline-block;width:8px;height:8px;background:#83b5f4;border-radius:50%;margin-right:8px;vertical-align:middle"></span>energy</div>
+            <div class="price">$750</div>
+          </div>
+          <div class="claim">Energía celular sostenida.</div>
+          <div class="ingr">VITAMINA C · L-CARNITINA · TÉ VERDE · GINSENG · VITAMINA B2 · ÁCIDO FÓLICO · VITAMINA E</div>
+        </div>
+      </div>
+
+      <!-- SLEEP -->
+      <div class="product-card">
+        <div class="stage">
+          <svg viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sachet Sleep">
+            <rect x="8" y="8" width="184" height="244" rx="8" fill="#1eb1bc"/>
+            <rect x="8" y="14" width="184" height="16" fill="#ffffff" opacity=".18"/>
+            <text x="100" y="72" text-anchor="middle" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="600" font-size="24" fill="#ffffff" letter-spacing="-0.5">novapatch</text>
+            <rect x="118" y="152" width="72" height="60" rx="12" fill="#ffffff"/>
+            <text x="154" y="192" text-anchor="middle" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="600" font-size="20" fill="#1eb1bc">Sleep</text>
+            <text x="20" y="184" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="500" font-size="10" fill="#ffffff">Ayuda a promover</text>
+            <text x="20" y="196" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="500" font-size="10" fill="#ffffff">un descanso más</text>
+            <text x="20" y="208" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="500" font-size="10" fill="#ffffff">reparador</text>
+          </svg>
+        </div>
+        <div class="caption">
+          <div class="row">
+            <div class="name"><span style="display:inline-block;width:8px;height:8px;background:#1eb1bc;border-radius:50%;margin-right:8px;vertical-align:middle"></span>sleep</div>
+            <div class="price">$750</div>
+          </div>
+          <div class="claim">Sueño profundo y reparador.</div>
+          <div class="ingr">TRIPTÓFANO · MAGNESIO · INOSITOL · VITAMINA B6 · GLICINA</div>
+        </div>
+      </div>
+
+      <!-- ZEN -->
+      <div class="product-card">
+        <div class="stage">
+          <svg viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sachet Zen">
+            <rect x="8" y="8" width="184" height="244" rx="8" fill="#4e82bc"/>
+            <rect x="8" y="14" width="184" height="16" fill="#ffffff" opacity=".18"/>
+            <text x="100" y="72" text-anchor="middle" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="600" font-size="24" fill="#ffffff" letter-spacing="-0.5">novapatch</text>
+            <rect x="128" y="152" width="62" height="60" rx="12" fill="#ffffff"/>
+            <text x="159" y="192" text-anchor="middle" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="600" font-size="20" fill="#4e82bc">Zen</text>
+            <text x="20" y="184" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="500" font-size="10" fill="#ffffff">Formulado para</text>
+            <text x="20" y="196" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="500" font-size="10" fill="#ffffff">acompañar tus</text>
+            <text x="20" y="208" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="500" font-size="10" fill="#ffffff">momentos de calma</text>
+          </svg>
+        </div>
+        <div class="caption">
+          <div class="row">
+            <div class="name"><span style="display:inline-block;width:8px;height:8px;background:#4e82bc;border-radius:50%;margin-right:8px;vertical-align:middle"></span>zen</div>
+            <div class="price">$750</div>
+          </div>
+          <div class="claim">Calma mental diaria.</div>
+          <div class="ingr">TRIPTÓFANO · MAGNESIO · TAURINA · MANZANILLA · VITAMINA B6</div>
+        </div>
+      </div>
+
+      <!-- SHIELD -->
+      <div class="product-card">
+        <div class="stage">
+          <svg viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sachet Shield">
+            <rect x="8" y="8" width="184" height="244" rx="8" fill="#ffa849"/>
+            <rect x="8" y="14" width="184" height="16" fill="#ffffff" opacity=".22"/>
+            <text x="100" y="72" text-anchor="middle" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="600" font-size="24" fill="#ffffff" letter-spacing="-0.5">novapatch</text>
+            <rect x="118" y="152" width="72" height="60" rx="12" fill="#ffffff"/>
+            <text x="154" y="192" text-anchor="middle" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="600" font-size="20" fill="#e08a24">Shield</text>
+            <text x="20" y="184" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="500" font-size="10" fill="#ffffff">Un apoyo diario</text>
+            <text x="20" y="196" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="500" font-size="10" fill="#ffffff">para tu bienestar</text>
+            <text x="20" y="208" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="500" font-size="10" fill="#ffffff">natural</text>
+          </svg>
+        </div>
+        <div class="caption">
+          <div class="row">
+            <div class="name"><span style="display:inline-block;width:8px;height:8px;background:#ffa849;border-radius:50%;margin-right:8px;vertical-align:middle"></span>shield</div>
+            <div class="price">$750</div>
+          </div>
+          <div class="claim">Apoyo a las defensas naturales.</div>
+          <div class="ingr">VITAMINA C · ZINC · VITAMINA D3 · VITAMINA E · NIACINAMIDA</div>
+        </div>
+      </div>
+
+      <!-- GLOW -->
+      <div class="product-card">
+        <div class="stage">
+          <svg viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sachet Glow">
+            <rect x="8" y="8" width="184" height="244" rx="8" fill="#f25c54"/>
+            <rect x="8" y="14" width="184" height="16" fill="#ffffff" opacity=".18"/>
+            <text x="100" y="72" text-anchor="middle" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="600" font-size="24" fill="#ffffff" letter-spacing="-0.5">novapatch</text>
+            <rect x="118" y="152" width="72" height="60" rx="12" fill="#ffffff"/>
+            <text x="154" y="192" text-anchor="middle" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="600" font-size="20" fill="#f25c54">Glow</text>
+            <text x="20" y="184" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="500" font-size="10" fill="#ffffff">Nutre tu piel</text>
+            <text x="20" y="196" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="500" font-size="10" fill="#ffffff">desde adentro</text>
+          </svg>
+        </div>
+        <div class="caption">
+          <div class="row">
+            <div class="name"><span style="display:inline-block;width:8px;height:8px;background:#f25c54;border-radius:50%;margin-right:8px;vertical-align:middle"></span>glow <span style="font-family:var(--mono);font-size:9.5px;color:var(--stone);letter-spacing:0.06em;text-transform:uppercase;margin-left:6px">más popular</span></div>
+            <div class="price">$750</div>
+          </div>
+          <div class="claim">Piel visiblemente renovada.</div>
+          <div class="ingr">VITAMINA C · ÁCIDO HIALURÓNICO · COLÁGENO HIDROLIZADO · BIOTINA · VITAMINA B3 · CENTELLA ASIÁTICA · VITAMINA E</div>
+        </div>
+      </div>
+
+      <!-- WOMAN -->
+      <div class="product-card">
+        <div class="stage">
+          <svg viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sachet Woman">
+            <rect x="8" y="8" width="184" height="244" rx="8" fill="#c693c4"/>
+            <rect x="8" y="14" width="184" height="16" fill="#ffffff" opacity=".18"/>
+            <text x="100" y="72" text-anchor="middle" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="600" font-size="24" fill="#ffffff" letter-spacing="-0.5">novapatch</text>
+            <rect x="118" y="152" width="72" height="60" rx="12" fill="#ffffff"/>
+            <text x="154" y="192" text-anchor="middle" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="600" font-size="20" fill="#b57cb3">Woman</text>
+            <text x="20" y="184" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="500" font-size="10" fill="#ffffff">Acompaña tu rutina</text>
+            <text x="20" y="196" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="500" font-size="10" fill="#ffffff">de bienestar</text>
+            <text x="20" y="208" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="500" font-size="10" fill="#ffffff">femenino</text>
+          </svg>
+        </div>
+        <div class="caption">
+          <div class="row">
+            <div class="name"><span style="display:inline-block;width:8px;height:8px;background:#c693c4;border-radius:50%;margin-right:8px;vertical-align:middle"></span>woman</div>
+            <div class="price">$750</div>
+          </div>
+          <div class="claim">Bienestar hormonal femenino.</div>
+          <div class="ingr">EXTRACTO DE SOYA · VITAMINA B6 · MAGNESIO · ÁCIDO FÓLICO · HIERRO</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <span class="meta">formato — común a los 6</span>
+        <div class="specimen" style="margin-top:16px;padding:clamp(20px,3vw,36px)">
+          <table class="spec">
+            <tr><td style="width:44%;color:var(--stone)">Pack</td><td class="m">30 PARCHES / CAJA</td></tr>
+            <tr><td style="color:var(--stone)">Uso</td><td class="m">1 PARCHE POR DÍA</td></tr>
+            <tr><td style="color:var(--stone)">Duración</td><td class="m">10—12 H</td></tr>
+            <tr><td style="color:var(--stone)">Aplicación</td><td>Piel limpia, donde sea cómodo. Sin agua.</td></tr>
+            <tr><td style="color:var(--stone)">Recomendación</td><td>Uso constante 2–3 semanas mínimo.</td></tr>
+            <tr><td style="color:var(--stone)">Garantía</td><td class="m">30 DÍAS · NOVAPATCH.CARE/REEMBOLSO</td></tr>
+          </table>
+        </div>
+      </div>
+      <div>
+        <span class="meta">precios y suscripción — mxn</span>
+        <div class="specimen" style="margin-top:16px;padding:clamp(20px,3vw,36px)">
+          <table class="spec">
+            <tr><th>plan</th><th>desc.</th><th>precio</th></tr>
+            <tr><td>Compra única</td><td class="m">—</td><td class="m">$750</td></tr>
+            <tr><td>Mensual · cada 30 días <span style="font-family:var(--mono);font-size:9.5px;color:var(--stone);letter-spacing:0.06em;text-transform:uppercase"> · más popular</span></td><td class="m">−20%</td><td class="m">$600</td></tr>
+            <tr><td>Bimestral · cada 60 días</td><td class="m">−15%</td><td class="m">$638</td></tr>
+            <tr><td>Trimestral · cada 90 días</td><td class="m">−10%</td><td class="m">$675</td></tr>
+          </table>
+          <div class="body" style="margin-top:20px;font-size:14px;color:var(--shadow)">Envío automático · pausa o cancela cuando quieras · sin penalización. Cuando se muestran las tres frecuencias, mensual se destaca.</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <span class="meta">diferenciadores — se usan como caption o íconos al pie</span>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px">
+        <span class="badge">sin azúcar</span>
+        <span class="badge">100% vegano</span>
+        <span class="badge">libre de gluten</span>
+        <span class="badge">resistente al agua</span>
+        <span class="badge">sin látex</span>
+        <span class="badge solid">−20% suscripción</span>
+      </div>
+    </div>
+
+    <div>
+      <span class="meta">cómo se nombra el producto</span>
+      <div class="grid-2" style="margin-top:16px">
+        <div class="stack">
+          <div class="tile yes"><div class="tag">sí</div><div class="tile-h">"Parche con vitaminas."</div><div class="tile-b">También: "un parche por día", "formato adhesivo", "se pega, se olvida, funciona".</div></div>
+          <div class="tile yes"><div class="tag">sí</div><div class="tile-h">Ventajas de formato.</div><div class="tile-b">Sin pastillas · sin agua · sin azúcar · sin colorantes ni rellenos · discreto, no interrumpe la rutina.</div></div>
+        </div>
+        <div class="stack">
+          <div class="tile no"><div class="tag">no</div><div class="tile-h">"Parche transdérmico."</div><div class="tile-b">Claim regulado. Prohibido en todos los canales, incluso en notas internas.</div></div>
+          <div class="tile no"><div class="tag">no</div><div class="tile-h">Describir el mecanismo.</div><div class="tile-b">"Atraviesa la piel", "torrente sanguíneo", "capas de la piel", "500 Daltons", "absorción directa", "libera activos". Todos son sinónimos del claim prohibido.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <span class="meta">fotografía y arte de producto</span>
+      <div class="grid-4" style="margin-top:16px">
+        <div class="tile"><div class="tile-h">Fondo</div><div class="tile-b">Bone o paper plano. Nunca color de producto detrás del sachet.</div></div>
+        <div class="tile"><div class="tile-h">Luz</div><div class="tile-b">Difusa, natural. Sombra suave y corta o sin sombra. Nunca dramática.</div></div>
+        <div class="tile"><div class="tile-h">Props</div><div class="tile-b">Mínimos y neutros. El sachet se lee entero, sin recortes parciales.</div></div>
+        <div class="tile"><div class="tile-h">Piel</div><div class="tile-b">Gesto real y cotidiano. Sin cuerpos idealizados, sin antes/después, sin zoom clínico.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════ 06 SOCIAL -->
+<section class="bg-gray" id="social">
+  <div class="wrap stack-lg">
+    <div class="grid-2" style="align-items:end">
+      <div>
+        <span class="meta">06 · redes sociales</span>
+        <h2 class="h1" style="margin-top:20px">el sistema<br/>aplicado.</h2>
+      </div>
+      <p class="body-lg" style="color:var(--paper)">
+        Estructura constante en todos los formatos: brand top-left, product name top-right, copy bottom-left, márgenes de 80px, cero decoración. Solo cambian el fondo y el tamaño de texto.
+      </p>
+    </div>
+
+    <div>
+      <span class="meta">post de feed — 4:5 · 1080×1350</span>
+      <div class="grid-3" style="margin-top:16px">
+        <div class="post-mock g">
+          <div class="top"><span>novapatch</span><span>woman</span></div>
+          <div>
+            <div class="bottom">para las<br/>que sostienen.</div>
+            <div class="spec">10—12 H · $750 MXN · 30 PARCHES</div>
+          </div>
+        </div>
+        <div class="post-mock b">
+          <div class="top"><span style="color:var(--ink)">novapatch</span><span style="color:var(--ink)">glow</span></div>
+          <div>
+            <div class="bottom" style="color:var(--ink)">glow no se fuerza.<br/>se acompaña.</div>
+            <div class="spec" style="color:var(--ink)">10—12 H · $750 MXN · 30 PARCHES</div>
+          </div>
+        </div>
+        <div class="post-mock p">
+          <div class="top"><span style="color:var(--ink)">novapatch</span><span style="color:var(--ink)">energy</span></div>
+          <div>
+            <div class="bottom" style="color:var(--ink)">no te acelera.<br/>te acompaña.</div>
+            <div class="spec" style="color:var(--ink)">10—12 H · $750 MXN · 30 PARCHES</div>
+          </div>
+        </div>
+      </div>
+      <div class="caps" style="color:rgba(255,255,255,0.7);margin-top:16px">headline space grotesk · brand top open sauce · spec bottom jetbrains mono</div>
+    </div>
+
+    <div>
+      <span class="meta">story y reel cover — 9:16 · 1080×1920</span>
+      <div class="grid-4" style="margin-top:16px">
+        <div class="post-mock g" style="aspect-ratio:9/16;padding:32px;font-size:28px">
+          <div class="top" style="font-size:12px"><span>novapatch</span><span>sleep</span></div>
+          <div class="bottom" style="font-size:32px">dormir mejor<br/>empieza bajando<br/>el ritmo.</div>
+        </div>
+        <div class="post-mock b" style="aspect-ratio:9/16;padding:32px;font-size:28px">
+          <div class="top" style="font-size:12px;color:var(--ink)"><span>novapatch</span><span>shield</span></div>
+          <div class="bottom" style="font-size:32px;color:var(--ink)">cuidarse antes<br/>es cuidarse<br/>mejor.</div>
+        </div>
+        <div class="post-mock k" style="aspect-ratio:9/16;padding:32px;font-size:28px">
+          <div class="top" style="font-size:12px"><span>novapatch</span><span>reel</span></div>
+          <div class="bottom" style="font-size:32px">cómo se<br/>aplica.</div>
+        </div>
+        <div class="post-mock p" style="aspect-ratio:9/16;padding:32px;font-size:28px">
+          <div class="top" style="font-size:12px;color:var(--ink)"><span>novapatch</span><span>zen</span></div>
+          <div class="bottom" style="font-size:32px;color:var(--ink)">calma para<br/>seguir, no<br/>para frenar.</div>
+        </div>
+      </div>
+      <div class="caps" style="color:rgba(255,255,255,0.7);margin-top:16px">gris · bone · ink (solo reel cover) · paper</div>
+    </div>
+
+    <div>
+      <span class="meta">specs por formato</span>
+      <div class="specimen" style="margin-top:16px;padding:clamp(20px,3vw,36px)">
+        <table class="spec">
+          <tr><th>formato</th><th>medida</th><th>fondo</th><th>padding</th><th>notas</th></tr>
+          <tr><td>Feed post</td><td class="m">1080×1080<br/>1080×1350</td><td>Gris (institucional) o Paper (producto)</td><td class="m">80PX</td><td>Headline 100–150px lowercase. Body 42px.</td></tr>
+          <tr><td>Story</td><td class="m">1080×1920</td><td>Bone, Gris o Paper</td><td class="m">80PX LAT.<br/>120PX VERT.</td><td>Contenido en zona segura: evitar 250px arriba y abajo por la UI de IG.</td></tr>
+          <tr><td>Reel cover</td><td class="m">1080×1920</td><td>Ink #0F0F0F</td><td class="m">80PX</td><td>Único formato con negro como fondo dominante. Texto blanco 700+.</td></tr>
+          <tr><td>Highlights cover</td><td class="m">1080×1080</td><td>Gris o Ink</td><td class="m">—</td><td>Se ve en círculo. Única excepción al left-align: label centrado.</td></tr>
+          <tr><td>Carrusel</td><td class="m">1080×1350</td><td>Gris</td><td class="m">80PX</td><td>Brand top-left + producto top-right. Headline 128px o párrafo 42px. Sin numeración de slides.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="grid-3">
+      <div class="tile no"><div class="tag">no</div><div class="tile-h">Emojis, stickers, gifs.</div><div class="tile-b">Ni en captions, ni en stories, ni en respuestas de DM.</div></div>
+      <div class="tile no"><div class="tag">no</div><div class="tile-h">Texto centrado.</div><div class="tile-b">Left aligned en todo. Excepción única: highlights circulares.</div></div>
+      <div class="tile no"><div class="tag">no</div><div class="tile-h">Overlays de color sobre foto.</div><div class="tile-b">Ni filtros de marca, ni tintes de producto sobre imágenes.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════ 07 ADS -->
+<section class="bg-bone" id="ads">
+  <div class="wrap stack-lg">
+    <div class="grid-2" style="align-items:end">
+      <div>
+        <span class="meta">07 · ads</span>
+        <h2 class="h1" style="margin-top:20px">pauta sin<br/>gritar.</h2>
+      </div>
+      <p class="body">
+        El ad usa el mismo sistema que el orgánico — mismo fondo, mismas fuentes, mismo left-align. Lo único que cambia es que hay un CTA explícito y una zona segura que respetar. Un ad que se ve distinto del feed rompe la marca dos veces: en la pieza y en el aterrizaje.
+      </p>
+    </div>
+
+    <div>
+      <span class="meta">formatos base</span>
+      <div class="grid-4" style="margin-top:16px;align-items:start">
+        <div class="ad">
+          <div class="frame g" style="aspect-ratio:1/1">
+            <div class="wmk">novapatch</div>
+            <div class="hl">bienestar<br/>silencioso.</div>
+            <div class="sl">Parches con vitaminas · 6 fórmulas.</div>
+          </div>
+          <div class="under">meta feed 1:1 · 1080×1080</div>
+        </div>
+        <div class="ad">
+          <div class="frame" style="aspect-ratio:4/5">
+            <div class="wmk">novapatch · glow</div>
+            <div class="hl">glow no<br/>se fuerza.</div>
+            <div class="sl">30 parches · $750 MXN</div>
+          </div>
+          <div class="under">meta feed 4:5 · 1080×1350</div>
+        </div>
+        <div class="ad">
+          <div class="frame k" style="aspect-ratio:9/16;padding:20px 20px 56px">
+            <div class="wmk">novapatch · sleep</div>
+            <div class="hl" style="font-size:22px">dormir mejor<br/>empieza antes.</div>
+            <div class="sl">Zona inferior libre para el CTA de la plataforma.</div>
+          </div>
+          <div class="under">story / reel 9:16 · safe 250/340</div>
+        </div>
+        <div class="ad">
+          <div class="frame" style="aspect-ratio:1.91/1;padding:20px">
+            <div class="wmk">novapatch</div>
+            <div class="hl" style="font-size:20px">un parche por día.</div>
+            <div class="sl">novapatch.care/mx</div>
+          </div>
+          <div class="under">display / pmax · 1200×628</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <span class="meta">meta ads — assets y límites de copy</span>
+        <div class="specimen" style="margin-top:16px;padding:clamp(20px,3vw,36px)">
+          <table class="spec">
+            <tr><th>campo</th><th>límite</th><th>regla novapatch</th></tr>
+            <tr><td>Primary text</td><td class="m">125 CAR.<br/>VISIBLES</td><td>La idea completa antes del "ver más". Sin claims, sin emojis.</td></tr>
+            <tr><td>Headline</td><td class="m">27—40 CAR.</td><td>La frase marco del producto, tal cual.</td></tr>
+            <tr><td>Description</td><td class="m">27 CAR.</td><td>Dato en mono: precio, pack o envío.</td></tr>
+            <tr><td>CTA button</td><td class="m">NATIVO</td><td>"Comprar" o "Más información". Nunca urgencia falsa.</td></tr>
+            <tr><td>Feed</td><td class="m">1080×1080<br/>1080×1350</td><td>Fondo gris o bone. Texto en imagen mínimo.</td></tr>
+            <tr><td>Story / Reel</td><td class="m">1080×1920</td><td>Safe zone: 250px arriba · 340px abajo.</td></tr>
+          </table>
+        </div>
+      </div>
+      <div>
+        <span class="meta">google ads — assets y límites de copy</span>
+        <div class="specimen" style="margin-top:16px;padding:clamp(20px,3vw,36px)">
+          <table class="spec">
+            <tr><th>campo</th><th>límite</th><th>regla novapatch</th></tr>
+            <tr><td>Headline</td><td class="m">30 CAR.</td><td>Mín. 3 variantes. Una siempre institucional.</td></tr>
+            <tr><td>Long headline</td><td class="m">90 CAR.</td><td>Frase marco + formato ("un parche por día").</td></tr>
+            <tr><td>Description</td><td class="m">90 CAR.</td><td>Beneficio de formato + precio. Nunca mecanismo.</td></tr>
+            <tr><td>Business name</td><td class="m">25 CAR.</td><td class="m">NOVAPATCH</td></tr>
+            <tr><td>Imagen horizontal</td><td class="m">1200×628</td><td>Sachet a la derecha, copy a la izquierda.</td></tr>
+            <tr><td>Imagen cuadrada</td><td class="m">1200×1200</td><td>Fondo bone o gris plano.</td></tr>
+            <tr><td>Logo</td><td class="m">1200×1200<br/>1200×300</td><td>Wordmark ink sobre paper. Cero color de producto.</td></tr>
+            <tr><td>Display</td><td class="m">300×250 · 336×280<br/>728×90 · 300×600</td><td>Wordmark + headline + CTA. Nada más.</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <span class="meta">plantillas de copy por objetivo</span>
+      <div class="grid-2" style="margin-top:16px;gap:24px">
+        <div class="specimen" style="padding:28px">
+          <div class="h3">institucional · awareness</div>
+          <div class="mono" style="color:var(--stone);margin-top:14px">primary text</div>
+          <div class="body" style="margin-top:6px">Un parche con vitaminas que te acompaña el día. Sin pastillas, sin agua, sin horarios.</div>
+          <div class="mono" style="color:var(--stone);margin-top:16px">headline</div>
+          <div class="body" style="margin-top:6px;font-weight:600">Bienestar silencioso.</div>
+          <div class="mono" style="color:var(--stone);margin-top:16px">description · cta</div>
+          <div class="body" style="margin-top:6px">6 fórmulas · $750 MXN — <em style="font-style:normal;font-weight:600">Más información</em></div>
+        </div>
+        <div class="specimen" style="padding:28px">
+          <div class="h3">producto · conversión</div>
+          <div class="mono" style="color:var(--stone);margin-top:14px">primary text</div>
+          <div class="body" style="margin-top:6px">Lo pones en la mañana y sigue tu ritmo hasta la noche. Energy es un parche con vitaminas para acompañar tu energía, sin picos.</div>
+          <div class="mono" style="color:var(--stone);margin-top:16px">headline</div>
+          <div class="body" style="margin-top:6px;font-weight:600">No te acelera. Te acompaña.</div>
+          <div class="mono" style="color:var(--stone);margin-top:16px">description · cta</div>
+          <div class="body" style="margin-top:6px">30 parches · $750 MXN — <em style="font-style:normal;font-weight:600">Comprar</em></div>
+        </div>
+        <div class="specimen" style="padding:28px">
+          <div class="h3">suscripción · retención</div>
+          <div class="mono" style="color:var(--stone);margin-top:14px">primary text</div>
+          <div class="body" style="margin-top:6px">Lo simple se repite. Recibe tu caja cada 30 días con 20% menos, y pausa o cancela cuando quieras.</div>
+          <div class="mono" style="color:var(--stone);margin-top:16px">headline</div>
+          <div class="body" style="margin-top:6px;font-weight:600">Tu rutina, sin recordarla.</div>
+          <div class="mono" style="color:var(--stone);margin-top:16px">description · cta</div>
+          <div class="body" style="margin-top:6px">$600 MXN al mes — <em style="font-style:normal;font-weight:600">Suscribirme</em></div>
+        </div>
+        <div class="specimen" style="padding:28px">
+          <div class="h3">retargeting · carrito</div>
+          <div class="mono" style="color:var(--stone);margin-top:14px">primary text</div>
+          <div class="body" style="margin-top:6px">Sigue ahí. Un parche por día, 30 en la caja, y 30 días de garantía si no es para ti.</div>
+          <div class="mono" style="color:var(--stone);margin-top:16px">headline</div>
+          <div class="body" style="margin-top:6px;font-weight:600">Un gesto diario, nada más.</div>
+          <div class="mono" style="color:var(--stone);margin-top:16px">description · cta</div>
+          <div class="body" style="margin-top:6px">Garantía de 30 días — <em style="font-style:normal;font-weight:600">Comprar</em></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <span class="meta">prohibido en pauta — marca + política de plataforma</span>
+      <div class="grid-3" style="margin-top:16px">
+        <div class="tile no"><div class="tag">no</div><div class="tile-h">Atributos personales.</div><div class="tile-b">"¿Tienes insomnio?", "¿Te sientes agotada?". Meta prohíbe implicar una condición del usuario. Hablar del producto, no de la persona.</div></div>
+        <div class="tile no"><div class="tag">no</div><div class="tile-h">Antes / después.</div><div class="tile-b">Ni de piel, ni de energía, ni de peso. Ni comparativas, ni zoom en partes del cuerpo, ni cuerpos idealizados.</div></div>
+        <div class="tile no"><div class="tag">no</div><div class="tile-h">Claims y tiempos.</div><div class="tile-b">Transdérmico, refuerza, cura, garantizado, "resultados en 7 días", "absorción en X minutos".</div></div>
+        <div class="tile no"><div class="tag">no</div><div class="tile-h">Urgencia falsa.</div><div class="tile-b">Contadores, "últimas horas", "solo hoy". La marca no presiona.</div></div>
+        <div class="tile no"><div class="tag">no</div><div class="tile-h">Estética de performance.</div><div class="tile-b">Flechas, círculos rojos, texto amarillo, stickers "OFERTA". El ad se ve como la marca o no sale.</div></div>
+        <div class="tile yes"><div class="tag">sí</div><div class="tile-h">Coherencia con el landing.</div><div class="tile-b">El headline del ad y el H1 de la landing dicen lo mismo. Un producto por ad, un producto por destino.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════ 08 WEB -->
+<section class="bg-paper" id="web">
+  <div class="wrap stack-lg">
+    <div class="grid-2" style="align-items:end">
+      <div>
+        <span class="meta">08 · web</span>
+        <h2 class="h1" style="margin-top:20px">la web es<br/>una pausa.</h2>
+      </div>
+      <p class="body">
+        Navegación mínima, hero con display, producto sobre fondo neutro, CTAs en tinta sólida. Los espacios entre secciones deben incomodar levemente — si la página se siente "vacía", está bien calibrada. Alternar paper y bone es lo que marca las secciones: nunca cajas, nunca líneas de más.
+      </p>
+    </div>
+
+    <div class="mock">
+      <div class="mock-nav">
+        <span class="brand">novapatch</span>
+        <ul><li>tienda</li><li>parches</li><li>suscripción</li><li>cómo funciona</li></ul>
+        <span class="cart">0 · carrito</span>
+      </div>
+      <div class="mock-hero">
+        <div class="txt">
+          <h3>bienestar silencioso.</h3>
+          <p>Un parche por la mañana, sobre piel limpia, y el día sigue tu ritmo. Sin pastillas, sin agua, sin horarios.</p>
+          <a class="btn primary">comprar caja</a>
+          <a class="btn ghost" style="margin-left:8px">cómo funciona</a>
+        </div>
+        <div class="img">
+          <svg viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sachet Energy">
+            <rect x="8" y="8" width="184" height="244" rx="8" fill="#83b5f4"/>
+            <rect x="8" y="14" width="184" height="16" fill="#ffffff" opacity=".18"/>
+            <text x="100" y="72" text-anchor="middle" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="600" font-size="24" fill="#ffffff" letter-spacing="-0.5">novapatch</text>
+            <rect x="118" y="152" width="72" height="60" rx="12" fill="#ffffff"/>
+            <text x="154" y="192" text-anchor="middle" font-family="Outfit, Open Sauce Sans, sans-serif" font-weight="600" font-size="20" fill="#83b5f4">Energy</text>
+          </svg>
+        </div>
+      </div>
+      <div class="mock-sec">
+        <span class="meta">sección de producto</span>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:14px;flex-wrap:wrap;gap:12px">
+          <div class="h3">seis fórmulas, un solo gesto</div>
+          <div style="font-family:var(--mono);font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:var(--stone)">$750 MXN · 30 PARCHES</div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:20px">
+          <span class="badge">sin azúcar</span><span class="badge">100% vegano</span><span class="badge">libre de gluten</span><span class="badge">resistente al agua</span><span class="badge">sin látex</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="specimen">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px">
+          <div class="h3">botones</div><span class="caps" style="color:var(--stone)">cta</span>
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <a class="btn primary">comprar caja</a>
+          <a class="btn ghost">saber más</a>
+          <a class="btn primary small">agregar al carrito</a>
+          <a class="btn ghost small">detalles</a>
+        </div>
+        <div class="body" style="margin-top:24px;font-size:14px;color:var(--shadow)">Píldora completa, border 1px ink, padding 16×28, Open Sauce Sans 500, uppercase, tracking +0.12em, 13px. Primary llena de ink; ghost es transparente. El hover invierte el fill. Nunca color de producto, nunca sombra.</div>
+      </div>
+
+      <div class="specimen">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px">
+          <div class="h3">badges y tags</div><span class="caps" style="color:var(--stone)">meta</span>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <span class="badge">nuevo</span>
+          <span class="badge">100% vegano</span>
+          <span class="badge">sin látex</span>
+          <span class="badge solid">−20% suscripción</span>
+        </div>
+        <div class="body" style="margin-top:24px;font-size:14px;color:var(--shadow)">Outline por default sobre line #E6E1D8. Badge sólido en ink solo para promos y planes. El dot de color de producto (≤8px) solo aparece al lado del nombre del producto en listados de tienda.</div>
+      </div>
+    </div>
+
+    <div class="grid-4">
+      <div class="tile"><div class="tile-h">Nav</div><div class="tile-b">Sticky, paper o bone con blur, border-bottom 1px line. Wordmark 20px + links 13px. Padding vertical 18px.</div></div>
+      <div class="tile"><div class="tile-h">Hero</div><div class="tile-b">Fondo bone. Display en Space Grotesk, párrafo Open Sauce 400, dos CTAs máximo.</div></div>
+      <div class="tile"><div class="tile-h">Cards de producto</div><div class="tile-b">Fondo paper, border 1px line, radius 2–4px. Sachet centrado, caption con dot + nombre en ink + precio en mono.</div></div>
+      <div class="tile"><div class="tile-h">Ritmo de sección</div><div class="tile-b">Alternar paper y bone. Padding vertical mínimo 80px, ideal 120–160px. Cero cajas de color.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════ 09 EMAIL -->
+<section class="bg-gray" id="email">
+  <div class="wrap stack-lg">
+    <div class="grid-2" style="align-items:end">
+      <div>
+        <span class="meta">09 · email</span>
+        <h2 class="h1" style="margin-top:20px">un mensaje.<br/>un botón.</h2>
+      </div>
+      <p class="body-lg" style="color:var(--paper)">
+        Ancho 600px, fondo paper, todo left aligned. Un solo CTA por email. El asunto no grita ni promete: dice lo que hay adentro.
+      </p>
+    </div>
+
+    <div class="grid-2" style="align-items:start">
+      <div class="email-mock">
+        <div class="e-head">
+          <span class="wm">novapatch</span>
+          <span style="font-family:var(--mono);font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--stone)">tienda · suscripción</span>
+        </div>
+        <div class="e-body">
+          <div style="font-family:var(--mono);font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--stone)">bienvenida · 01 de 4</div>
+          <div style="font-family:var(--display);font-weight:700;font-size:38px;line-height:0.98;letter-spacing:-0.035em;text-transform:lowercase;margin-top:16px">se pega,<br/>se olvida,<br/>funciona.</div>
+          <div class="body" style="margin-top:20px;color:var(--shadow)">Tu caja va en camino. Cuando llegue: un parche por la mañana, sobre piel limpia, donde te quede cómodo. Por la noche lo retiras. Eso es todo.</div>
+          <div style="margin-top:26px"><a class="btn primary small">cómo se usa</a></div>
+          <div style="height:1px;background:var(--line);margin:32px 0"></div>
+          <div style="font-family:var(--mono);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--stone);line-height:1.8">30 PARCHES · 10—12 H · $750 MXN<br/>GARANTÍA DE 30 DÍAS</div>
+        </div>
+        <div class="e-foot">
+          novapatch.care/mx · @novapatch.mx<br/>
+          Suplemento alimenticio. No es un medicamento. Consulta a tu médico si tienes alguna condición.<br/>
+          Cancelar suscripción · Preferencias
+        </div>
+      </div>
+
+      <div class="stack">
+        <div class="specimen" style="padding:28px">
+          <div class="h3">asunto y preheader</div>
+          <table class="spec" style="margin-top:16px">
+            <tr><td style="width:40%;color:rgba(255,255,255,0.65)">Asunto</td><td class="m">30—45 CAR.</td></tr>
+            <tr><td style="color:rgba(255,255,255,0.65)">Preheader</td><td class="m">60—90 CAR.</td></tr>
+            <tr><td style="color:rgba(255,255,255,0.65)">Tono</td><td>Minúsculas, directo, sin signos de exclamación ni emojis.</td></tr>
+          </table>
+          <div class="body" style="margin-top:20px;font-size:14px">
+            ✓ "tu caja va en camino"<br/>
+            ✓ "un parche por día, nada más"<br/>
+            ✕ "¡transforma tu energía HOY!"<br/>
+            ✕ "última oportunidad ⏰"
+          </div>
+        </div>
+        <div class="grid-2" style="gap:20px">
+          <div class="tile"><div class="tile-h">Estructura</div><div class="tile-b">Header con wordmark → eyebrow mono → display → párrafo → un CTA → bloque de datos en mono → footer legal.</div></div>
+          <div class="tile"><div class="tile-h">Footer legal</div><div class="tile-b">Suplemento alimenticio, no medicamento. Consulta médica si hay condiciones. Baja y preferencias siempre visibles.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════ 10 VOZ -->
+<section class="bg-bone" id="voz">
+  <div class="wrap stack-lg">
+    <div class="grid-2" style="align-items:end">
+      <div>
+        <span class="meta">10 · voz por producto</span>
+        <h2 class="h1" style="margin-top:20px">seis parches.<br/>seis voces.</h2>
+      </div>
+      <p class="body">
+        Cada frase marco es el ancla del producto — el punto desde donde nace cualquier título, caption, ad o email. Un post = un producto = una voz. Usar el tono de Glow para Energy es violación de marca, aunque el copy "suene bien". Verbos siempre honestos: <strong>acompaña, ayuda a, apoya, contribuye a, favorece</strong>.
+      </p>
+    </div>
+
+    <div class="grid-3">
+      <div class="voice-card">
+        <div class="name"><span class="dot" style="background:#83b5f4"></span>energy</div>
+        <div class="frase">"No te acelera. Te acompaña."</div>
+        <div class="target">Energía celular sostenida · 25–45, profesionales y creativos con fatiga mental · mood: frescura, vitalidad, claridad</div>
+        <div class="kw">ok: sostenida · claridad · día completo · sin picos · ritmo<br/>evitar: explota · potencia · boost · preworkout</div>
+      </div>
+      <div class="voice-card">
+        <div class="name"><span class="dot" style="background:#1eb1bc"></span>sleep</div>
+        <div class="frase">"Dormir mejor empieza bajando el ritmo."</div>
+        <div class="target">Sueño reparador · 25–55, estrés, padres, viajeros · mood: calma, pausa, noche</div>
+        <div class="kw">ok: descanso · bajar el ritmo · pausa · reparador<br/>evitar: te duerme · sedante · somnífero natural</div>
+      </div>
+      <div class="voice-card">
+        <div class="name"><span class="dot" style="background:#4e82bc"></span>zen</div>
+        <div class="frase">"Calma para seguir, no para frenar."</div>
+        <div class="target">Calma mental · 25–50, alta carga mental, agenda llena · mood: estabilidad, orden, aire</div>
+        <div class="kw">ok: calma funcional · equilibrio · presencia · foco tranquilo<br/>evitar: antiansiedad · relajante · te frena</div>
+      </div>
+      <div class="voice-card">
+        <div class="name"><span class="dot" style="background:#ffa849"></span>shield</div>
+        <div class="frase">"Cuidarse antes es cuidarse mejor."</div>
+        <div class="target">Apoyo a las defensas · 30–55, familias, viajes, cambios de estación · mood: protección, constancia</div>
+        <div class="kw">ok: apoyo a las defensas · cuidado preventivo · constancia<br/>evitar: refuerza el sistema inmune · te protege contra x</div>
+      </div>
+      <div class="voice-card">
+        <div class="name"><span class="dot" style="background:#f25c54"></span>glow</div>
+        <div class="frase">"Glow no se fuerza. Se acompaña."</div>
+        <div class="target">Piel renovada · 25–45, skincare integral con poco tiempo · mood: vitalidad, luz desde adentro</div>
+        <div class="kw">ok: desde adentro · proceso · constancia · piel renovada<br/>evitar: antiarrugas · rejuvenece · borra manchas · antes/después</div>
+      </div>
+      <div class="voice-card">
+        <div class="name"><span class="dot" style="background:#c693c4"></span>woman</div>
+        <div class="frase">"Respetar los propios ritmos."</div>
+        <div class="target">Bienestar femenino · 25–50, ciclo, transiciones · mood: equilibrio, suavidad, conexión</div>
+        <div class="kw">ok: ritmos · ciclos · equilibrio · acompañamiento<br/>evitar: rosa decorativo + emojis · estereotipos · regula tu ciclo</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <span class="meta">institucional — cuando no hay producto</span>
+        <div class="specimen" style="margin-top:16px">
+          <div class="body-lg" style="max-width:none">"Novapatch no promete cambiar tu cuerpo. Te acompaña a cuidarlo mejor todos los días."</div>
+          <div class="body" style="margin-top:20px;color:var(--shadow)">Tono honesto, práctico, antielocuente. Mensajes recurrentes:</div>
+          <div style="margin-top:14px;font-weight:600;font-size:17px;line-height:1.9">
+            "Bienestar que no interrumpe tu día."<br/>
+            "Un solo gesto diario. Sin agua."<br/>
+            "Lo simple se repite. Lo complejo se abandona."<br/>
+            "Sin pastillas. Sin horarios. Sin agua."
+          </div>
+        </div>
+      </div>
+      <div>
+        <span class="meta">español neutro mx — obligatorio en todo canal</span>
+        <div class="specimen" style="margin-top:16px">
+          <table class="spec">
+            <tr><th>sí</th><th>no</th></tr>
+            <tr><td class="m">AQUÍ · ALLÍ</td><td class="m">ACÁ · ALLÁ</td></tr>
+            <tr><td class="m">TÚ · ERES</td><td class="m">VOS · SOS</td></tr>
+            <tr><td class="m">TIENES · QUIERES · PUEDES</td><td class="m">TENÉS · QUERÉS · PODÉS</td></tr>
+            <tr><td class="m">MANTÉN · ELIGE · EMPIEZA</td><td class="m">MANTENÉ · ELEGÍ · EMPEZÁ</td></tr>
+            <tr><td class="m">PÉGATELO · CONOCE</td><td class="m">PEGÁTELO · CONOCÉ</td></tr>
+          </table>
+          <div class="body" style="margin-top:20px;font-size:14px;color:var(--shadow)">Aplica a captions, hashtags, DMs, ads, emails y notas internas. Nunca mezclar registros dentro de una misma pieza.</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <span class="meta">copy — sí y no</span>
+      <div class="grid-2" style="margin-top:16px">
+        <div class="copy-card yes"><div class="tag">sí</div><div class="frase">"Lo pones en la mañana y te acompaña el día."</div><div class="why">Verbo cotidiano. Rutina. Sin promesa de resultado inmediato.</div></div>
+        <div class="copy-card no"><div class="tag">no</div><div class="frase">"Refuerza tu energía al instante."</div><div class="why"><strong>Refuerza</strong> es claim prohibido. "Al instante" promete tiempos. Doble violación.</div></div>
+        <div class="copy-card yes"><div class="tag">sí</div><div class="frase">"Bienestar que se refleja en la piel, con constancia."</div><div class="why">Honesto. Da contexto: es acompañamiento, no una promesa de 7 días.</div></div>
+        <div class="copy-card no"><div class="tag">no</div><div class="frase">"Transforma tu piel en 7 días."</div><div class="why">Promesa temporal + verbo transformador. Todo lo que Novapatch no es.</div></div>
+        <div class="copy-card yes"><div class="tag">sí</div><div class="frase">"Apoyo a las defensas naturales."</div><div class="why">Verbo permitido. Describe acompañamiento, no efecto garantizado.</div></div>
+        <div class="copy-card no"><div class="tag">no</div><div class="frase">"Parche transdérmico de absorción directa."</div><div class="why">Claim regulado + descripción de mecanismo. Prohibido en todos los canales.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════ 11 REGLAS -->
+<section class="bg-paper" id="reglas">
+  <div class="wrap stack-lg">
+    <div class="grid-2" style="align-items:end">
+      <div>
+        <span class="meta">11 · reglas</span>
+        <h2 class="h1" style="margin-top:20px">cuando<br/>dudes, quita.</h2>
+      </div>
+      <p class="body">
+        Este sistema se rompe cuando quiere ser demasiado. Si algo no es imprescindible — un ícono, un color, un divider, un tag "nuevo" — se saca. La restricción es el estilo.
+      </p>
+    </div>
+
+    <div class="grid-2">
+      <div class="stack">
+        <div class="tile yes"><div class="tag">sí</div><div class="tile-h">Fondos: solo paper, bone o gris.</div><div class="tile-b">Ink únicamente para texto o reels covers.</div></div>
+        <div class="tile yes"><div class="tag">sí</div><div class="tile-h">Tres fuentes en sus roles.</div><div class="tile-b">Open Sauce Sans primaria · Space Grotesk display 100px+ · JetBrains Mono datos.</div></div>
+        <div class="tile yes"><div class="tag">sí</div><div class="tile-h">Left aligned siempre.</div><div class="tile-b">Excepción única: highlights covers circulares.</div></div>
+        <div class="tile yes"><div class="tag">sí</div><div class="tile-h">Un producto por pieza.</div><div class="tile-b">Excepción: carrusel "¿qué parche es para ti?".</div></div>
+        <div class="tile yes"><div class="tag">sí</div><div class="tile-h">Español neutro MX.</div><div class="tile-b">Sin voseo, sin regionalismos, sin mezclar registros.</div></div>
+      </div>
+      <div class="stack">
+        <div class="tile no"><div class="tag">no</div><div class="tile-h">Fuentes fuera del sistema.</div><div class="tile-b">Instrument Serif, Outfit, Playfair, Fraunces: descontinuadas. Outfit sobrevive solo en el packaging actual.</div></div>
+        <div class="tile no"><div class="tag">no</div><div class="tile-h">Color de producto fuera del sachet.</div><div class="tile-b">Cero botones teal, cero H1 rojos, cero fondos mostaza, cero tintes al 5%.</div></div>
+        <div class="tile no"><div class="tag">no</div><div class="tile-h">Efectos decorativos.</div><div class="tile-b">Sin sombras, gradientes, bordes decorativos, outlines, emojis, stickers ni gifs.</div></div>
+        <div class="tile no"><div class="tag">no</div><div class="tile-h">Claims prohibidos.</div><div class="tile-b">Transdérmico · refuerza · cura · sana · trata · elimina · garantizado · resultados en X días · torrente sanguíneo · 500 Daltons.</div></div>
+        <div class="tile no"><div class="tag">no</div><div class="tile-h">Isotipo.</div><div class="tile-b">No se reproduce hasta que llegue el SVG oficial. Hoy la marca es solo wordmark.</div></div>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div style="display:flex;justify-content:space-between;margin-bottom:20px;align-items:flex-end;flex-wrap:wrap;gap:12px">
+        <div class="h3">checklist pre-publicación</div>
+        <span class="caps" style="color:var(--stone)">10 chequeos · aplica a social, ads, web y email</span>
+      </div>
+      <ol class="check">
+        <li><span class="n">01</span><span>¿La pieza tiene un solo producto (o es institucional)?</span></li>
+        <li><span class="n">02</span><span>¿El color solo aparece sobre el sachet o como micro-dot ≤8px?</span></li>
+        <li><span class="n">03</span><span>¿Se usaron las 3 fuentes oficiales en sus roles correctos, y ninguna más?</span></li>
+        <li><span class="n">04</span><span>¿Cero claims prohibidos (transdérmico, refuerza, cura, garantizado, tiempos, mecanismo)?</span></li>
+        <li><span class="n">05</span><span>¿La voz coincide con la frase marco del producto?</span></li>
+        <li><span class="n">06</span><span>¿El fondo es paper, bone, gris o ink (nunca otro)?</span></li>
+        <li><span class="n">07</span><span>¿El texto es blanco sobre gris/ink · ink sobre paper/bone?</span></li>
+        <li><span class="n">08</span><span>¿La alineación es LEFT en toda la pieza?</span></li>
+        <li><span class="n">09</span><span>¿Cero efectos (sombras, gradientes, bordes decorativos, emojis)?</span></li>
+        <li><span class="n">10</span><span>¿La pieza pasa la regla de oro? (acompaña, no transforma)</span></li>
+      </ol>
+      <div class="body" style="margin-top:24px;color:var(--shadow)">Si los 10 checks pasan → listo para publicar. Si alguno falla → se corrige antes, no después.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════ FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <div class="wm">novapatch</div>
+        <p class="body" style="max-width:34ch;color:var(--shadow);font-size:14px">Parches con vitaminas. Seis fórmulas para acompañar tu día — no para reinventarlo.</p>
+      </div>
+      <div>
+        <h4>tienda</h4>
+        <ul><li>Todos los parches</li><li>Suscripción</li><li>Sets</li><li>Woman</li></ul>
+      </div>
+      <div>
+        <h4>marca</h4>
+        <ul><li>Cómo funciona</li><li>Ingredientes</li><li>Diario</li><li>Compromiso</li></ul>
+      </div>
+      <div>
+        <h4>ayuda</h4>
+        <ul><li>Envíos MX</li><li>Garantía 30 días</li><li>FAQ</li><li>Contacto</li></ul>
+      </div>
+    </div>
+    <div class="base">
+      <span>© 2026 NOVAPATCH · MÉXICO · NOVAPATCH.CARE/MX</span>
+      <span>BRAND KIT V3 · MASTER · AGOSTO 2026</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

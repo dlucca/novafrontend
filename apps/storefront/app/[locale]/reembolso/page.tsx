@@ -53,19 +53,18 @@ function Radio({ name, value, label, checked, onChange }: {
   return (
     <label className="flex items-start gap-3 cursor-pointer group">
       <div
-        className="mt-0.5 w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-all duration-150"
+        className="mt-0.5 w-4 h-4 rounded-full border shrink-0 flex items-center justify-center transition-all duration-150"
         style={{
-          borderColor: checked ? "#3CBFAB" : "#D1D5DB",
-          background: checked ? "#3CBFAB" : "white",
+          borderColor: checked ? "#0F0F0F" : "#E6E1D8",
+          background: checked ? "#0F0F0F" : "white",
         }}
         onClick={onChange}
       >
-        {checked && <div className="w-2 h-2 rounded-full bg-white" />}
+        {checked && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
       </div>
       <input type="radio" name={name} value={value} checked={checked} onChange={onChange} className="sr-only" />
       <span
-        className="text-[15px] leading-snug transition-colors duration-150"
-        style={{ color: checked ? "#3CBFAB" : "#374151" }}
+        className={`text-xs font-sans transition-colors duration-150 ${checked ? "text-[#0F0F0F] font-semibold" : "text-[#3A3A37]"}`}
         onClick={onChange}
       >
         {label}
@@ -78,10 +77,10 @@ function Checkbox({ label, checked, onChange }: { label: string; checked: boolea
   return (
     <label className="flex items-start gap-3 cursor-pointer">
       <div
-        className="mt-0.5 w-5 h-5 rounded flex-shrink-0 flex items-center justify-center transition-all duration-150 border-2"
+        className="mt-0.5 w-4 h-4 rounded shrink-0 flex items-center justify-center transition-all duration-150 border"
         style={{
-          borderColor: checked ? "#3CBFAB" : "#D1D5DB",
-          background: checked ? "#3CBFAB" : "white",
+          borderColor: checked ? "#0F0F0F" : "#E6E1D8",
+          background: checked ? "#0F0F0F" : "white",
         }}
         onClick={onChange}
       >
@@ -91,7 +90,7 @@ function Checkbox({ label, checked, onChange }: { label: string; checked: boolea
           </svg>
         )}
       </div>
-      <span className="text-[15px] leading-snug" style={{ color: checked ? "#3CBFAB" : "#374151" }} onClick={onChange}>
+      <span className={`text-xs font-sans ${checked ? "text-[#0F0F0F] font-semibold" : "text-[#3A3A37]"}`} onClick={onChange}>
         {label}
       </span>
     </label>
@@ -99,11 +98,11 @@ function Checkbox({ label, checked, onChange }: { label: string; checked: boolea
 }
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
-  return <p className="text-[15px] font-semibold text-[#0D1B35] mb-3">{children}</p>;
+  return <p className="text-sm font-sans font-semibold text-[#0F0F0F] mb-3">{children}</p>;
 }
 
 function Optional() {
-  return <span className="text-[12px] font-normal text-[#9CA3AF] ml-1.5">opcional</span>;
+  return <span className="text-xs font-normal text-[#A8A29A] ml-1.5">opcional</span>;
 }
 
 // ─── Steps ────────────────────────────────────────────────────────────────────
@@ -128,7 +127,7 @@ function Step1({ data, set }: { data: FormData; set: (k: keyof FormData, v: stri
           value={data.email}
           onChange={(e) => set("email", e.target.value)}
           placeholder="tu@correo.com"
-          className="w-full px-4 py-3 rounded-xl border border-[#E5E7EB] text-[15px] text-[#0D1B35] focus:outline-none focus:border-[#3CBFAB] focus:ring-2 focus:ring-[#3CBFAB]/10 transition-all"
+          className="w-full px-4 py-3 rounded-xl border border-[#E6E1D8] bg-[#FAF8F5] text-sm font-sans text-[#0F0F0F] placeholder-[#A8A29A] outline-none focus:bg-white focus:border-[#0F0F0F] transition-all"
         />
       </div>
     </div>
@@ -191,7 +190,7 @@ function Step3({ data, set }: { data: FormData; set: (k: keyof FormData, v: stri
               onChange={(e) => set("motivo_otro", e.target.value)}
               placeholder="Cuéntanos más..."
               rows={3}
-              className="w-full px-4 py-3 rounded-xl border border-[#E5E7EB] text-[15px] text-[#0D1B35] resize-none focus:outline-none focus:border-[#3CBFAB] focus:ring-2 focus:ring-[#3CBFAB]/10 transition-all"
+              className="w-full px-4 py-3 rounded-xl border border-[#E6E1D8] bg-[#FAF8F5] text-sm font-sans text-[#0F0F0F] placeholder-[#A8A29A] outline-none focus:bg-white focus:border-[#0F0F0F] resize-none transition-all"
             />
           </motion.div>
         )}
@@ -203,7 +202,7 @@ function Step3({ data, set }: { data: FormData; set: (k: keyof FormData, v: stri
           onChange={(e) => set("experiencia", e.target.value)}
           placeholder="Describe brevemente tu experiencia..."
           rows={4}
-          className="w-full px-4 py-3 rounded-xl border border-[#E5E7EB] text-[15px] text-[#0D1B35] resize-none focus:outline-none focus:border-[#3CBFAB] focus:ring-2 focus:ring-[#3CBFAB]/10 transition-all"
+          className="w-full px-4 py-3 rounded-xl border border-[#E6E1D8] bg-[#FAF8F5] text-sm font-sans text-[#0F0F0F] placeholder-[#A8A29A] outline-none focus:bg-white focus:border-[#0F0F0F] resize-none transition-all"
         />
       </div>
     </div>
@@ -231,7 +230,7 @@ function Step4({ data, set }: { data: FormData; set: (k: keyof FormData, v: stri
               onChange={(e) => set("reaccion_detalle", e.target.value)}
               placeholder="Describe la reacción con más detalle..."
               rows={3}
-              className="w-full px-4 py-3 rounded-xl border border-[#E5E7EB] text-[15px] text-[#0D1B35] resize-none focus:outline-none focus:border-[#3CBFAB] focus:ring-2 focus:ring-[#3CBFAB]/10 transition-all"
+              className="w-full px-4 py-3 rounded-xl border border-[#E6E1D8] bg-[#FAF8F5] text-sm font-sans text-[#0F0F0F] placeholder-[#A8A29A] outline-none focus:bg-white focus:border-[#0F0F0F] resize-none transition-all"
             />
           </motion.div>
         )}
@@ -269,11 +268,11 @@ function Step5({ data, set, toggle }: {
               key={n}
               type="button"
               onClick={() => set("rating", String(n))}
-              className="w-12 h-12 rounded-xl text-[20px] font-bold transition-all duration-150 border-2"
+              className="w-12 h-12 rounded-xl text-lg font-mono font-bold transition-all duration-150 border cursor-pointer"
               style={{
-                borderColor: data.rating >= n ? "#3CBFAB" : "#E5E7EB",
-                background: data.rating >= n ? "#3CBFAB" : "white",
-                color: data.rating >= n ? "white" : "#9CA3AF",
+                borderColor: data.rating >= n ? "#0F0F0F" : "#E6E1D8",
+                background: data.rating >= n ? "#0F0F0F" : "#FAF8F5",
+                color: data.rating >= n ? "white" : "#A8A29A",
               }}
             >
               {n}
@@ -281,14 +280,14 @@ function Step5({ data, set, toggle }: {
           ))}
         </div>
         <div className="flex justify-between mt-1.5">
-          <span className="text-[11px] text-[#9CA3AF]">Muy mala</span>
-          <span className="text-[11px] text-[#9CA3AF]">Excelente</span>
+          <span className="text-[11px] font-sans text-[#A8A29A]">Muy mala</span>
+          <span className="text-[11px] font-sans text-[#A8A29A]">Excelente</span>
         </div>
       </div>
 
       {/* Menos gustó */}
       <div>
-        <FieldLabel>¿Qué fue lo que menos te gustó? <span className="text-[12px] font-normal text-[#9CA3AF] ml-1">(puedes elegir más de uno)</span></FieldLabel>
+        <FieldLabel>¿Qué fue lo que menos te gustó? <span className="text-xs font-normal text-[#A8A29A] ml-1">(puedes elegir más de uno)</span></FieldLabel>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {menosGusto.map((item) => (
             <Checkbox key={item} label={item} checked={data.menos_gusto.includes(item)} onChange={() => toggle(item)} />
@@ -304,7 +303,7 @@ function Step5({ data, set, toggle }: {
           onChange={(e) => set("mejora", e.target.value)}
           placeholder="Tu opinión nos ayuda a mejorar..."
           rows={3}
-          className="w-full px-4 py-3 rounded-xl border border-[#E5E7EB] text-[15px] text-[#0D1B35] resize-none focus:outline-none focus:border-[#3CBFAB] focus:ring-2 focus:ring-[#3CBFAB]/10 transition-all"
+          className="w-full px-4 py-3 rounded-xl border border-[#E6E1D8] bg-[#FAF8F5] text-sm font-sans text-[#0F0F0F] placeholder-[#A8A29A] outline-none focus:bg-white focus:border-[#0F0F0F] resize-none transition-all"
         />
       </div>
 
@@ -336,7 +335,7 @@ function Step5({ data, set, toggle }: {
           onChange={(e) => set("comentario_final", e.target.value)}
           placeholder="Número de orden, detalles adicionales, o cualquier cosa que quieras compartir..."
           rows={4}
-          className="w-full px-4 py-3 rounded-xl border border-[#E5E7EB] text-[15px] text-[#0D1B35] resize-none focus:outline-none focus:border-[#3CBFAB] focus:ring-2 focus:ring-[#3CBFAB]/10 transition-all"
+          className="w-full px-4 py-3 rounded-xl border border-[#E6E1D8] bg-[#FAF8F5] text-sm font-sans text-[#0F0F0F] placeholder-[#A8A29A] outline-none focus:bg-white focus:border-[#0F0F0F] resize-none transition-all"
         />
       </div>
     </div>
@@ -377,7 +376,6 @@ export default function ReembolsoPage() {
   const prev = () => { setDir(-1); setStep((s) => s - 1); };
 
   const submit = () => {
-    // TODO: POST data to /api/reembolso or Resend endpoint
     setSubmitted(true);
   };
 
@@ -385,26 +383,27 @@ export default function ReembolsoPage() {
     return (
       <>
         <Navbar lightBg />
-        <main className="min-h-screen flex items-center justify-center px-6" style={{ background: "#FAF7F2" }}>
+        <main className="min-h-screen bg-[#FAF8F5] flex items-center justify-center px-6 py-20">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] as const }}
-            className="max-w-md w-full bg-white rounded-3xl p-10 text-center shadow-[0_8px_48px_rgba(0,0,0,0.08)]"
+            className="max-w-md w-full bg-white rounded-xl border border-[#E6E1D8] p-10 text-center shadow-2xs"
           >
-            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: "#E6F7F6" }}>
+            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 bg-[#FAF8F5] border border-[#E6E1D8] text-[#0F0F0F]">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                <path d="M5 13l4 4L19 7" stroke="#3CBFAB" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M5 13l4 4L19 7" stroke="#0F0F0F" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
-            <h1 className="text-[24px] font-black text-[#0D1B35] mb-3">Solicitud recibida</h1>
-            <p className="text-[15px] text-[#0D1B35]/60 leading-[1.7] mb-8">
-              Gracias por tu tiempo. Nuestro equipo revisará tu caso y te contactará al correo indicado en un plazo de <strong className="text-[#0D1B35]">2 a 5 días hábiles</strong>.
+            <h1 className="text-2xl font-display font-semibold text-[#0F0F0F] mb-3 tracking-[-0.035em] lowercase">
+              solicitud recibida
+            </h1>
+            <p className="text-sm font-sans text-[#3A3A37] leading-relaxed mb-8">
+              Gracias por tu tiempo. Nuestro equipo revisará tu caso y te contactará al correo indicado en un plazo de <strong className="text-[#0F0F0F]">2 a 5 días hábiles</strong>.
             </p>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-[15px] font-bold text-white transition-all duration-200 hover:-translate-y-0.5"
-              style={{ background: "#3CBFAB" }}
+              className="inline-flex items-center justify-center px-8 py-3.5 rounded-full text-xs font-sans font-medium uppercase tracking-[0.12em] bg-[#0F0F0F] text-white border border-[#0F0F0F] hover:bg-white hover:text-[#0F0F0F] transition-all cursor-pointer"
             >
               Volver al inicio
             </Link>
@@ -420,24 +419,23 @@ export default function ReembolsoPage() {
   return (
     <>
       <Navbar lightBg />
-      <main className="min-h-screen pt-28 pb-24 px-6" style={{ background: "#FAF7F2" }}>
+      <main className="min-h-screen bg-[#FAF8F5] pt-28 pb-24 px-6">
         <div className="max-w-[560px] mx-auto">
 
           {/* Header */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="text-center mb-10"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[12px] font-bold uppercase tracking-[0.08em] mb-4"
-              style={{ background: "#E6F7F6", color: "#3CBFAB" }}>
-              Garantía 30 días
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] font-sans font-medium uppercase tracking-[0.14em] mb-4 bg-white border border-[#E6E1D8] text-[#3A3A37]">
+              garantía 30 días
             </div>
-            <h1 className="text-[28px] font-black text-[#0D1B35] tracking-[-0.02em] mb-2">
-              Solicitud de reembolso
+            <h1 className="text-3xl sm:text-4xl font-display font-semibold text-[#0F0F0F] tracking-[-0.035em] lowercase mb-2">
+              solicitud de reembolso.
             </h1>
-            <p className="text-[15px] text-[#0D1B35]/60">
+            <p className="text-sm font-sans text-[#3A3A37]">
               Completa el formulario y te contactamos en 2–5 días hábiles.
             </p>
           </motion.div>
@@ -448,33 +446,33 @@ export default function ReembolsoPage() {
               {STEPS.map((s, i) => (
                 <span
                   key={s.label}
-                  className="text-[11px] font-semibold uppercase tracking-[0.06em] hidden sm:block"
-                  style={{ color: i === step ? "#3CBFAB" : i < step ? "#3CBFAB" : "#D1D5DB" }}
+                  className={`text-[10px] font-sans font-medium uppercase tracking-[0.12em] hidden sm:block ${
+                    i === step ? "text-[#0F0F0F] font-semibold" : i < step ? "text-[#0F0F0F]" : "text-[#A8A29A]"
+                  }`}
                 >
                   {s.label}
                 </span>
               ))}
             </div>
-            <div className="h-1.5 rounded-full bg-[#E5E7EB] overflow-hidden">
+            <div className="h-1.5 rounded-full bg-[#E6E1D8] overflow-hidden">
               <motion.div
-                className="h-full rounded-full"
-                style={{ background: "linear-gradient(90deg, #3CBFAB, #3CBFAB)" }}
+                className="h-full rounded-full bg-[#0F0F0F]"
                 animate={{ width: `${progress + 20}%` }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
               />
             </div>
-            <p className="text-[12px] text-[#9CA3AF] mt-1.5">Paso {step + 1} de {STEPS.length}</p>
+            <p className="text-xs font-mono text-[#A8A29A] mt-2">Paso {step + 1} de {STEPS.length}</p>
           </div>
 
           {/* Card */}
-          <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.06)] overflow-hidden">
+          <div className="bg-white rounded-xl border border-[#E6E1D8] shadow-2xs overflow-hidden">
             {/* Step header */}
-            <div className="px-8 pt-8 pb-6 border-b border-[#F3F4F6]">
-              <p className="text-[11px] font-bold uppercase tracking-[0.1em] mb-1" style={{ color: "#3CBFAB" }}>
+            <div className="px-8 pt-8 pb-6 border-b border-[#E6E1D8]">
+              <p className="text-[11px] font-sans font-medium uppercase tracking-[0.14em] mb-1 text-[#A8A29A]">
                 {STEPS[step].label}
               </p>
-              <h2 className="text-[18px] font-bold text-[#0D1B35]">
-                {["Tu pedido", "Tu experiencia de uso", "Motivo de devolución", "Estado del producto", "Tu opinión"][step]}
+              <h2 className="text-lg font-display font-semibold text-[#0F0F0F] lowercase">
+                {["tu pedido", "tu experiencia de uso", "motivo de devolución", "estado del producto", "tu opinión"][step]}
               </h2>
             </div>
 
@@ -503,9 +501,9 @@ export default function ReembolsoPage() {
               {step > 0 ? (
                 <button
                   onClick={prev}
-                  className="flex items-center gap-2 text-[14px] font-semibold text-[#0D1B35]/60 hover:text-[#0D1B35] transition-colors duration-150"
+                  className="flex items-center gap-2 text-xs font-sans font-medium text-[#3A3A37] hover:text-[#0F0F0F] transition-colors duration-150 cursor-pointer"
                 >
-                  <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                     <path d="M15 18l-6-6 6-6" />
                   </svg>
                   Atrás
@@ -518,11 +516,10 @@ export default function ReembolsoPage() {
                 <button
                   onClick={next}
                   disabled={!canAdvance(step, data)}
-                  className="flex items-center gap-2 px-7 py-3 rounded-full text-[14px] font-bold text-white transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed disabled:translate-y-0"
-                  style={{ background: "#3CBFAB" }}
+                  className="flex items-center gap-2 px-6 py-3 rounded-full text-[11px] font-sans font-medium uppercase tracking-[0.12em] bg-[#0F0F0F] text-white border border-[#0F0F0F] hover:bg-white hover:text-[#0F0F0F] transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
                 >
                   Siguiente
-                  <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                     <path d="M9 18l6-6-6-6" />
                   </svg>
                 </button>
@@ -530,11 +527,10 @@ export default function ReembolsoPage() {
                 <button
                   onClick={submit}
                   disabled={!canAdvance(step, data)}
-                  className="flex items-center gap-2 px-7 py-3 rounded-full text-[14px] font-bold text-white transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed disabled:translate-y-0"
-                  style={{ background: "#3CBFAB" }}
+                  className="flex items-center gap-2 px-6 py-3 rounded-full text-[11px] font-sans font-medium uppercase tracking-[0.12em] bg-[#0F0F0F] text-white border border-[#0F0F0F] hover:bg-white hover:text-[#0F0F0F] transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
                 >
                   Enviar solicitud
-                  <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                     <path d="M5 12h14M12 5l7 7-7 7" />
                   </svg>
                 </button>
@@ -543,10 +539,10 @@ export default function ReembolsoPage() {
           </div>
 
           {/* Legal note */}
-          <p className="text-center text-[12px] text-[#9CA3AF] mt-6 leading-[1.6]">
+          <p className="text-center text-xs font-sans text-[#A8A29A] mt-6 leading-relaxed">
             Una vez enviado este formulario, nuestro equipo revisará tu caso y te contactará al email indicado.<br />
             ¿Dudas? Escríbenos a{" "}
-            <a href="mailto:hola@novapatch.care" className="text-[#3CBFAB] hover:underline">hola@novapatch.care</a>
+            <a href="mailto:hola@novapatch.care" className="text-[#0F0F0F] underline font-medium">hola@novapatch.care</a>
           </p>
         </div>
       </main>

@@ -32,18 +32,17 @@ const faqs = [
 
 function FAQItem({ faq, isOpen, onToggle }: { faq: { cat: string; q: string; a: string }; isOpen: boolean; onToggle: () => void }) {
   return (
-    <div className={`rounded-2xl border transition-all duration-200 overflow-hidden ${isOpen ? "bg-white border-[#3CBFAB]/25 shadow-[0_4px_20px_rgba(60,191,171,0.1)]" : "bg-white border-[#0D1B35]/8 hover:border-[#3CBFAB]/20"}`}>
-      <button onClick={onToggle} className="w-full flex items-center justify-between gap-4 p-5 text-left">
-        <span className={`home-item-title leading-snug ${isOpen ? "text-teal" : "text-ocean"}`}>{faq.q}</span>
-        <motion.div animate={{ rotate: isOpen ? 45 : 0 }} transition={{ duration: 0.2 }}
-          className={`flex-shrink-0 w-6 h-6 rounded-lg flex items-center justify-center ${isOpen ? "bg-[#3CBFAB]" : "bg-[#0D1B35]/8"}`}>
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v8M2 6h8" stroke={isOpen ? "white" : "#0D1B35"} strokeWidth="1.5" strokeLinecap="round" /></svg>
-        </motion.div>
+    <div className="py-5 border-b border-[#E6E1D8]">
+      <button onClick={onToggle} className="w-full flex items-center justify-between gap-4 text-left group cursor-pointer">
+        <span className="font-sans font-semibold text-base text-[#0F0F0F] leading-snug group-hover:text-[#3A3A37] transition-colors">{faq.q}</span>
+        <span className="shrink-0 w-6 h-6 rounded-full border border-[#E6E1D8] bg-[#FAF8F5] flex items-center justify-center font-mono text-xs text-[#0F0F0F]">
+          {isOpen ? "−" : "+"}
+        </span>
       </button>
       <AnimatePresence>
         {isOpen && (
-          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] as const }}>
-            <div className="px-5 pb-5"><div className="h-px bg-[#3CBFAB]/15 mb-4" /><p className="home-body">{faq.a}</p></div>
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] as const }} className="overflow-hidden">
+            <p className="pt-3 font-sans text-sm text-[#3A3A37] leading-relaxed">{faq.a}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -60,55 +59,68 @@ export default function FAQPage() {
   return (
     <>
       <Navbar lightBg />
-      <main>
-        {/* Hero */}
-        <section className="pt-32 pb-16 px-6 text-center" style={{ background: "#FEF7ED" }}>
-          <div className="max-w-2xl mx-auto">
-            <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-              className="home-section-eyebrow">Soporte</motion.p>
-            <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
-              className="home-section-title text-ocean">Preguntas frecuentes</motion.h1>
-            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
-              className="home-section-subtitle">Todo lo que necesitas saber sobre NovaPatch.</motion.p>
+      <main className="min-h-screen bg-[#FAF8F5]">
+
+        {/* Hero Stage */}
+        <section className="pt-32 pb-16 px-6 sm:px-10 max-w-[1240px] mx-auto">
+          <div className="bg-white rounded-xl border border-[#E6E1D8] p-8 sm:p-14 text-left shadow-2xs">
+            <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+              className="text-xs font-sans font-medium uppercase tracking-[0.14em] text-[#A8A29A] mb-3">centro de ayuda</motion.p>
+            <motion.h1 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, delay: 0.08 }}
+              className="text-4xl sm:text-5xl lg:text-6xl font-display font-semibold text-[#0F0F0F] tracking-[-0.035em] leading-tight lowercase mb-4">preguntas frecuentes.</motion.h1>
+            <motion.p initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, delay: 0.16 }}
+              className="font-sans text-base sm:text-lg text-[#3A3A37] max-w-xl leading-relaxed">Todo lo que necesitas saber sobre el uso, envíos, pagos y garantía de Novapatch.</motion.p>
           </div>
         </section>
 
-        {/* FAQ content */}
-        <section className="py-16 px-6 bg-[#FAF7F2]">
-          <div className="max-w-4xl mx-auto">
-            {/* Category tabs */}
-            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-              className="flex flex-wrap gap-2 justify-center mb-12">
-              {categories.map((cat) => (
-                <button key={cat} onClick={() => { setActive(cat); setOpenIdx(null); }}
-                  className={`home-body rounded-xl px-5 py-2 font-semibold transition-all duration-200 ${active === cat ? "bg-[#3CBFAB] text-white shadow-[0_4px_12px_rgba(60,191,171,0.25)]" : "border border-[#0D1B35]/10 bg-white text-[#6B7280] hover:border-[#3CBFAB]/30 hover:text-teal"}`}>
-                  {cat}
-                </button>
-              ))}
-            </motion.div>
+        {/* FAQ Content */}
+        <section className="py-20 px-6 sm:px-10 max-w-[1240px] mx-auto border-t border-[#E6E1D8] text-left">
+          {/* Category tabs */}
+          <div className="max-w-4xl mx-auto flex flex-wrap gap-2 mb-12">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => { setActive(cat); setOpenIdx(null); }}
+                className={`text-xs font-sans font-medium uppercase tracking-[0.12em] px-4 py-2.5 rounded-full transition-all cursor-pointer ${
+                  active === cat
+                    ? "bg-[#0F0F0F] text-white border border-[#0F0F0F]"
+                    : "bg-white text-[#3A3A37] border border-[#E6E1D8] hover:border-[#0F0F0F]"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
 
-            {/* FAQ list */}
+          {/* FAQ list */}
+          <div className="max-w-4xl mx-auto border-t border-[#E6E1D8]">
             <AnimatePresence mode="wait">
-              <motion.div key={active} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
-                className="flex flex-col gap-3 mb-16">
+              <motion.div key={active} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
                 {filtered.map((faq, i) => (
                   <FAQItem key={`${active}-${i}`} faq={faq} isOpen={openIdx === i} onToggle={() => setOpenIdx(openIdx === i ? null : i)} />
                 ))}
               </motion.div>
             </AnimatePresence>
+          </div>
 
-            {/* CTA */}
-            <div className="bg-[#F8EDEB] rounded-3xl p-8 text-center border border-[#005088]/15">
-              <h3 className="home-item-title text-ocean mb-2">¿No encontraste tu respuesta?</h3>
-              <p className="home-body mb-6">Nuestro equipo responde en menos de 24h en días hábiles.</p>
-              <Link href="/contacto"
-                className="inline-flex items-center gap-2 rounded-full bg-[#3CBFAB] px-8 py-4 font-bold text-white shadow-[0_4px_20px_rgba(60,191,171,0.3)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#2da898] hover:shadow-[0_8px_32px_rgba(60,191,171,0.4)] active:scale-[0.97]">
-                Contáctanos
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              </Link>
+          {/* Contact Box */}
+          <div className="mt-12 p-6 sm:p-8 rounded-xl bg-white border border-[#E6E1D8] shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-6 max-w-4xl mx-auto">
+            <div>
+              <h3 className="font-display font-semibold text-xl text-[#0F0F0F] lowercase mb-1">¿no encontraste tu respuesta?</h3>
+              <p className="font-sans text-xs text-[#3A3A37]">Nuestro equipo te responderá en menos de 24h en días hábiles.</p>
             </div>
+            <Link
+              href="/contacto"
+              className="inline-flex items-center gap-2 bg-[#0F0F0F] text-white border border-[#0F0F0F] hover:bg-white hover:text-[#0F0F0F] text-[11px] font-sans font-medium uppercase tracking-[0.12em] px-6 py-3.5 rounded-full transition-all shrink-0"
+            >
+              Contáctanos
+              <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </Link>
           </div>
         </section>
+
       </main>
       <Footer />
     </>

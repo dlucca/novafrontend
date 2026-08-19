@@ -10,7 +10,7 @@ export default function UgcMarquee({ accent }: { accent: string }) {
   const doubleImages = [...IMAGES, ...IMAGES];
 
   return (
-    <section className="bg-white py-16 overflow-hidden border-b border-[#0D1B35]/5">
+    <section className="bg-[#FAF8F5] py-16 overflow-hidden border-b border-[#E6E1D8]">
       <style>{`
         @keyframes marquee {
           0% { transform: translateX(0); }
@@ -23,28 +23,22 @@ export default function UgcMarquee({ accent }: { accent: string }) {
         }
       `}</style>
 
-      <div className="text-center mb-10 px-6">
-        <span 
-          className="block text-[11px] font-bold uppercase tracking-[0.2em] mb-2"
-          style={{ color: accent }}
-        >
-          Gente real · Bienestar real
-        </span>
-        <h2 className="text-[clamp(24px,2.5vw,36px)] font-black text-[#0D1B35] tracking-tight">
-          Nuestra Comunidad de Novapatchers
+      <div className="text-left max-w-6xl mx-auto mb-8 px-6">
+        <h2 className="text-4xl sm:text-5xl lg:text-6xl font-display font-semibold text-[#0F0F0F] tracking-[-0.03em] leading-tight lowercase">
+          comunidad novapatch.
         </h2>
       </div>
 
       <div className="relative w-full overflow-hidden">
         {/* Soft gradient masks on left and right for high-end look */}
-        <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-white to-transparent z-[2] pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-white to-transparent z-[2] pointer-events-none" />
+        <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-[#FAF8F5] to-transparent z-[2] pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-[#FAF8F5] to-transparent z-[2] pointer-events-none" />
 
         <div className="animate-marquee gap-4 px-4">
           {doubleImages.map((src, idx) => (
             <div
               key={idx}
-              className="relative aspect-[4/5] w-[180px] sm:w-[220px] overflow-hidden rounded-[24px] bg-[#FAF7F2] shadow-sm border border-[#0D1B35]/5 cursor-pointer group"
+              className="relative aspect-[4/5] w-[180px] sm:w-[220px] overflow-hidden rounded-xl bg-[#FAF8F5] border border-[#E6E1D8] shadow-2xs cursor-pointer group"
             >
               <Image
                 src={src}

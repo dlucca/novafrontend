@@ -1,6 +1,5 @@
-// apps/storefront/app/layout.tsx
 import type { Metadata } from 'next'
-import { Outfit } from 'next/font/google'
+import { Outfit, Instrument_Serif } from 'next/font/google'
 import Script from 'next/script'
 import { META_PIXEL_ID } from '@/lib/meta'
 import './globals.css'
@@ -9,13 +8,21 @@ const outfit = Outfit({
   subsets: ['latin'],
   variable: '--font-outfit',
   display: 'swap',
-  weight: ['400', '600', '700'],
+  weight: ['300', '400', '500', '600', '700', '800'],
+})
+
+const instrumentSerif = Instrument_Serif({
+  subsets: ['latin'],
+  variable: '--font-serif',
+  display: 'swap',
+  weight: ['400'],
+  style: ['normal', 'italic'],
 })
 
 const SITE_URL = 'https://novapatch.care'
 const SITE_TITLE = 'Novapatch — Bienestar que no interrumpe tu día'
 const SITE_DESCRIPTION =
-  'La forma más limpia y práctica de tomar vitaminas. Parches inteligentes de alta absorción transdérmica, sin pastillas ni rellenos.'
+  'La forma más limpia y práctica de acompañar tu bienestar. Parches de liberación tópica continua, sin pastillas ni azúcar añadida.'
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -39,13 +46,8 @@ export const metadata: Metadata = {
     images: ['/girls.webp'],
   },
   icons: {
-    icon: [
-      { url: '/favicon/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
-      { url: '/favicon/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
-      { url: '/favicon/favicon.ico' },
-    ],
-    apple: { url: '/favicon/apple-touch-icon.png' },
-    other: [{ rel: 'manifest', url: '/favicon/site.webmanifest' }],
+    icon: '/favicon/favicon.ico',
+    apple: '/favicon/apple-touch-icon.png',
   },
 }
 
@@ -89,7 +91,7 @@ fbq('track', 'PageView');`}
         </Script>
         {/* End Meta Pixel Code */}
       </head>
-      <body suppressHydrationWarning className={`${outfit.variable} min-h-screen`}>
+      <body suppressHydrationWarning className={`${outfit.variable} ${instrumentSerif.variable} min-h-screen font-sans bg-[#FAF8F5] text-[#0F0F0F]`}>
         {/* Meta Pixel noscript fallback */}
         <noscript>
           {/* eslint-disable-next-line @next/next/no-img-element */}

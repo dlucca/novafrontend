@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
+import { Link } from "@/lib/i18n-navigation";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -35,44 +35,25 @@ export default function NosotrosPage() {
   return (
     <>
       <Navbar lightBg />
-      <main>
+      <main className="min-h-screen bg-[#FAF8F5]">
 
         {/* ── HERO ─────────────────────────────────────────────────── */}
-        <section
-          className="min-h-screen flex flex-col justify-center pt-24 pb-16 px-6 relative overflow-hidden"
-          style={{ background: "#FAF7F2" }}
-        >
-          <div className="max-w-7xl mx-auto relative z-10 w-full">
-            <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+        <section className="pt-32 pb-20 px-4 sm:px-8 relative overflow-hidden bg-[#FAF8F5]">
+          <div className="max-w-[1400px] mx-auto relative z-10 w-full">
+            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
               {/* Left: text */}
-              <div>
-                <motion.p
-                  {...fade(0)}
-                  className="font-bold text-[11px] uppercase tracking-[0.22em] mb-8"
-                  style={{ color: "#E8503A" }}
-                >
-                  Nosotros
-                </motion.p>
-
+              <div className="text-left">
                 <motion.h1
                   {...fade(0.1)}
-                  className="font-black leading-[1.05] mb-7 tracking-[-0.02em]"
-                  style={{ fontSize: "clamp(30px, 3.8vw, 52px)", color: "#005088" }}
+                  className="font-display font-semibold text-[#0F0F0F] tracking-[-0.035em] leading-tight text-4xl sm:text-5xl lg:text-6xl lowercase mb-6"
                 >
-                  Creemos que cuidarse no debería ser complicado.
+                  creemos que cuidarse no debería ser complicado.
                 </motion.h1>
 
-                <motion.div
-                  {...fade(0.18)}
-                  className="w-12 h-[3px] mb-7"
-                  style={{ background: "linear-gradient(90deg, #E8503A, #5BA8D5)" }}
-                />
-
                 <motion.p
-                  {...fade(0.24)}
-                  className="font-light leading-relaxed"
-                  style={{ fontSize: "clamp(15px, 1.2vw, 17px)", color: "rgba(13,27,53,0.6)" }}
+                  {...fade(0.2)}
+                  className="font-sans font-normal text-base sm:text-lg text-[#3A3A37] leading-relaxed max-w-md"
                 >
                   Comenzó con una frustración, no con una fórmula.
                 </motion.p>
@@ -87,10 +68,7 @@ export default function NosotrosPage() {
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
               >
-                <div
-                  className="relative rounded-[28px] overflow-hidden aspect-[4/3] w-full"
-                  style={{ boxShadow: "0 24px 72px rgba(13,27,53,0.14)" }}
-                >
+                <div className="relative rounded-xl overflow-hidden aspect-[4/3] w-full border border-[#E6E1D8] shadow-2xs bg-[#0F0F0F]">
                   <AnimatePresence mode="popLayout">
                     <motion.div
                       key={currentIndex}
@@ -109,24 +87,20 @@ export default function NosotrosPage() {
                       />
                     </motion.div>
                   </AnimatePresence>
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0D1B35]/30 via-transparent to-transparent pointer-events-none z-10" />
+
+                  {/* Dark Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10 pointer-events-none z-10" />
+
+                  {/* Overlaid Text */}
+                  <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 z-20 text-left">
+                    <p className="font-sans font-medium text-[10px] uppercase tracking-[0.14em] text-white/80 mb-1">
+                      La idea era clara
+                    </p>
+                    <p className="font-sans font-semibold text-base sm:text-lg text-white">
+                      Que cuidarse sea algo que sí se pueda sostener.
+                    </p>
+                  </div>
                 </div>
-                {/* Floating badge */}
-                <motion.div
-                  {...fade(0.5)}
-                  className="absolute -bottom-4 -left-4 bg-white rounded-2xl px-5 py-3.5 border z-20"
-                  style={{
-                    boxShadow: "0 8px 32px rgba(13,27,53,0.12)",
-                    borderColor: "rgba(13,27,53,0.1)",
-                  }}
-                >
-                  <p className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: "#E8503A" }}>
-                    La idea era clara
-                  </p>
-                  <p className="text-[13px] font-semibold" style={{ color: "#0D1B35" }}>
-                    Que cuidarse sea algo que sí se pueda sostener.
-                  </p>
-                </motion.div>
               </motion.div>
 
             </div>
@@ -134,32 +108,23 @@ export default function NosotrosPage() {
         </section>
 
         {/* ── 01 — EL PROBLEMA ─────────────────────────────────────── */}
-        <section
-          className="py-24 px-6 relative overflow-hidden"
-          style={{ background: "#FEF7ED" }}
-        >
+        <section className="py-20 px-6 sm:px-10 relative overflow-hidden bg-white border-t border-[#E6E1D8]">
           {/* Ghost number */}
-          <div
-            className="absolute right-4 top-1/2 -translate-y-1/2 font-black leading-none select-none pointer-events-none"
-            style={{ color: "rgba(13,27,53,0.04)", fontSize: "clamp(100px, 14vw, 220px)" }}
-          >
+          <div className="absolute right-6 top-1/2 -translate-y-1/2 font-mono font-bold text-[#0F0F0F]/5 text-[140px] sm:text-[220px] select-none pointer-events-none">
             01
           </div>
 
-          <div className="max-w-7xl mx-auto relative z-10">
-            <div className="grid lg:grid-cols-[180px_1fr] gap-14 items-start">
+          <div className="max-w-[1240px] mx-auto relative z-10">
+            <div className="grid lg:grid-cols-[180px_1fr] gap-12 items-start text-left">
 
               <motion.div {...fade(0)} className="lg:sticky lg:top-32 self-start">
                 <div className="flex items-center gap-3 mb-3">
-                  <span className="font-black" style={{ fontSize: "clamp(24px, 2.5vw, 34px)", color: "#E8503A" }}>
+                  <span className="font-mono font-bold text-2xl sm:text-3xl text-[#0F0F0F]">
                     01
                   </span>
-                  <div className="h-px flex-1" style={{ background: "rgba(13,27,53,0.12)" }} />
+                  <div className="h-px flex-1 bg-[#E6E1D8]" />
                 </div>
-                <p
-                  className="text-[11px] font-bold uppercase tracking-[0.18em] leading-relaxed"
-                  style={{ color: "rgba(13,27,53,0.35)" }}
-                >
+                <p className="font-sans font-medium text-[11px] uppercase tracking-[0.14em] text-[#A8A29A]">
                   El problema<br />que vimos
                 </p>
               </motion.div>
@@ -167,16 +132,14 @@ export default function NosotrosPage() {
               <div>
                 <motion.h2
                   {...fade(0.1)}
-                  className="font-black leading-[1.1] mb-8 tracking-[-0.02em]"
-                  style={{ fontSize: "clamp(22px, 2.4vw, 38px)", color: "#005088" }}
+                  className="font-display font-semibold text-2xl sm:text-3xl lg:text-4xl text-[#0F0F0F] tracking-[-0.03em] lowercase mb-6"
                 >
-                  El problema no era la intención.
+                  el problema no era la intención.
                 </motion.h2>
 
                 <motion.div
                   {...fade(0.2)}
-                  className="flex flex-col gap-5 leading-[1.85] mb-12"
-                  style={{ fontSize: "clamp(14px, 1.1vw, 16px)", color: "rgba(13,27,53,0.6)" }}
+                  className="flex flex-col gap-4 font-sans font-normal text-sm sm:text-base text-[#3A3A37] leading-relaxed mb-8 max-w-2xl"
                 >
                   <p>
                     La mayoría de las personas quiere cuidarse. Compra
@@ -185,7 +148,7 @@ export default function NosotrosPage() {
                     porque el formato no acompaña la vida real.
                   </p>
                   <p>
-                    Pastillas que requieren agua, horarios estrictos, cápsulas
+                    Pastillas que requieren agua, horarios strictly, cápsulas
                     que pueden caer pesadas al estómago, rituales que se sienten
                     como obligaciones.
                   </p>
@@ -194,15 +157,10 @@ export default function NosotrosPage() {
                 {/* Pull quote */}
                 <motion.div
                   {...fade(0.3)}
-                  className="border-l-[3px] pl-7"
-                  style={{ borderColor: "#E8503A" }}
+                  className="border-l-2 border-[#0F0F0F] pl-6 my-6"
                 >
-                  <p
-                    className="font-black leading-tight"
-                    style={{ fontSize: "clamp(20px, 2.2vw, 32px)", color: "#005088" }}
-                  >
-                    Lo complejo se abandona.<br />
-                    <span style={{ color: "rgba(0,80,136,0.3)" }}>Siempre.</span>
+                  <p className="font-display font-semibold text-xl sm:text-2xl lg:text-3xl text-[#0F0F0F] tracking-[-0.03em] lowercase leading-snug">
+                    lo complejo se abandona. siempre.
                   </p>
                 </motion.div>
               </div>
@@ -211,28 +169,22 @@ export default function NosotrosPage() {
         </section>
 
         {/* ── 02 — LA IDEA ─────────────────────────────────────────── */}
-        <section className="py-24 px-6 relative overflow-hidden bg-white">
-          <div
-            className="absolute left-4 top-1/2 -translate-y-1/2 font-black leading-none select-none pointer-events-none"
-            style={{ fontSize: "clamp(100px, 14vw, 220px)", color: "rgba(13,27,53,0.06)" }}
-          >
+        <section className="py-20 px-6 relative overflow-hidden bg-[#FAF8F5] border-t border-[#E6E1D8]">
+          <div className="absolute left-6 top-1/2 -translate-y-1/2 font-mono font-bold text-[#0F0F0F]/5 text-[140px] sm:text-[220px] select-none pointer-events-none">
             02
           </div>
 
-          <div className="max-w-7xl mx-auto relative z-10">
-            <div className="grid lg:grid-cols-[180px_1fr] gap-14 items-start">
+          <div className="max-w-6xl mx-auto relative z-10">
+            <div className="grid lg:grid-cols-[180px_1fr] gap-12 items-start text-left">
 
               <motion.div {...fade(0)} className="lg:sticky lg:top-32 self-start">
                 <div className="flex items-center gap-3 mb-3">
-                  <span className="font-black" style={{ fontSize: "clamp(24px, 2.5vw, 34px)", color: "#5BA8D5" }}>
+                  <span className="font-mono font-bold text-2xl sm:text-3xl text-[#0F0F0F]">
                     02
                   </span>
-                  <div className="h-px flex-1" style={{ background: "rgba(13,27,53,0.12)" }} />
+                  <div className="h-px flex-1 bg-[#E6E1D8]" />
                 </div>
-                <p
-                  className="text-[11px] font-bold uppercase tracking-[0.18em] leading-relaxed"
-                  style={{ color: "rgba(13,27,53,0.35)" }}
-                >
+                <p className="font-sans font-medium text-[11px] uppercase tracking-[0.14em] text-[#A8A29A]">
                   La idea que<br />cambió todo
                 </p>
               </motion.div>
@@ -240,16 +192,14 @@ export default function NosotrosPage() {
               <div>
                 <motion.h2
                   {...fade(0.1)}
-                  className="font-black leading-[1.1] mb-8 tracking-[-0.02em]"
-                  style={{ fontSize: "clamp(22px, 2.4vw, 38px)", color: "#005088" }}
+                  className="font-display font-semibold text-2xl sm:text-3xl lg:text-4xl text-[#0F0F0F] tracking-[-0.03em] lowercase mb-6"
                 >
-                  Comenzó con una frustración, no con una fórmula.
+                  comenzó con una frustración, no con una fórmula.
                 </motion.h2>
 
                 <motion.div
                   {...fade(0.2)}
-                  className="flex flex-col gap-5 leading-[1.85] mb-8"
-                  style={{ fontSize: "clamp(14px, 1.1vw, 16px)", color: "rgba(13,27,53,0.6)" }}
+                  className="flex flex-col gap-4 font-sans font-normal text-sm sm:text-base text-[#3A3A37] leading-relaxed mb-6 max-w-2xl"
                 >
                   <p>
                     A Cristian le pasaba lo mismo que a casi todos. Empezaba
@@ -257,10 +207,7 @@ export default function NosotrosPage() {
                     Junto con Esteban, su amigo y socio de toda la vida,
                     empezaron a darle vueltas a una pregunta:
                   </p>
-                  <p
-                    className="font-semibold"
-                    style={{ color: "#005088", fontSize: "clamp(16px, 1.3vw, 20px)" }}
-                  >
+                  <p className="font-sans font-semibold text-base sm:text-lg text-[#0F0F0F] my-2">
                     ¿Y si cuidarse no dependiera de acordarse?
                   </p>
                   <p>
@@ -273,16 +220,14 @@ export default function NosotrosPage() {
 
                 <motion.p
                   {...fade(0.25)}
-                  className="font-black leading-[1.02] mb-8 tracking-[-0.02em]"
-                  style={{ fontSize: "clamp(26px, 3vw, 46px)", color: "#005088" }}
+                  className="font-display font-semibold text-3xl sm:text-4xl lg:text-5xl text-[#0F0F0F] tracking-[-0.035em] lowercase my-6"
                 >
-                  Un gesto.<br />Todo el día.
+                  un gesto. todo el día.
                 </motion.p>
 
                 <motion.div
                   {...fade(0.3)}
-                  className="flex flex-col gap-5 leading-[1.85] mb-12"
-                  style={{ fontSize: "clamp(14px, 1.1vw, 16px)", color: "rgba(13,27,53,0.6)" }}
+                  className="flex flex-col gap-4 font-sans font-normal text-sm sm:text-base text-[#3A3A37] leading-relaxed mb-8 max-w-2xl"
                 >
                   <p>
                     La absorción a través de la piel no es nueva, pero la
@@ -295,15 +240,10 @@ export default function NosotrosPage() {
                 {/* Pull quote */}
                 <motion.div
                   {...fade(0.35)}
-                  className="border-l-[3px] pl-7"
-                  style={{ borderColor: "#E8503A" }}
+                  className="border-l-2 border-[#0F0F0F] pl-6 my-6"
                 >
-                  <p
-                    className="font-black leading-tight"
-                    style={{ fontSize: "clamp(20px, 2.2vw, 32px)", color: "#005088" }}
-                  >
-                    Bienestar que se integra a tu día.<br />
-                    <span style={{ color: "rgba(0,80,136,0.3)" }}>No que lo interrumpe.</span>
+                  <p className="font-display font-semibold text-xl sm:text-2xl lg:text-3xl text-[#0F0F0F] tracking-[-0.03em] lowercase leading-snug">
+                    bienestar que se integra a tu día. no que lo interrumpe.
                   </p>
                 </motion.div>
               </div>
@@ -312,31 +252,22 @@ export default function NosotrosPage() {
         </section>
 
         {/* ── 03 — LO QUE NOS GUÍA ─────────────────────────────────── */}
-        <section
-          className="py-24 px-6 relative overflow-hidden"
-          style={{ background: "#FAF7F2" }}
-        >
-          <div
-            className="absolute right-4 top-1/2 -translate-y-1/2 font-black leading-none select-none pointer-events-none"
-            style={{ fontSize: "clamp(100px, 14vw, 220px)", color: "rgba(13,27,53,0.04)" }}
-          >
+        <section className="py-20 px-6 relative overflow-hidden bg-white border-t border-[#E6E1D8]">
+          <div className="absolute right-6 top-1/2 -translate-y-1/2 font-mono font-bold text-[#0F0F0F]/5 text-[140px] sm:text-[220px] select-none pointer-events-none">
             03
           </div>
 
-          <div className="max-w-7xl mx-auto relative z-10">
-            <div className="grid lg:grid-cols-[180px_1fr] gap-14 items-start">
+          <div className="max-w-6xl mx-auto relative z-10">
+            <div className="grid lg:grid-cols-[180px_1fr] gap-12 items-start text-left">
 
               <motion.div {...fade(0)} className="lg:sticky lg:top-32 self-start">
                 <div className="flex items-center gap-3 mb-3">
-                  <span className="font-black" style={{ fontSize: "clamp(24px, 2.5vw, 34px)", color: "#E8503A" }}>
+                  <span className="font-mono font-bold text-2xl sm:text-3xl text-[#0F0F0F]">
                     03
                   </span>
-                  <div className="h-px flex-1" style={{ background: "rgba(13,27,53,0.12)" }} />
+                  <div className="h-px flex-1 bg-[#E6E1D8]" />
                 </div>
-                <p
-                  className="text-[11px] font-bold uppercase tracking-[0.18em] leading-relaxed"
-                  style={{ color: "rgba(13,27,53,0.35)" }}
-                >
+                <p className="font-sans font-medium text-[11px] uppercase tracking-[0.14em] text-[#A8A29A]">
                   Lo que<br />nos guía
                 </p>
               </motion.div>
@@ -344,16 +275,14 @@ export default function NosotrosPage() {
               <div>
                 <motion.h2
                   {...fade(0.1)}
-                  className="font-black leading-[1.1] mb-8 tracking-[-0.02em]"
-                  style={{ fontSize: "clamp(22px, 2.4vw, 38px)", color: "#005088" }}
+                  className="font-display font-semibold text-2xl sm:text-3xl lg:text-4xl text-[#0F0F0F] tracking-[-0.03em] lowercase mb-6"
                 >
-                  Constancia por sobre impacto.
+                  constancia por sobre impacto.
                 </motion.h2>
 
                 <motion.div
                   {...fade(0.2)}
-                  className="flex flex-col gap-5 leading-[1.85] mb-12"
-                  style={{ fontSize: "clamp(14px, 1.1vw, 16px)", color: "rgba(13,27,53,0.6)" }}
+                  className="flex flex-col gap-4 font-sans font-normal text-sm sm:text-base text-[#3A3A37] leading-relaxed mb-8 max-w-2xl"
                 >
                   <p>
                     En bienestar, el producto que se usa todos los días siempre
@@ -369,11 +298,9 @@ export default function NosotrosPage() {
 
                 <motion.p
                   {...fade(0.3)}
-                  className="font-black leading-[0.95] tracking-[-0.02em]"
-                  style={{ fontSize: "clamp(32px, 4.5vw, 64px)", color: "rgba(0,80,136,0.18)" }}
+                  className="font-display font-semibold text-4xl sm:text-5xl lg:text-6xl text-[#0F0F0F] tracking-[-0.035em] lowercase my-6"
                 >
-                  Eso es{" "}
-                  <span style={{ color: "#005088" }}>Novapatch.</span>
+                  eso es novapatch.
                 </motion.p>
               </div>
             </div>
@@ -381,28 +308,22 @@ export default function NosotrosPage() {
         </section>
 
         {/* ── 04 — LO QUE NO SOMOS ─────────────────────────────────── */}
-        <section className="py-24 px-6 relative overflow-hidden bg-white">
-          <div
-            className="absolute left-4 top-1/2 -translate-y-1/2 font-black leading-none select-none pointer-events-none"
-            style={{ fontSize: "clamp(100px, 14vw, 220px)", color: "rgba(13,27,53,0.06)" }}
-          >
+        <section className="py-20 px-6 relative overflow-hidden bg-[#FAF8F5] border-t border-[#E6E1D8]">
+          <div className="absolute left-6 top-1/2 -translate-y-1/2 font-mono font-bold text-[#0F0F0F]/5 text-[140px] sm:text-[220px] select-none pointer-events-none">
             04
           </div>
 
-          <div className="max-w-7xl mx-auto relative z-10">
-            <div className="grid lg:grid-cols-[180px_1fr] gap-14 items-start">
+          <div className="max-w-6xl mx-auto relative z-10">
+            <div className="grid lg:grid-cols-[180px_1fr] gap-12 items-start text-left">
 
               <motion.div {...fade(0)} className="lg:sticky lg:top-32 self-start">
                 <div className="flex items-center gap-3 mb-3">
-                  <span className="font-black" style={{ fontSize: "clamp(24px, 2.5vw, 34px)", color: "#5BA8D5" }}>
+                  <span className="font-mono font-bold text-2xl sm:text-3xl text-[#0F0F0F]">
                     04
                   </span>
-                  <div className="h-px flex-1" style={{ background: "rgba(13,27,53,0.12)" }} />
+                  <div className="h-px flex-1 bg-[#E6E1D8]" />
                 </div>
-                <p
-                  className="text-[11px] font-bold uppercase tracking-[0.18em] leading-relaxed"
-                  style={{ color: "rgba(13,27,53,0.35)" }}
-                >
+                <p className="font-sans font-medium text-[11px] uppercase tracking-[0.14em] text-[#A8A29A]">
                   Lo que<br />no somos
                 </p>
               </motion.div>
@@ -410,16 +331,14 @@ export default function NosotrosPage() {
               <div>
                 <motion.h2
                   {...fade(0.1)}
-                  className="font-black leading-[1.1] mb-8 tracking-[-0.02em]"
-                  style={{ fontSize: "clamp(22px, 2.4vw, 38px)", color: "#005088" }}
+                  className="font-display font-semibold text-2xl sm:text-3xl lg:text-4xl text-[#0F0F0F] tracking-[-0.03em] lowercase mb-6"
                 >
-                  Sin promesas que no podemos cumplir.
+                  sin promesas que no podemos cumplir.
                 </motion.h2>
 
                 <motion.div
                   {...fade(0.2)}
-                  className="flex flex-col gap-5 leading-[1.85] mb-12"
-                  style={{ fontSize: "clamp(14px, 1.1vw, 16px)", color: "rgba(13,27,53,0.6)" }}
+                  className="flex flex-col gap-4 font-sans font-normal text-sm sm:text-base text-[#3A3A37] leading-relaxed mb-8 max-w-2xl"
                 >
                   <p>
                     No prometemos transformaciones radicales ni soluciones
@@ -434,11 +353,7 @@ export default function NosotrosPage() {
                 </motion.div>
 
                 {/* If / then rows */}
-                <motion.div
-                  {...fade(0.3)}
-                  className="divide-y"
-                  style={{ borderColor: "#E5E7EB" }}
-                >
+                <div className="divide-y divide-[#E6E1D8] border-y border-[#E6E1D8] max-w-2xl">
                   {[
                     {
                       cond: "Si buscás resultados de un día para el otro,",
@@ -452,69 +367,37 @@ export default function NosotrosPage() {
                     <motion.div
                       key={i}
                       {...fade(0.35 + i * 0.1)}
-                      className="py-6"
-                      style={{ borderColor: "#E5E7EB" }}
+                      className="py-5"
                     >
-                      <span
-                        className="font-black leading-[1.05] tracking-[-0.02em]"
-                        style={{
-                          fontSize: "clamp(20px, 2.5vw, 42px)",
-                          color: "rgba(0,80,136,0.18)",
-                        }}
-                      >
+                      <p className="font-display font-semibold text-lg sm:text-2xl text-[#0F0F0F] tracking-[-0.03em] lowercase">
                         {item.cond}{" "}
-                        <span className="block sm:inline" style={{ color: "#005088" }}>
+                        <span className="block sm:inline text-[#0F0F0F]">
                           {item.result}
                         </span>
-                      </span>
+                      </p>
                     </motion.div>
                   ))}
-                </motion.div>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* ── CTA ──────────────────────────────────────────────────── */}
-        <section
-          className="py-28 px-6 text-center relative overflow-hidden"
-          style={{ background: "#FEF7ED" }}
-        >
-          <div className="max-w-3xl mx-auto relative z-10">
-            <motion.p
-              {...fade(0)}
-              className="font-bold text-[11px] uppercase tracking-[0.22em] mb-8"
-              style={{ color: "#E8503A" }}
+        {/* ── CTA FINAL ────────────────────────────────────────────── */}
+        <section className="py-20 px-6 max-w-5xl mx-auto">
+          <div className="rounded-xl p-8 sm:p-12 bg-white border border-[#E6E1D8] shadow-2xs text-center flex flex-col items-center gap-4 sm:gap-6">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-semibold text-[#0F0F0F] tracking-[-0.035em] leading-tight lowercase">
+              seis parches. un solo hábito.
+            </h2>
+            <p className="font-sans font-normal text-sm sm:text-base text-[#3A3A37] max-w-md">
+              Descubre la fórmula que mejor se adapta a tu ritmo diario.
+            </p>
+            <Link
+              href="/tienda"
+              className="mt-2 inline-flex items-center justify-center rounded-full bg-[#0F0F0F] text-white border border-[#0F0F0F] hover:bg-white hover:text-[#0F0F0F] px-8 py-4 text-[11px] font-sans font-medium uppercase tracking-[0.12em] transition-all shadow-2xs active:scale-95 cursor-pointer"
             >
-              El portfolio
-            </motion.p>
-
-            <motion.h2
-              {...fade(0.1)}
-              className="font-black leading-[1.02] mb-10 tracking-[-0.02em]"
-              style={{ color: "#005088", fontSize: "clamp(30px, 4vw, 56px)" }}
-            >
-              Seis parches.<br />Un solo hábito.
-            </motion.h2>
-
-            <motion.div {...fade(0.2)}>
-              <Link
-                href="/tienda"
-                className="inline-flex items-center gap-3 font-bold rounded-full transition-all duration-200 hover:-translate-y-0.5"
-                style={{
-                  background: "#E8503A",
-                  color: "white",
-                  fontSize: "15px",
-                  padding: "14px 36px",
-                  boxShadow: "0 8px 32px rgba(232,80,58,0.35)",
-                }}
-              >
-                Conoce el portfolio
-                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </Link>
-            </motion.div>
+              Conoce el portfolio
+            </Link>
           </div>
         </section>
 

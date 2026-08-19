@@ -12,14 +12,15 @@ description: >
 
 # Novapatch — Marketing Playbook (México)
 
-**Versión 1.0 · Mayo 2026 · novapatch.care · Mercado: México**
+**Versión 2.0 (Brand Kit v1.0 Editorial) · Agosto 2026 · novapatch.care · Mercado: México**
 
-Este playbook es material accionable para que Claude genere contenido de marketing de Novapatch directamente.
+Este playbook es material accionable para generar contenido de marketing de Novapatch ("bienestar, en silencio").
 No describe el marketing — provee los argumentos, ángulos y hooks listos para convertir en copy.
 
 > **Relación con la marca:** Esta skill cubre el QUÉ decir y A QUIÉN. Para CÓMO se ve y suena
-> (colores, tipografía, voz visual, claims permitidos/prohibidos), usa siempre la skill `novapatch-brand`.
-> Todo claim que generes debe pasar el filtro de claims de esa skill: **acompañamos, no transformamos.**
+> (colores neutros `#FAF8F5`/`#0F0F0F`, tipografía Outfit + Instrument Serif, voz visual, claims permitidos/prohibidos),
+> usa siempre la skill `novapatch-brand`.
+> Todo claim que generes debe pasar el filtro de claims de esa skill: **"Novapatch no promete cambiar tu cuerpo. Te acompaña a cuidarlo mejor todos los días."**
 
 ---
 

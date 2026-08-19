@@ -1,38 +1,30 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Open+Sauce+Sans:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
 @theme {
-  /* Brand — Novapatch */
-  --color-coral:       #E8503A;
-  --color-coral-light: #FF7A65;
-  --color-coral-dark:  #C43B28;
+  /* Brand Kit Definitivo — Novapatch Neutrals */
+  --color-paper:  #ffffff;
+  --color-bone:   #faf8f5;
+  --color-gray:   #aeaeaf;
+  --color-linen:  #f2eee7;
+  --color-line:   #e6e1d8;
+  --color-stone:  #a8a29a;
+  --color-shadow: #3a3a37;
+  --color-ink:    #0f0f0f;
 
-  --color-navy:        #0D1B35;
-  --color-navy-light:  #1D3461;
+  /* Product Accents (Only on sachet packshot or 8px dot) */
+  --color-accent-energy: #83b5f4;
+  --color-accent-sleep:  #1eb1bc;
+  --color-accent-zen:    #4e82bc;
+  --color-accent-shield: #ffa849;
+  --color-accent-glow:   #f25c54;
+  --color-accent-woman:  #c693c4;
 
-  --color-sky:         #5BA8D5;
-  --color-sky-light:   #B8DDEF;
-  --color-sky-pale:    #EAF5FB;
-
-  --color-cream:       #FAF7F2;
-  --color-lime:        #C9D849;
-  --color-lime-dark:   #A8B42A;
-
-  /* Extended palette */
-  --color-ocean:       #005088;
-  --color-ocean-light: #0068AA;
-  --color-ocean-dark:  #003D6B;
-  --color-teal:        #1CB1BC;
-  --color-gold:        #F5C628;
-  --color-blush:       #F8EDEB;
-  --color-teal-pale:   #E4F4F4;
-  --color-warm:        #FEF7ED;
-
-  /* Surfaces */
-  --color-surface:     #FAFAFA;  /* Soft drawer / card footer backgrounds */
-
-  /* Typography */
-  --font-display: "Outfit", var(--font-outfit), system-ui, sans-serif;
-  --font-body:    "Outfit", var(--font-outfit), system-ui, sans-serif;
+  /* Brand Kit Definitivo Tripartite Typography System */
+  --font-sans:    "Open Sauce Sans", "Outfit", "Inter", system-ui, sans-serif;
+  --font-display: "Space Grotesk", "Open Sauce Sans", system-ui, sans-serif;
+  --font-serif:   "Space Grotesk", "Open Sauce Sans", system-ui, sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, monospace;
 }
 
 html {
@@ -40,16 +32,31 @@ html {
 }
 
 body {
-  font-family: var(--font-outfit), var(--font-body), system-ui, sans-serif;
-  background-color: #ffffff;
-  color: #111827;
+  font-family: "Open Sauce Sans", "Outfit", var(--font-sans), system-ui, sans-serif;
+  background-color: #faf8f5;
+  color: #0f0f0f;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
 }
 
+/* Font utilities (Definitivo: Space Grotesk for Display/Headings, Open Sauce Sans for Body/UI, JetBrains Mono for Specs/Data) */
+.font-display, .font-serif {
+  font-family: "Space Grotesk", "Open Sauce Sans", system-ui, sans-serif !important;
+  font-style: normal !important;
+}
+
+.font-sans {
+  font-family: "Open Sauce Sans", "Outfit", system-ui, sans-serif !important;
+}
+
+.font-mono {
+  font-family: "JetBrains Mono", ui-monospace, monospace !important;
+}
+
 /* Typographic rhythm */
 h1, h2, h3, h4 {
+  font-family: "Space Grotesk", "Open Sauce Sans", system-ui, sans-serif;
   text-wrap: balance;
   font-feature-settings: "kern" 1;
 }
@@ -60,94 +67,37 @@ p {
 
 /* Scrollbar */
 ::-webkit-scrollbar        { width: 5px; }
-::-webkit-scrollbar-track  { background: var(--color-cream); }
-::-webkit-scrollbar-thumb  { background: var(--color-coral); border-radius: 4px; }
+::-webkit-scrollbar-track  { background: #faf8f5; }
+::-webkit-scrollbar-thumb  { background: #0f0f0f; border-radius: 4px; }
 
 /* Selection */
-::selection { background: var(--color-coral); color: #fff; }
+::selection { background: #0f0f0f; color: #fff; }
 
-/* Google Places Autocomplete dropdown — encima de modales y drawers */
+/* Google Places Autocomplete dropdown */
 .pac-container {
   z-index: 9999 !important;
-  border: 1px solid #E2E8F0;
+  border: 1px solid #E6E1D8;
   border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(13, 27, 53, 0.12);
-  font-family: var(--font-body), system-ui, sans-serif;
+  box-shadow: 0 8px 32px rgba(15, 15, 15, 0.08);
+  font-family: "Open Sauce Sans", system-ui, sans-serif;
   margin-top: 4px;
   overflow: hidden;
 }
 .pac-item {
   padding: 10px 14px;
   font-size: 14px;
-  color: #0D1B35;
+  color: #0F0F0F;
   cursor: pointer;
-  border-top: 1px solid #F1F5F9;
+  border-top: 1px solid #F2EEE7;
 }
 .pac-item:first-child { border-top: none; }
 .pac-item:hover,
 .pac-item-selected {
-  background-color: #EAF5FB;
+  background-color: #FAF8F5;
 }
 .pac-item-query {
   font-weight: 600;
-  color: var(--color-ocean);
+  color: #0F0F0F;
 }
-.pac-matched { color: var(--color-coral); }
-.pac-icon { display: none; } /* Ocultar ícono de Google Maps */
-
-/* Product card button — dynamic accent via CSS custom property */
-.product-card-btn {
-  background: transparent;
-  color: var(--btn-accent);
-}
-.product-card-btn:hover {
-  background: var(--btn-accent);
-  color: #fff !important;
-}
-
-/* Home section title — consistent across homepage sections */
-.home-section-title {
-  font-family: var(--font-display);
-  font-weight: 900; /* equivalent to font-black */
-  font-size: clamp(26px, 3vw, 40px);
-  line-height: 1.08;
-  letter-spacing: -0.02em;
-  padding-block: 0; /* consistent vertical padding */
-  margin-block-end: 0.75rem; /* keep a consistent gap below headings */
-}
-.home-section-title.lead {
-  font-size: clamp(22px, 2.6vw, 32px);
-  font-weight: 800;
-}
-
-/* Home section typography hierarchy */
-.home-section-eyebrow {
-  display: inline-block;
-  font-size: 0.875rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--color-teal);
-  margin-block-end: 0.75rem;
-}
-.home-section-subtitle {
-  font-size: 1rem;
-  line-height: 1.65;
-  color: color-mix(in srgb, var(--color-navy) 65%, transparent);
-}
-.home-item-title {
-  font-size: 1.125rem;
-  font-weight: 700;
-  line-height: 1.35;
-  color: var(--color-navy);
-}
-.home-body {
-  font-size: 0.875rem;
-  line-height: 1.6;
-  color: color-mix(in srgb, var(--color-navy) 55%, transparent);
-}
-.home-caption {
-  font-size: 0.875rem;
-  line-height: 1.5;
-  color: color-mix(in srgb, var(--color-navy) 50%, transparent);
-}
+.pac-matched { color: #0F0F0F; }
+.pac-icon { display: none; }

@@ -29,33 +29,33 @@ const BUNDLE_PRICES: Record<string, number> = {
 const BUNDLE_IMAGES: Record<string, string[]> = {
   "pack-dia-noche": [
     "/products/Bundle_dianoche_patches.webp",
-    "/products/Energy_ingredients.webp",
-    "/products/Sleep_ingredients.webp",
-    "/products/Energy_2.webp",
-    "/products/Sleep_2.webp",
+    "/products/Energy_1_1.webp",
+    "/products/Energy_3.webp",
+    "/products/Sleep_1_1.webp",
+    "/products/Sleep_3.webp",
   ],
   "pack-calma-sueno": [
     "/products/Bundle_calma_patches.webp",
-    "/products/Zen_ingredients.webp",
-    "/products/Sleep_ingredients.webp",
-    "/products/Zen_2.webp",
-    "/products/Sleep_2.webp",
+    "/products/Zen_1_1.webp",
+    "/products/Zen_3.webp",
+    "/products/Sleep_1_1.webp",
+    "/products/Sleep_3.webp",
   ],
   "pack-glow-balance": [
     "/products/Bundle_mujer_patches.webp",
-    "/products/Glow_ingredients.webp",
-    "/products/Woman_ingredients.webp",
-    "/products/Glow_2.webp",
-    "/products/Woman_2.webp",
+    "/products/Glow_1_1.webp",
+    "/products/Glow_3.webp",
+    "/products/Woman_1_1.webp",
+    "/products/Woman_3.webp",
   ],
   "pack-trio-vitalidad": [
     "/products/Bundle_360_patches.webp",
-    "/products/Energy_ingredients.webp",
-    "/products/Zen_ingredients.webp",
-    "/products/Sleep_ingredients.webp",
-    "/products/Energy_2.webp",
-    "/products/Zen_2.webp",
-    "/products/Sleep_2.webp",
+    "/products/Energy_1_1.webp",
+    "/products/Energy_3.webp",
+    "/products/Zen_1_1.webp",
+    "/products/Zen_3.webp",
+    "/products/Sleep_1_1.webp",
+    "/products/Sleep_3.webp",
   ],
 };
 
@@ -97,7 +97,7 @@ function medusaToProduct(p: Awaited<ReturnType<typeof medusa.catalog.getProducts
     title: p.title,
     description: meta?.description ?? p.description ?? "",
     price: rawAmount ? Math.round(rawAmount) : (BUNDLE_PRICES[slug] ?? 750),
-    image: p.thumbnail ?? meta?.imgSrc ?? `/products/${slug}_thumb.webp`,
+    image: meta?.imgSrc ?? `/products/${slug}_45.webp`,
     variantId: variant?.id,
   };
 }
@@ -190,11 +190,7 @@ function fallbackDetail(slug: string): ProductDetail | null {
   const basePrice = BUNDLE_PRICES[slug] ?? 750;
   const nameCap = slug.charAt(0).toUpperCase() + slug.slice(1);
   const images = BUNDLE_IMAGES[slug] ?? [
-    meta.imgSrc,
-    `/products/${nameCap}_ingredients.webp`,
-    `/products/${nameCap}_2.webp`,
-    `/products/${nameCap}_3.webp`,
-    `/products/${nameCap}_4.webp`,
+    `/products/${nameCap}_1_1.webp`,
   ];
 
   return {
@@ -262,7 +258,15 @@ export async function getProductDetail(
       };
     });
 
-    const images = (p.images ?? []).map((i) => i.url).filter(Boolean);
+    const isBundle = handle.startsWith("pack-");
+    const bundleImages = BUNDLE_IMAGES[handle];
+    const medusaImages = (p.images ?? []).map((i) => i.url).filter(Boolean);
+    const nameCap = handle.charAt(0).toUpperCase() + handle.slice(1);
+    const images = isBundle && bundleImages && bundleImages.length > 0
+      ? bundleImages
+      : medusaImages.length > 0
+      ? medusaImages
+      : (bundleImages ?? [`/products/${nameCap}_1_1.webp`]);
 
     return {
       id: p.id,
@@ -270,7 +274,7 @@ export async function getProductDetail(
       title: p.title,
       description: meta?.description ?? p.description ?? "",
       basePrice,
-      images: images.length > 0 ? images : [p.thumbnail ?? meta?.imgSrc ?? `/products/${handle}_thumb.webp`],
+      images,
       options,
     };
   } catch {

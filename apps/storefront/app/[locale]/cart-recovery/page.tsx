@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams, useParams } from "next/navigation";
+import Link from "next/link";
 import { medusa } from "@/lib/medusa";
 
 const MEDUSA_CART_KEY = "novapatch_medusa_cart_id";
@@ -27,12 +28,9 @@ export default function CartRecoveryPage() {
 
     (async () => {
       try {
-        // Verify the cart still exists and isn't already completed.
         const cart = await medusa.cart.retrieve(cartId);
         if (cancelled) return;
 
-        // If the user already finished this purchase since the email was sent,
-        // send them home — no need to recover anything.
         if (cart.completed_at) {
           setStatus("completed");
           setTimeout(() => {
@@ -41,8 +39,6 @@ export default function CartRecoveryPage() {
           return;
         }
 
-        // Restore the Medusa cart_id in localStorage so the checkout flow
-        // picks up the existing line items instead of creating a fresh cart.
         if (typeof window !== "undefined") {
           window.localStorage.setItem(MEDUSA_CART_KEY, cart.id);
         }
@@ -52,7 +48,6 @@ export default function CartRecoveryPage() {
       } catch (err) {
         if (cancelled) return;
         const message = err instanceof Error ? err.message : String(err);
-        // 404 → cart doesn't exist (expired/deleted)
         if (/not found|404/i.test(message)) {
           setStatus("not-found");
         } else {
@@ -68,123 +63,64 @@ export default function CartRecoveryPage() {
   }, [params, router, locale]);
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "#FAF7F2",
-        padding: "24px",
-      }}
-    >
-      <div
-        style={{
-          maxWidth: 420,
-          textAlign: "center",
-          background: "white",
-          borderRadius: 20,
-          padding: "32px 28px",
-          boxShadow: "0 4px 20px rgba(13,27,53,0.08)",
-        }}
-      >
+    <div className="min-h-screen bg-[#FAF8F5] flex items-center justify-center p-6">
+      <div className="max-w-md w-full bg-white rounded-xl border border-[#E6E1D8] p-8 text-center shadow-2xs">
         {(status === "loading" || status === "redirecting") && (
-          <>
-            <div
-              style={{
-                width: 32,
-                height: 32,
-                borderRadius: "50%",
-                border: "3px solid #17B8A3",
-                borderTopColor: "transparent",
-                margin: "0 auto 20px",
-                animation: "spin 1s linear infinite",
-              }}
-            />
-            <p style={{ color: "#0D1B35", fontSize: 16, fontWeight: 600 }}>
+          <div className="flex flex-col items-center gap-4 py-4">
+            <span className="h-8 w-8 border-3 border-[#0F0F0F] border-t-transparent rounded-full animate-spin" />
+            <p className="text-base font-sans font-semibold text-[#0F0F0F]">
               {status === "loading" ? "Recuperando tu carrito..." : "Te llevamos al checkout..."}
             </p>
-          </>
+          </div>
         )}
 
         {status === "completed" && (
-          <>
-            <p style={{ color: "#0D1B35", fontSize: 18, fontWeight: 700, marginBottom: 8 }}>
-              Esta compra ya fue completada.
-            </p>
-            <p style={{ color: "rgba(13,27,53,0.55)", fontSize: 14 }}>
+          <div className="py-2">
+            <h2 className="text-lg font-display font-semibold text-[#0F0F0F] mb-2 tracking-[-0.035em] lowercase">
+              esta compra ya fue completada
+            </h2>
+            <p className="text-sm font-sans text-[#3A3A37]">
               Te llevamos al inicio.
             </p>
-          </>
+          </div>
         )}
 
         {status === "not-found" && (
-          <>
-            <p style={{ color: "#0D1B35", fontSize: 18, fontWeight: 700, marginBottom: 8 }}>
-              Este carrito ya no está disponible.
-            </p>
-            <p style={{ color: "rgba(13,27,53,0.55)", fontSize: 14, marginBottom: 16 }}>
+          <div className="py-2 flex flex-col items-center gap-4">
+            <h2 className="text-lg font-display font-semibold text-[#0F0F0F] tracking-[-0.035em] lowercase">
+              este carrito ya no está disponible
+            </h2>
+            <p className="text-sm font-sans text-[#3A3A37] leading-relaxed">
               Probá agregando los productos de nuevo desde la tienda.
             </p>
-            <a
+            <Link
               href={`/${locale ?? "mx"}`}
-              style={{
-                display: "inline-block",
-                background: "#0D1B35",
-                color: "white",
-                textDecoration: "none",
-                borderRadius: 999,
-                padding: "12px 24px",
-                fontSize: 14,
-                fontWeight: 600,
-              }}
+              className="mt-2 inline-flex items-center px-6 py-3 rounded-full text-xs font-sans font-medium uppercase tracking-[0.12em] bg-[#0F0F0F] text-white border border-[#0F0F0F] hover:bg-white hover:text-[#0F0F0F] transition-all cursor-pointer"
             >
               Ir a la tienda
-            </a>
-          </>
+            </Link>
+          </div>
         )}
 
         {status === "error" && (
-          <>
-            <p style={{ color: "#0D1B35", fontSize: 18, fontWeight: 700, marginBottom: 8 }}>
-              No pudimos recuperar tu carrito.
-            </p>
+          <div className="py-2 flex flex-col items-center gap-4">
+            <h2 className="text-lg font-display font-semibold text-[#0F0F0F] tracking-[-0.035em] lowercase">
+              no pudimos recuperar tu carrito
+            </h2>
             {errorMsg && (
-              <p
-                style={{
-                  color: "rgba(13,27,53,0.55)",
-                  fontSize: 12,
-                  marginBottom: 16,
-                  fontFamily: "monospace",
-                }}
-              >
+              <p className="text-xs font-mono text-[#A8A29A]">
                 {errorMsg}
               </p>
             )}
-            <a
+            <Link
               href={`/${locale ?? "mx"}`}
-              style={{
-                display: "inline-block",
-                background: "#0D1B35",
-                color: "white",
-                textDecoration: "none",
-                borderRadius: 999,
-                padding: "12px 24px",
-                fontSize: 14,
-                fontWeight: 600,
-              }}
+              className="mt-2 inline-flex items-center px-6 py-3 rounded-full text-xs font-sans font-medium uppercase tracking-[0.12em] bg-[#0F0F0F] text-white border border-[#0F0F0F] hover:bg-white hover:text-[#0F0F0F] transition-all cursor-pointer"
             >
               Volver a la tienda
-            </a>
-          </>
+            </Link>
+          </div>
         )}
       </div>
-
-      <style>{`
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
     </div>
   );
 }

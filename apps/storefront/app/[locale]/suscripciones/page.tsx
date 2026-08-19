@@ -1,5 +1,7 @@
-import Link from "next/link";
 import Image from "next/image";
+import HeroImageWithScroll from "./HeroImageWithScroll";
+import ProcessImageWithScroll from "./ProcessImageWithScroll";
+import { Link } from "@/lib/i18n-navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SubscriptionsFAQ from "./SubscriptionsFAQ";
@@ -12,7 +14,7 @@ import type { Locale } from "@/i18n/routing";
 const steps = [
   { n: 1, title: "Elige tus parches", desc: "Combina los que necesites desde la tienda." },
   { n: 2, title: "Define la frecuencia", desc: "Cada producto puede ir a 30, 60 o 90 días." },
-  { n: 3, title: "Recibe y olvídate", desc: "Llega solo, con descuento de suscriptor." },
+  { n: 3, title: "Recibe y olvídate", desc: "Llega solo, con descuento exclusivo de suscriptor." },
 ];
 
 const controlItems = [
@@ -20,7 +22,7 @@ const controlItems = [
     title: "Pausa cuando lo necesites",
     desc: "¿Te vas de viaje o ya tienes stock? Pausa cualquier producto desde tu cuenta, sin explicaciones.",
     icon: (
-      <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#0F0F0F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <path d="M9 6H8a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1Zm7 0h-1a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1Z" />
       </svg>
     ),
@@ -29,7 +31,7 @@ const controlItems = [
     title: "Cambia tus parches o tu frecuencia",
     desc: "¿Cambió tu rutina? Ajusta qué productos recibes y cada cuánto, antes de tu próximo envío.",
     icon: (
-      <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#0F0F0F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <path d="m16 10 3-3m0 0-3-3m3 3H5v3m3 4-3 3m0 0 3 3m-3-3h14v-3" />
       </svg>
     ),
@@ -38,7 +40,7 @@ const controlItems = [
     title: "Cancela sin penalizaciones",
     desc: "Si decides salir, sales. Sin llamadas, sin formularios complicados, sin cargos extra.",
     icon: (
-      <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#0F0F0F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <path d="M12 14v3m-3-6V7a3 3 0 1 1 6 0v4m-8 0h10a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1Z" />
       </svg>
     ),
@@ -58,167 +60,231 @@ export default async function SuscripcionesPage({
     market.medusaRegionId || undefined,
     market.currency
   );
+
   return (
     <>
       <Navbar lightBg />
-      <main className="min-h-screen bg-[#FAF7F2]">
+      <main className="min-h-screen bg-[#FAF8F5]">
 
-        {/* Hero */}
-        <section className="mx-auto grid max-w-6xl gap-10 px-6 pt-28 pb-16 lg:grid-cols-2 lg:items-center">
+        {/* ── Hero ── */}
+        <section className="mx-auto grid max-w-[1400px] gap-10 px-4 sm:px-8 pt-32 pb-16 lg:grid-cols-2 lg:items-center">
           <FadeIn x={-40} y={0} duration={0.7}>
-            <div className="relative aspect-square w-full overflow-hidden rounded-[24px] shadow-[0_8px_32px_rgba(0,0,0,0.08)]">
-              <Image
-                src="/productusers/threepack.webp"
-                alt="Novapatch Sleep, Woman y Shield"
-                fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                priority
-                className="object-cover object-top"
-              />
-            </div>
+            <HeroImageWithScroll />
           </FadeIn>
 
           <FadeIn x={40} y={0} duration={0.7}>
-            <div className="flex flex-col justify-center">
-              <p className="home-section-eyebrow">Suscripciones</p>
-              <h1 className="home-section-title text-ocean">
-                El hábito que no tienes que recordar
+            <div className="flex flex-col justify-center text-left">
+              <h1 className="font-display font-semibold text-[#0F0F0F] tracking-[-0.035em] leading-tight text-4xl sm:text-5xl lg:text-6xl lowercase mb-4">
+                el hábito que no tienes que recordar.
               </h1>
-              <p className="home-section-subtitle max-w-md">
+              <p className="font-sans font-normal text-base sm:text-lg text-[#3A3A37] max-w-md leading-relaxed">
                 Elige tus parches, define cada cuánto los quieres y olvídate del resto. Con descuento, sin compromiso.
               </p>
-              <Link
-                href="/tienda"
-                className="mt-8 inline-flex w-full items-center justify-center rounded-full bg-ocean px-8 py-4 text-base font-bold text-white shadow-[0_4px_20px_rgba(0,80,136,0.18)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-ocean-dark hover:shadow-[0_8px_32px_rgba(0,80,136,0.28)] sm:w-auto"
-              >
-                Armar mi plan
-              </Link>
-              <p className="home-caption mt-3 text-center sm:text-left">
-                Pausa, cambia o cancela cuando quieras · Sin penalizaciones
-              </p>
+              <div className="mt-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <Link
+                  href="/tienda"
+                  className="w-full sm:w-auto inline-flex items-center justify-center rounded-full bg-[#0F0F0F] text-white border border-[#0F0F0F] hover:bg-white hover:text-[#0F0F0F] px-8 py-4 text-xs font-sans font-medium uppercase tracking-[0.12em] transition-all shadow-2xs active:scale-95 cursor-pointer"
+                >
+                  Armar mi plan
+                </Link>
+              </div>
             </div>
           </FadeIn>
         </section>
 
-        {/* Planes */}
-        <section id="planes" className="border-y border-[#E8E2D8] bg-white py-16 sm:py-20">
-          <div className="mx-auto max-w-6xl px-6">
+        {/* ── Planes / Frecuencias ── */}
+        <section id="planes" className="border-y border-[#E6E1D8] bg-white py-16 sm:py-20">
+          <div className="mx-auto max-w-[1240px] px-6 sm:px-10 text-left">
             <FadeIn>
-              <p className="home-section-eyebrow">Frecuencias</p>
-              <h2 className="home-section-title text-ocean">Cada producto, a tu ritmo</h2>
-              <p className="home-section-subtitle mb-10 max-w-xl">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-semibold text-[#0F0F0F] tracking-[-0.03em] leading-tight lowercase">
+                cada producto, a tu ritmo.
+              </h2>
+              <p className="font-sans font-normal text-sm sm:text-base text-[#3A3A37] mt-3 mb-10 max-w-xl leading-relaxed">
                 Mientras más seguido recibes, mayor es el descuento. Cada parche puede tener su propia frecuencia.
               </p>
             </FadeIn>
 
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-              {frecuencias.map((f, i) => (
-                <FadeIn key={f.freq} delay={i * 0.1} y={24}>
-                  <div
-                    className="rounded-2xl border-2 px-5 py-5 text-left"
-                    style={{
-                      borderColor: f.best ? "var(--color-ocean)" : "#E7E1D6",
-                      background: f.best ? "color-mix(in srgb, var(--color-sky-pale) 45%, #fff)" : "#FCFAF6",
-                      boxShadow: f.best ? "0 4px 16px rgba(13,27,53,0.08)" : "none",
-                    }}
-                  >
-                    {f.best && (
-                      <span className="mb-3 inline-block rounded-full bg-ocean px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-white">
-                        Más popular
-                      </span>
-                    )}
-                    <p className="home-item-title">{f.label}</p>
-                    <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                      <span className="home-caption text-base line-through">
-                        {formatPrice(f.basePrice, market.currency, market.locale)}
-                      </span>
-                      <span className="text-2xl font-black text-ocean">
-                        {formatPrice(f.price, market.currency, market.locale)}
-                        <span className="home-caption ml-1 text-sm font-medium">/ caja</span>
-                      </span>
-                    </div>
-                    <p className="home-body mt-2">
-                      <span className="font-bold text-teal">{f.discountPct}% de descuento</span>
-                      {" · "}
-                      <span className="font-bold text-[#1E7D4F]">
-                        Ahorras {formatPrice(f.basePrice - f.price, market.currency, market.locale)}
-                      </span>
-                    </p>
-                    <p className="home-caption mt-2">Cada {f.freq} días</p>
-                  </div>
-                </FadeIn>
-              ))}
-            </div>
-          </div>
-        </section>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3 items-stretch">
+              {frecuencias.map((f, i) => {
+                const isHero = f.best || f.discountPct >= 20;
 
-        {/* Cómo funciona — compacto */}
-        <section className="mx-auto max-w-6xl px-6 py-16 sm:py-20">
-          <div className="grid items-start gap-10 lg:grid-cols-[1fr_280px] lg:gap-12">
-            <FadeIn className="lg:col-start-1 lg:row-start-1">
-              <p className="home-section-eyebrow">El proceso</p>
-              <h2 className="home-section-title text-ocean">Así de simple</h2>
-            </FadeIn>
+                return (
+                  <FadeIn key={f.freq} delay={i * 0.1} y={24}>
+                    <div
+                      className={`relative rounded-2xl p-7 text-left flex flex-col justify-between h-full ${
+                        isHero
+                          ? "bg-[#0F0F0F] text-white shadow-xl ring-1 ring-[#0F0F0F] scale-[1.02] md:-translate-y-2"
+                          : "bg-white text-[#0F0F0F] border border-[#E6E1D8] shadow-2xs"
+                      }`}
+                    >
+                      <div>
+                        {/* Top Badge & Discount Pill */}
+                        <div className="flex items-center justify-between mb-4">
+                          <span
+                            className={`px-3 py-1 rounded-full text-[10px] font-sans font-semibold uppercase tracking-[0.12em] ${
+                              isHero
+                                ? "bg-white text-[#0F0F0F]"
+                                : "bg-[#FAF8F5] border border-[#E6E1D8] text-[#3A3A37]"
+                            }`}
+                          >
+                            {isHero ? "MÁS POPULAR · RECOMENDADO" : `FRECUENCIA ${f.freq} DÍAS`}
+                          </span>
 
-            <FadeIn
-              x={40}
-              y={0}
-              delay={0.15}
-              duration={0.7}
-              className="mx-auto w-full max-w-[280px] lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:mx-0 lg:sticky lg:top-28"
-            >
-              <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[24px] shadow-[0_8px_32px_rgba(0,0,0,0.08)]">
-                <video
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  preload="metadata"
-                  poster="/productusers/woman-using-patch.webp"
-                  className="h-full w-full object-cover"
-                  aria-label="Cómo funcionan las suscripciones Novapatch"
-                >
-                  <source src="/videos/suscripciones.mp4" type="video/mp4" />
-                </video>
-              </div>
-            </FadeIn>
+                          <span
+                            className={`font-mono text-xs font-bold px-2.5 py-0.5 rounded-full ${
+                              isHero
+                                ? "bg-white/15 text-white"
+                                : "bg-[#0F0F0F] text-white"
+                            }`}
+                          >
+                            {f.discountPct}% OFF
+                          </span>
+                        </div>
 
-            <div className="lg:col-start-1 lg:row-start-2">
-              <div className="grid gap-10 sm:grid-cols-3 lg:mt-12">
-                {steps.map((step, i) => (
-                  <FadeIn key={step.n} delay={i * 0.1} y={24}>
-                    <div className="border-t-2 border-ocean pt-5">
-                      <span className="block text-[clamp(40px,4vw,56px)] font-black leading-none text-ocean">
-                        {step.n}
-                      </span>
-                      <h3 className="home-item-title mt-4">{step.title}</h3>
-                      <p className="home-body mt-2">{step.desc}</p>
+                        {/* Title & Frequency */}
+                        <h3
+                          className={`text-2xl sm:text-3xl font-display font-semibold lowercase mb-1 ${
+                            isHero ? "text-white" : "text-[#0F0F0F]"
+                          }`}
+                        >
+                          {f.label}
+                        </h3>
+                        <p
+                          className={`text-xs font-sans mb-6 ${
+                            isHero ? "text-stone-400" : "text-[#A8A29A]"
+                          }`}
+                        >
+                          Entrega automática cada {f.freq} días en tu puerta.
+                        </p>
+
+                        {/* Price & Savings Block */}
+                        <div
+                          className={`p-4 rounded-xl mb-6 ${
+                            isHero ? "bg-white/10 border border-white/10" : "bg-[#FAF8F5] border border-[#E6E1D8]"
+                          }`}
+                        >
+                          <div className="flex items-baseline gap-2 mb-1">
+                            <span
+                              className={`font-mono text-sm line-through ${
+                                isHero ? "text-stone-400" : "text-[#A8A29A]"
+                              }`}
+                            >
+                              {formatPrice(f.basePrice, market.currency, market.locale)}
+                            </span>
+                            <span
+                              className={`text-3xl font-mono font-extrabold ${
+                                isHero ? "text-white" : "text-[#0F0F0F]"
+                              }`}
+                            >
+                              {formatPrice(f.price, market.currency, market.locale)}
+                            </span>
+                            <span
+                              className={`text-xs font-sans ${
+                                isHero ? "text-stone-300" : "text-[#A8A29A]"
+                              }`}
+                            >
+                              / sobre
+                            </span>
+                          </div>
+
+                          <div
+                            className={`text-xs font-sans font-medium ${
+                              isHero ? "text-emerald-400" : "text-[#0F0F0F]"
+                            }`}
+                          >
+                            Ahorras {formatPrice(f.basePrice - f.price, market.currency, market.locale)} por sobre
+                          </div>
+                        </div>
+
+                        {/* Feature Bullet List */}
+                        <ul className="space-y-2.5 text-xs font-sans">
+                          {isHero && (
+                            <li className="flex items-center gap-2">
+                              <span className="text-xs text-white">✓</span>
+                              <span className="text-white font-semibold">
+                                Regalo sorpresa exclusivo en cada entrega
+                              </span>
+                            </li>
+                          )}
+                          <li className="flex items-center gap-2">
+                            <span className={`text-xs ${isHero ? "text-white" : "text-[#0F0F0F]"}`}>✓</span>
+                            <span className={isHero ? "text-stone-200" : "text-[#3A3A37]"}>Envío automático prioritario</span>
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className={`text-xs ${isHero ? "text-white" : "text-[#0F0F0F]"}`}>✓</span>
+                            <span className={isHero ? "text-stone-200" : "text-[#3A3A37]"}>Pausa o cancela sin comisiones</span>
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className={`text-xs ${isHero ? "text-white" : "text-[#0F0F0F]"}`}>✓</span>
+                            <span className={isHero ? "text-stone-200" : "text-[#3A3A37]"}>Descuento permanente asegurado</span>
+                          </li>
+                        </ul>
+                      </div>
                     </div>
                   </FadeIn>
-                ))}
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* ── El Proceso / Cómo funciona ── */}
+        <section className="py-16 sm:py-20 text-left">
+          <div className="mx-auto max-w-[1240px] px-6 sm:px-10">
+            <div className="grid items-start gap-10 lg:grid-cols-[1fr_320px] lg:gap-12">
+              <FadeIn className="lg:col-start-1 lg:row-start-1">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-semibold text-[#0F0F0F] tracking-[-0.03em] leading-tight lowercase">
+                  así de simple.
+                </h2>
+              </FadeIn>
+
+              <FadeIn
+                x={40}
+                y={0}
+                delay={0.15}
+                duration={0.7}
+                className="mx-auto w-full max-w-[320px] lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:mx-0 lg:sticky lg:top-28"
+              >
+                <ProcessImageWithScroll />
+              </FadeIn>
+
+              <div className="lg:col-start-1 lg:row-start-2">
+                <div className="grid gap-10 sm:grid-cols-3 lg:mt-8">
+                  {steps.map((step, i) => (
+                    <FadeIn key={step.n} delay={i * 0.1} y={24}>
+                      <div className="border-t border-[#E6E1D8] pt-5">
+                        <span className="block text-4xl sm:text-5xl font-mono font-bold text-[#0F0F0F]">
+                          {String(step.n).padStart(2, "0")}
+                        </span>
+                        <h3 className="font-sans font-semibold text-base sm:text-lg text-[#0F0F0F] mt-3">{step.title}</h3>
+                        <p className="font-sans font-normal text-xs sm:text-sm text-[#3A3A37] mt-1.5 leading-relaxed">{step.desc}</p>
+                      </div>
+                    </FadeIn>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Control total */}
-        <section className="bg-blush px-6 py-16 sm:py-20">
-          <div className="mx-auto max-w-6xl">
+        {/* ── Control Total ── */}
+        <section className="bg-white border-y border-[#E6E1D8] py-16 sm:py-20 text-left">
+          <div className="mx-auto max-w-[1240px] px-6 sm:px-10">
             <FadeIn>
-              <p className="home-section-eyebrow">Control total</p>
-              <h2 className="home-section-title text-ocean">Tú tienes el control, siempre.</h2>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-semibold text-[#0F0F0F] tracking-[-0.03em] leading-tight lowercase">
+                tú tienes el control, siempre.
+              </h2>
             </FadeIn>
 
             <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
               {controlItems.map((item, i) => (
                 <FadeIn key={item.title} delay={i * 0.1} y={24}>
-                  <div
-                    className="flex h-full flex-col gap-4 rounded-3xl bg-white p-7 shadow-[0_4px_16px_rgba(0,0,0,0.05)]"
-                    style={{ border: "1px solid rgba(0,80,136,0.08)" }}
-                  >
-                    <div className="text-ocean">{item.icon}</div>
-                    <h3 className="home-item-title">{item.title}</h3>
-                    <p className="home-body">{item.desc}</p>
+                  <div className="flex h-full flex-col justify-between gap-4 rounded-xl bg-[#FAF8F5] border border-[#E6E1D8] p-7 shadow-2xs hover:border-[#AEAEAF] hover:shadow-md transition-all">
+                    <div className="flex flex-col gap-3">
+                      <div className="text-[#0F0F0F]">{item.icon}</div>
+                      <h3 className="font-sans font-semibold text-base sm:text-lg text-[#0F0F0F]">{item.title}</h3>
+                      <p className="font-sans font-normal text-xs sm:text-sm text-[#3A3A37] leading-relaxed">{item.desc}</p>
+                    </div>
                   </div>
                 </FadeIn>
               ))}
@@ -226,37 +292,40 @@ export default async function SuscripcionesPage({
           </div>
         </section>
 
-        {/* FAQ */}
-        <section className="bg-white px-6 py-16 sm:py-20">
-          <div className="mx-auto max-w-2xl">
+        {/* ── FAQ ── */}
+        <section className="bg-[#FAF8F5] py-16 sm:py-20 text-left">
+          <div className="mx-auto max-w-[1240px] px-6 sm:px-10">
             <FadeIn>
-              <p className="home-section-eyebrow">Antes de empezar</p>
-              <h2 className="home-section-title text-ocean">Preguntas frecuentes</h2>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-semibold text-[#0F0F0F] tracking-[-0.03em] leading-tight lowercase mb-10">
+                preguntas frecuentes.
+              </h2>
             </FadeIn>
-            <FadeIn delay={0.1} className="mt-10">
+            <FadeIn delay={0.1}>
               <SubscriptionsFAQ />
             </FadeIn>
           </div>
         </section>
 
-        {/* CTA final */}
-        <section className="bg-white px-6 pb-24">
-          <FadeIn y={40} duration={0.7}>
-            <div className="mx-auto flex max-w-6xl flex-col items-start gap-6 rounded-[28px] border border-[#E8E2D8] bg-white px-10 py-12 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h2 className="text-[clamp(24px,2.5vw,32px)] font-black leading-tight text-[#0D1B35]">
-                  ¿Listo para empezar?
+        {/* ── CTA Final ── */}
+        <section className="bg-[#FAF8F5] pb-24">
+          <div className="mx-auto max-w-[1240px] px-6 sm:px-10">
+            <FadeIn y={30} duration={0.6}>
+              <div className="rounded-xl p-8 sm:p-12 bg-white border border-[#E6E1D8] shadow-2xs text-center flex flex-col items-center gap-4 sm:gap-6">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-semibold text-[#0F0F0F] tracking-[-0.035em] leading-tight lowercase">
+                  ¿listo para empezar tu plan?
                 </h2>
-                <p className="home-body mt-1">Elige tus parches en la tienda y activa tu suscripción al checkout.</p>
+                <p className="font-sans font-normal text-sm sm:text-base text-[#3A3A37] max-w-md">
+                  Elige tus parches en la tienda y activa tu suscripción al checkout.
+                </p>
+                <Link
+                  href="/tienda"
+                  className="mt-2 inline-flex items-center justify-center rounded-full bg-[#0F0F0F] text-white border border-[#0F0F0F] hover:bg-white hover:text-[#0F0F0F] px-8 py-4 text-[11px] font-sans font-medium uppercase tracking-[0.12em] transition-all shadow-2xs active:scale-95 cursor-pointer"
+                >
+                  Ir a la tienda
+                </Link>
               </div>
-              <Link
-                href="/tienda"
-                className="inline-flex shrink-0 items-center justify-center rounded-full bg-ocean px-10 py-4 text-base font-bold text-white shadow-[0_4px_20px_rgba(0,80,136,0.18)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-ocean-dark hover:shadow-[0_8px_32px_rgba(0,80,136,0.28)]"
-              >
-                Ir a la tienda
-              </Link>
-            </div>
-          </FadeIn>
+            </FadeIn>
+          </div>
         </section>
 
       </main>

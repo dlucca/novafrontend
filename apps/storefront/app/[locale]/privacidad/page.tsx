@@ -70,43 +70,48 @@ export default function PrivacidadPage() {
   return (
     <>
       <Navbar lightBg />
-      <main>
-        {/* Hero */}
-        <section className="pt-32 pb-16 px-6 text-center" style={{ background: "#FEF7ED" }}>
-          <div className="max-w-2xl mx-auto">
-            <p className="home-section-eyebrow">Legal</p>
-            <h1 className="home-section-title text-ocean">Aviso de Privacidad</h1>
-            <p className="home-caption">Última actualización: enero de 2025 · Cumplimiento LFPDPPP</p>
+      <main className="min-h-screen bg-[#FAF8F5]">
+
+        {/* Hero Stage */}
+        <section className="pt-32 pb-16 px-6 sm:px-10 max-w-[1240px] mx-auto">
+          <div className="bg-white rounded-xl border border-[#E6E1D8] p-8 sm:p-14 text-left shadow-2xs">
+            <p className="text-xs font-sans font-medium uppercase tracking-[0.14em] text-[#A8A29A] mb-3">
+              legal & protección de datos
+            </p>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-semibold text-[#0F0F0F] tracking-[-0.035em] leading-tight lowercase mb-4">
+              aviso de privacidad.
+            </h1>
+            <p className="font-sans text-xs sm:text-sm text-[#A8A29A]">
+              Última actualización: enero de 2026
+            </p>
           </div>
         </section>
 
         {/* Content */}
-        <section className="py-16 px-6 bg-[#FAF7F2]">
-          <div className="max-w-3xl mx-auto">
-            <div className="flex flex-col gap-10">
-              {sections.map((s, i) => (
-                <div key={i} className="flex flex-col gap-3">
-                  <h2 className="text-xl font-bold text-[#005088]">{s.title}</h2>
-                  <p className="text-[#6B7280] leading-relaxed whitespace-pre-line text-base">{s.content}</p>
-                </div>
-              ))}
-            </div>
+        <section className="py-20 px-6 sm:px-10 max-w-[1240px] mx-auto border-t border-[#E6E1D8] text-left">
+          <div className="max-w-3xl space-y-10">
+            {sections.map((s, i) => (
+              <div key={i} className="space-y-2">
+                <h2 className="text-xl font-display font-semibold text-[#0F0F0F] lowercase">{s.title}</h2>
+                <p className="font-sans text-sm text-[#3A3A37] leading-relaxed whitespace-pre-line">{s.content}</p>
+              </div>
+            ))}
 
             {/* Contact ARCO box */}
-            <div className="mt-12 bg-[#F8EDEB] rounded-3xl p-8 border border-[#005088]/15">
-              <h3 className="text-lg font-bold text-[#005088] mb-2">Contacto</h3>
-              <p className="text-[#6B7280] mb-4">
-                Para dudas sobre este Aviso de Privacidad o para ejercer tus derechos ARCO, contáctanos en:
-              </p>
-              <div className="flex flex-col gap-1">
-                <a href="mailto:info@novapatch.care" className="text-[#3CBFAB] font-semibold hover:underline">
+            <div className="pt-8 border-t border-[#E6E1D8]">
+              <div className="p-6 rounded-xl bg-white border border-[#E6E1D8] shadow-2xs">
+                <h3 className="font-display font-semibold text-lg text-[#0F0F0F] lowercase mb-1">contacto arco</h3>
+                <p className="font-sans text-xs text-[#3A3A37] mb-3">
+                  Para dudas sobre este Aviso de Privacidad o para ejercer tus derechos ARCO, contáctanos en:
+                </p>
+                <a href="mailto:info@novapatch.care" className="font-sans text-xs font-medium text-[#0F0F0F] underline">
                   info@novapatch.care
                 </a>
-                <p className="text-[#6B7280]">55 4545 1328</p>
               </div>
             </div>
           </div>
         </section>
+
       </main>
       <Footer />
     </>

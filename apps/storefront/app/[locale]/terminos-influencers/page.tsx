@@ -59,26 +59,17 @@ export default function TerminosInfluencersPage() {
   return (
     <>
       <Navbar lightBg />
-      <main style={{ background: "#FAF7F2" }}>
+      <main className="bg-[#FAF8F5]">
         {/* Header */}
-        <section
-          className="pt-32 pb-16 px-6"
-          style={{ borderBottom: "1px solid rgba(13,27,53,0.08)" }}
-        >
+        <section className="pt-32 pb-16 px-6 border-b border-[#E6E1D8]">
           <div className="max-w-3xl mx-auto">
-            <p
-              className="text-xs font-semibold tracking-widest uppercase mb-4"
-              style={{ color: "#E8503A" }}
-            >
-              Legal · Programa de Influencers
-            </p>
-            <h1
-              className="text-4xl font-bold mb-4"
-              style={{ color: "#0D1B35", letterSpacing: "-0.02em" }}
-            >
-              Términos de Colaboración
+            <span className="text-[11px] font-sans font-medium uppercase tracking-[0.14em] text-[#A8A29A] block mb-3">
+              legal · programa de influencers
+            </span>
+            <h1 className="text-3xl sm:text-4xl font-display font-semibold text-[#0F0F0F] tracking-[-0.035em] lowercase mb-4">
+              términos de colaboración.
             </h1>
-            <p style={{ color: "rgba(13,27,53,0.5)", lineHeight: 1.7 }}>
+            <p className="text-xs font-mono text-[#A8A29A]">
               Versión 1.0 · Vigente desde abril 2026 · México
             </p>
           </div>
@@ -87,11 +78,8 @@ export default function TerminosInfluencersPage() {
         {/* Intro callout */}
         <section className="px-6 py-10">
           <div className="max-w-3xl mx-auto">
-            <div
-              className="rounded-2xl px-7 py-6"
-              style={{ background: "rgba(232,80,58,0.06)", border: "1px solid rgba(232,80,58,0.15)" }}
-            >
-              <p className="text-base leading-relaxed" style={{ color: "rgba(13,27,53,0.7)" }}>
+            <div className="rounded-xl px-7 py-6 bg-white border border-[#E6E1D8] shadow-2xs">
+              <p className="text-sm font-sans text-[#3A3A37] leading-relaxed">
                 Este documento describe cómo funciona la relación entre Novapatch y los creadores de contenido que forman parte de nuestro programa de embajadores. Lo escribimos en lenguaje claro para que sepas exactamente qué podés esperar de nosotros y qué esperamos de vos.
               </p>
             </div>
@@ -103,39 +91,29 @@ export default function TerminosInfluencersPage() {
           <div className="max-w-3xl mx-auto flex flex-col gap-10">
             {SECTIONS.map((s) => (
               <div key={s.title}>
-                <h2
-                  className="text-lg font-bold mb-3"
-                  style={{ color: "#0D1B35" }}
-                >
+                <h2 className="text-base font-display font-semibold text-[#0F0F0F] tracking-[-0.02em] lowercase mb-3">
                   {s.title}
                 </h2>
-                <div
-                  className="text-base leading-relaxed whitespace-pre-line"
-                  style={{ color: "rgba(13,27,53,0.65)" }}
-                >
+                <div className="text-sm font-sans text-[#3A3A37] leading-relaxed whitespace-pre-line">
                   {s.body}
                 </div>
               </div>
             ))}
 
             {/* CTA back to form */}
-            <div
-              className="mt-6 pt-10 flex flex-col sm:flex-row items-start sm:items-center gap-4"
-              style={{ borderTop: "1px solid rgba(13,27,53,0.08)" }}
-            >
+            <div className="mt-6 pt-10 flex flex-col sm:flex-row items-start sm:items-center gap-4 border-t border-[#E6E1D8]">
               <a
                 href="/influencers#aplicar"
-                className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full font-semibold text-sm text-white"
-                style={{ background: "#E8503A" }}
+                className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full text-xs font-sans font-medium uppercase tracking-[0.12em] bg-[#0F0F0F] text-white border border-[#0F0F0F] hover:bg-white hover:text-[#0F0F0F] transition-all cursor-pointer"
               >
                 Volver a postularme
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
                   <path d="M2.5 7H11.5M11.5 7L7 2.5M11.5 7L7 11.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </a>
-              <p className="text-sm" style={{ color: "rgba(13,27,53,0.4)" }}>
+              <p className="text-xs font-sans text-[#A8A29A]">
                 ¿Tenés preguntas? Escribinos a{" "}
-                <a href="mailto:hola@novapatch.care" style={{ color: "#E8503A" }}>
+                <a href="mailto:hola@novapatch.care" className="text-[#0F0F0F] underline font-medium">
                   hola@novapatch.care
                 </a>
               </p>

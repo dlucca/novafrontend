@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import Navbar from "@/components/Navbar";
-import HeroWithBar from "@/components/home/HeroWithBar";
+import HeroSection from "@/components/home/HeroSection";
 import HowItWorks from "@/components/home/HowItWorks";
 import ComparisonTable from "@/components/home/ComparisonTable";
 import FeaturesBanner from "@/components/home/FeaturesBanner";
@@ -10,7 +10,7 @@ import { MARKETS } from "@/lib/markets";
 import type { Locale } from "@/i18n/routing";
 
 // Client Components: lazy-loaded to unblock LCP/FCP
-const BestsellersGrid = dynamic(() => import("@/components/home/BestsellersGrid"));
+const ProductCarousel = dynamic(() => import("@/components/home/ProductCarousel"));
 const SocialCommunity = dynamic(() => import("@/components/home/SocialCommunity"));
 const AbsorptionSectionV2 = dynamic(() => import("@/components/home/AbsorptionSectionV2"));
 const WomanBanner     = dynamic(() => import("@/components/home/WomanBanner"));
@@ -19,8 +19,6 @@ const Footer          = dynamic(() => import("@/components/Footer"));
 
 export const revalidate = 3600;
 
-// Canonical por locale: evita que las variantes con UTM (?utm_source=meta…) se
-// indexen como páginas duplicadas. metadataBase está en el root layout.
 export async function generateMetadata({
   params,
 }: {
@@ -46,26 +44,26 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     <>
       <Navbar />
       <main>
-        {/* 1. Hero + Features Bar */}
-        <HeroWithBar />
+        {/* 1. Hero */}
+        <HeroSection />
 
-        {/* 2. Sección de Best Sellers (3 Columnas + Banner Ritual) */}
-        <BestsellersGrid products={products} basePrice={basePrice} currency={currency} />
+        {/* 2. Product Carousel */}
+        <ProductCarousel products={products} basePrice={basePrice} currency={currency} />
 
-        {/* 3. Sección de Social & Comunidad UGC */}
-        <SocialCommunity />
-
-        {/* 4. Tabla Comparativa General */}
+        {/* 3. Tabla Comparativa General */}
         <ComparisonTable />
+
+        {/* 4. Cómo Funciona */}
+        <HowItWorks />
 
         {/* 5. Banner de Atributos/Beneficios */}
         <FeaturesBanner />
 
-        {/* 6. Cómo Funciona */}
-        <HowItWorks />
-
-        {/* 7. Absorción y Ciencia V2 */}
+        {/* 6. Absorción y Ciencia V2 */}
         <AbsorptionSectionV2 />
+
+        {/* 7. Comunidad UGC & Reviews */}
+        <SocialCommunity />
 
         {/* 8. Banner Promocional Woman */}
         <WomanBanner />

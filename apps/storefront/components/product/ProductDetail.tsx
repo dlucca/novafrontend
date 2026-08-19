@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { useUser } from "@clerk/nextjs";
 import { useCart } from "@/contexts/CartContext";
 import { trackMeta } from "@/lib/meta";
@@ -26,6 +26,14 @@ const sectionReveal = {
   transition: { duration: 0.5, ease: "easeOut" as const },
 };
 
+function StarIcon({ size = 13, filled = true }: { size?: number; filled?: boolean }) {
+  return (
+    <svg viewBox="0 0 20 20" fill={filled ? "#0F0F0F" : "#E6E1D8"} width={size} height={size} className="shrink-0 inline-block">
+      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+    </svg>
+  );
+}
+
 type MediaItem = 
   | { type: "image"; src: string }
   | { type: "video"; src: string; thumbnail: string };
@@ -41,12 +49,15 @@ function Gallery({
   bg: string;
   accent: string;
 }) {
-  const [active, setActive] = useState(0);
+  const [[active, direction], setActiveState] = useState([0, 0]);
   const [isMuted, setIsMuted] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const prev = () => setActive((a) => (a - 1 + media.length) % media.length);
-  const next = () => setActive((a) => (a + 1) % media.length);
+  const setPage = (newIndex: number) => {
+    if (newIndex === active) return;
+    const dir = newIndex > active ? 1 : -1;
+    setActiveState([newIndex, dir]);
+  };
 
   useEffect(() => {
     if (videoRef.current) {
@@ -59,131 +70,126 @@ function Gallery({
   }, [active, media]);
 
   return (
-    <div>
-      <div
-        className="relative aspect-[4/5] w-full overflow-hidden rounded-[24px]"
-        style={{ background: bg }}
-      >
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={active}
-            className="absolute inset-0 flex items-center justify-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            {media[active].type === "image" ? (
-              <Image
+    <div 
+      style={{ aspectRatio: "1 / 1" }}
+      className="relative w-full max-w-[520px] max-h-[calc(100vh-150px)] mx-auto overflow-hidden rounded-2xl bg-white border border-[#E6E1D8] shadow-2xs group/gallery"
+    >
+      {/* Animated Image Stage with Slide Transition */}
+      <AnimatePresence mode="wait" custom={direction}>
+        <motion.div
+          key={active}
+          custom={direction}
+          variants={{
+            enter: (dir: number) => ({
+              x: dir > 0 ? 35 : -35,
+              opacity: 0,
+              scale: 0.98,
+            }),
+            center: {
+              x: 0,
+              opacity: 1,
+              scale: 1,
+            },
+            exit: (dir: number) => ({
+              x: dir > 0 ? -35 : 35,
+              opacity: 0,
+              scale: 0.98,
+            }),
+          }}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          className="absolute inset-0 flex items-center justify-center"
+        >
+          {media[active].type === "image" ? (
+            <Image
+              src={media[active].src}
+              alt={`${title} — imagen ${active + 1}`}
+              fill
+              priority={active === 0}
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover p-0 select-none pointer-events-none"
+            />
+          ) : (
+            <div className="relative w-full h-full">
+              <video
+                ref={videoRef}
                 src={media[active].src}
-                alt={`${title} — imagen ${active + 1}`}
-                fill
-                priority={active === 0}
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-contain p-3 sm:p-1"
-              />
-            ) : (
-              <div className="relative w-full h-full">
-                <video
-                  ref={videoRef}
-                  src={media[active].src}
-                  loop
-                  muted={isMuted}
-                  playsInline
-                  autoPlay
-                  onClick={() => {
-                    if (videoRef.current) {
-                      if (videoRef.current.paused) {
-                        videoRef.current.play();
-                      } else {
-                        videoRef.current.pause();
-                      }
+                loop
+                muted={isMuted}
+                playsInline
+                autoPlay
+                onClick={() => {
+                  if (videoRef.current) {
+                    if (videoRef.current.paused) {
+                      videoRef.current.play();
+                    } else {
+                      videoRef.current.pause();
                     }
-                  }}
-                  className="w-full h-full object-cover cursor-pointer"
-                />
-                
-                {/* Mute/unmute button */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsMuted(!isMuted);
-                  }}
-                  className="absolute bottom-4 right-4 z-[2] flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 transition active:scale-95"
-                >
-                  {isMuted ? (
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" style={{ width: "16px", height: "16px" }}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 9.75L19.5 12m0 0l2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6L4.5 9H1.5v6h3l4.5 3.75V5.25z" />
-                    </svg>
-                  ) : (
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" style={{ width: "16px", height: "16px" }}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
-                    </svg>
-                  )}
-                </button>
-                
-                {/* Visual indicator that it's a video */}
-                <div className="absolute top-4 left-4 z-[2] flex items-center gap-1.5 rounded-full bg-black/60 px-3 py-1 text-[11px] font-bold text-white uppercase tracking-wider backdrop-blur-sm">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                  Video UGC
-                </div>
+                  }
+                }}
+                className="w-full h-full object-cover cursor-pointer"
+              />
+              
+              {/* Mute/unmute button */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsMuted(!isMuted);
+                }}
+                className="absolute bottom-4 right-4 z-[2] flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 transition active:scale-95"
+              >
+                {isMuted ? (
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" style={{ width: "16px", height: "16px" }}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 9.75L19.5 12m0 0l2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6L4.5 9H1.5v6h3l4.5 3.75V5.25z" />
+                  </svg>
+                ) : (
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" style={{ width: "16px", height: "16px" }}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
+                  </svg>
+                )}
+              </button>
+              
+              {/* Visual indicator that it's a video */}
+              <div className="absolute top-4 left-4 z-[2] flex items-center gap-1.5 rounded-full bg-black/60 px-3 py-1 text-[11px] font-sans font-medium text-white uppercase tracking-wider backdrop-blur-sm">
+                <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                Video UGC
               </div>
-            )}
-          </motion.div>
-        </AnimatePresence>
-        {media.length > 1 && (
-          <>
-            <button
-              onClick={prev}
-              aria-label="Media anterior"
-              className="absolute left-3 top-1/2 z-[1] flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-[#0D1B35] shadow-[0_2px_10px_rgba(13,27,53,0.12)] transition hover:bg-white active:scale-95"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" style={{ width: "18px", height: "18px" }}>
-                <path d="M15 5l-7 7 7 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-            <button
-              onClick={next}
-              aria-label="Media siguiente"
-              className="absolute right-3 top-1/2 z-[1] flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-[#0D1B35] shadow-[0_2px_10px_rgba(13,27,53,0.12)] transition hover:bg-white active:scale-95"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" style={{ width: "18px", height: "18px" }}>
-                <path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-          </>
-        )}
-      </div>
+            </div>
+          )}
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Translucent Overlay Floating Thumbnails at Bottom-Left */}
       {media.length > 1 && (
-        <div className="mt-4 flex flex-wrap gap-2.5 justify-center md:justify-start">
+        <div className="absolute bottom-4 left-4 z-20 flex gap-2 p-1.5 rounded-2xl bg-white/40 backdrop-blur-md border border-white/60 shadow-md max-w-[calc(100%-2rem)] overflow-x-auto">
           {media.map((item, i) => (
             <button
               key={i}
-              onClick={() => setActive(i)}
+              onMouseEnter={() => setPage(i)}
+              onClick={() => setPage(i)}
               aria-label={`Ver media ${i + 1}`}
               aria-current={i === active}
-              className={`relative aspect-[4/5] h-20 w-16 overflow-hidden rounded-2xl border-2 transition-all duration-200 group flex-shrink-0 ${
+              className={`relative aspect-square h-12 w-12 overflow-hidden rounded-xl border transition-all duration-200 group/thumb flex-shrink-0 cursor-pointer ${
                 i === active 
-                  ? 'border-black scale-105 shadow-md' 
-                  : 'border-transparent hover:border-gray-300'
+                  ? 'border-[#0F0F0F] bg-white scale-105 shadow-sm opacity-100 ring-2 ring-black/10' 
+                  : 'border-white/50 bg-white/70 opacity-70 hover:opacity-100 hover:scale-105 hover:bg-white hover:border-white'
               }`}
-              style={{
-                background: bg,
-              }}
             >
               <Image 
                 src={item.type === "image" ? item.src : item.thumbnail} 
                 alt={`${title} vista ${i + 1}`}
                 fill 
-                sizes="120px"
-                className="object-cover" 
+                sizes="80px"
+                className="object-cover p-0" 
               />
               
               {/* Play icon overlay on the video thumbnail */}
               {item.type === "video" && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/20 group hover:bg-black/30 transition">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-[#0D1B35] shadow-md transition group-hover:scale-110">
-                    <svg className="w-3 h-3 ml-0.5" fill="currentColor" viewBox="0 0 24 24" style={{ width: "12px", height: "12px" }}>
+                <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover/thumb:bg-black/30 transition">
+                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-white/90 text-[#0D1B35] shadow-xs">
+                    <svg className="w-2.5 h-2.5 ml-0.5" fill="currentColor" viewBox="0 0 24 24" style={{ width: "10px", height: "10px" }}>
                       <path d="M8 5v14l11-7z" />
                     </svg>
                   </div>
@@ -241,8 +247,7 @@ function HowItWorksPdpImage({
 
   return (
     <div
-      className="relative aspect-[4/5] overflow-hidden rounded-[24px]"
-      style={{ background: bg }}
+      className="relative aspect-[4/5] overflow-hidden rounded-xl bg-white border border-[#E6E1D8] shadow-2xs"
     >
       <AnimatePresence mode="sync">
         <motion.div
@@ -258,10 +263,120 @@ function HowItWorksPdpImage({
             alt={`${title} en uso (${index + 1})`}
             fill
             sizes="(max-width: 1024px) 100vw, 40vw"
-            className="object-cover"
+            className="object-contain p-4 sm:p-6"
           />
         </motion.div>
       </AnimatePresence>
+    </div>
+  );
+}
+
+const USAGE_IMAGES = [
+  { src: "/productusers/Howtouse_1.webp", alt: "Paso 1: Aplicar parche Novapatch" },
+  { src: "/productusers/Howtouse_2.webp", alt: "Paso 2: Liberación gradual de activos" },
+  { src: "/productusers/Howtouse_3.webp", alt: "Paso 3: Disfrutar del bienestar continuo" },
+];
+
+function PdpUsageImage() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"],
+  });
+  const imageScale = useTransform(scrollYProgress, [0, 0.6], [1.14, 1.0]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % USAGE_IMAGES.length);
+    }, 3500);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div
+      ref={containerRef}
+      className="relative aspect-square w-full overflow-hidden rounded-xl bg-white shadow-2xs border border-[#E6E1D8]"
+    >
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={USAGE_IMAGES[currentIndex].src}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.35, ease: "easeOut" }}
+          className="absolute inset-0"
+        >
+          <motion.div style={{ scale: imageScale }} className="w-full h-full relative">
+            <Image
+              src={USAGE_IMAGES[currentIndex].src}
+              alt={USAGE_IMAGES[currentIndex].alt}
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover"
+              priority={currentIndex === 0}
+            />
+          </motion.div>
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function HowItWorksBannerCard({
+  introText,
+  detailText,
+}: {
+  introText: string;
+  detailText: string;
+}) {
+  return (
+    <div className="relative w-full aspect-[16/9] sm:aspect-[21/9] sm:min-h-[340px] lg:min-h-[380px] rounded-2xl overflow-hidden bg-[#FAF8F5] border border-[#E6E1D8] shadow-md flex flex-col justify-end p-6 sm:p-9 lg:p-10 text-left">
+      {/* Background Image */}
+      <div className="absolute inset-0">
+        <Image
+          src="/infographic/Banner_howitworks_pdp.webp"
+          alt="Cómo funciona Novapatch"
+          fill
+          sizes="(max-width: 1400px) 100vw, 1240px"
+          className="object-cover object-center"
+          priority
+        />
+      </div>
+
+      {/* Soft Bone (#FAF8F5) Gradient Overlay for Elegant Left Side Text Blend */}
+      <div className="absolute inset-0 bg-gradient-to-t from-[#FAF8F5] via-[#FAF8F5]/90 to-transparent sm:bg-gradient-to-r sm:from-[#FAF8F5] sm:via-[#FAF8F5]/85 sm:to-transparent z-[1] pointer-events-none" />
+
+      {/* Hero Text Content Layer: 50% del espacio izquierdo en desktop */}
+      <div className="relative z-10 w-full lg:w-1/2 lg:max-w-[50%] flex flex-col justify-end">
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-semibold text-[#0F0F0F] tracking-[-0.035em] leading-tight lowercase mb-4">
+          cómo funciona.
+        </h2>
+
+        {/* Pill Badges */}
+        <div className="flex flex-wrap gap-2.5 mb-5">
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-[#E6E1D8] text-xs font-sans font-medium text-[#0F0F0F] shadow-2xs">
+            <span className="text-[#A8A29A]">✓</span> Liberación tópica gradual
+          </span>
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-[#E6E1D8] text-xs font-sans font-medium text-[#0F0F0F] shadow-2xs">
+            <span className="text-[#A8A29A]">✓</span> 0% impacto digestivo
+          </span>
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-[#E6E1D8] text-xs font-sans font-medium text-[#0F0F0F] shadow-2xs">
+            <span className="text-[#A8A29A]">✓</span> Absorción continua de 10h
+          </span>
+        </div>
+
+        <div className="space-y-3">
+          <p className="font-sans font-normal text-sm sm:text-base text-[#3A3A37] leading-relaxed">
+            {introText}
+          </p>
+          <p className="font-sans font-normal text-sm sm:text-base text-[#3A3A37] leading-relaxed">
+            {detailText}
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
@@ -273,7 +388,6 @@ const SYNERGY_SECTIONS: Record<string, {
   cards: {
     icon: string;
     timeTag: string;
-    timeBg: string;
     name: string;
     text: string;
     img: string;
@@ -288,7 +402,6 @@ const SYNERGY_SECTIONS: Record<string, {
       {
         icon: "",
         timeTag: "MAÑANA · 8:00 AM",
-        timeBg: "#005088",
         name: "Novapatch Energy",
         text: "Acompaña tu jornada con foco sostenido y claridad mental. Sin cafeína extra, sin temblores ni picos repentinos.",
         img: "/products/Energy_thumb.webp",
@@ -297,7 +410,6 @@ const SYNERGY_SECTIONS: Record<string, {
       {
         icon: "",
         timeTag: "NOCHE · 10:00 PM",
-        timeBg: "#432360",
         name: "Novapatch Sleep",
         text: "Aplica 1 hora antes de acostarte para acompañar la bajada de ritmo y preparar el cuerpo para un descanso reparador.",
         img: "/products/Sleep_thumb.webp",
@@ -313,7 +425,6 @@ const SYNERGY_SECTIONS: Record<string, {
       {
         icon: "",
         timeTag: "TARDE · 5:00 PM",
-        timeBg: "#3A6FA8",
         name: "Novapatch Zen",
         text: "Acompaña la calma funcional por la tarde, ayudando a transitar horas de alta exigencia con serenidad sin somnolencia.",
         img: "/products/Zen_thumb.webp",
@@ -322,7 +433,6 @@ const SYNERGY_SECTIONS: Record<string, {
       {
         icon: "",
         timeTag: "NOCHE · 10:00 PM",
-        timeBg: "#432360",
         name: "Novapatch Sleep",
         text: "Aplica 1 hora antes de acostarte para acompañar la bajada de ritmo y preparar el cuerpo para un descanso reparador.",
         img: "/products/Sleep_thumb.webp",
@@ -338,7 +448,6 @@ const SYNERGY_SECTIONS: Record<string, {
       {
         icon: "",
         timeTag: "MAÑANA · DÍA",
-        timeBg: "#C94030",
         name: "Novapatch Glow",
         text: "Acompaña la nutrición de la piel desde adentro con colágeno hidrolizado, ácido hialurónico, biotina y antioxidantes.",
         img: "/products/Glow_thumb.webp",
@@ -347,7 +456,6 @@ const SYNERGY_SECTIONS: Record<string, {
       {
         icon: "",
         timeTag: "DIARIO · A TU RITMO",
-        timeBg: "#8A3EBE",
         name: "Novapatch Woman",
         text: "Acompaña la estabilidad natural del bienestar femenino con fitoestrógenos botánicos de soya y minerales esenciales.",
         img: "/products/Woman_thumb.webp",
@@ -363,7 +471,6 @@ const SYNERGY_SECTIONS: Record<string, {
       {
         icon: "",
         timeTag: "MAÑANA · 8:00 AM",
-        timeBg: "#005088",
         name: "Novapatch Energy",
         text: "Acompaña tu jornada con claridad mental y foco sostenido sin picos de cafeína.",
         img: "/products/Energy_thumb.webp",
@@ -372,7 +479,6 @@ const SYNERGY_SECTIONS: Record<string, {
       {
         icon: "",
         timeTag: "TARDE · 5:00 PM",
-        timeBg: "#3A6FA8",
         name: "Novapatch Zen",
         text: "Acompaña la calma funcional por la tarde en momentos de exigencia sin somnolencia.",
         img: "/products/Zen_thumb.webp",
@@ -381,7 +487,6 @@ const SYNERGY_SECTIONS: Record<string, {
       {
         icon: "",
         timeTag: "NOCHE · 10:00 PM",
-        timeBg: "#432360",
         name: "Novapatch Sleep",
         text: "Aplica 1 hora antes de acostarte para acompañar la bajada de ritmo y preparar el descanso.",
         img: "/products/Sleep_thumb.webp",
@@ -413,7 +518,7 @@ function TierSelector({
 
   return (
     <div>
-      <p className="mb-3 text-sm font-semibold text-[#0D1B35]">¿Cómo quieres recibirlo?</p>
+      <p className="mb-3 text-sm font-sans font-semibold text-[#0F0F0F]">¿Cómo quieres recibirlo?</p>
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         {options.map((o) => {
           const isActive = o.tier === selected.tier;
@@ -426,32 +531,31 @@ function TierSelector({
               key={o.tier}
               onClick={() => onSelect(o)}
               aria-pressed={isActive}
-              className="rounded-2xl border-2 px-3.5 py-3 text-left transition flex flex-col justify-between"
-              style={{
-                borderColor: isActive ? color : "#E7E1D6",
-                background: isActive ? `color-mix(in srgb, ${bg} 45%, #fff)` : "#FCFAF6",
-                boxShadow: isActive ? "0 4px 16px rgba(13,27,53,0.08)" : "none",
-              }}
+              className={`rounded-xl border-2 px-3.5 py-3 text-left transition flex flex-col justify-between ${
+                isActive
+                  ? "border-[#0F0F0F] bg-white shadow-2xs"
+                  : "border-[#E6E1D8] bg-[#FAF8F5] hover:border-[#A8A29A]"
+              }`}
             >
               <div>
-                <span className="block text-xs font-semibold text-[#0D1B35]">{o.label}</span>
+                <span className="block text-xs font-sans font-semibold text-[#0F0F0F]">{o.label}</span>
                 {isBundle && originalPrice && (
-                  <span className="block text-[11px] font-bold text-stone-400 line-through mt-0.5">
+                  <span className="block text-[11px] font-mono font-medium text-[#A8A29A] line-through mt-0.5">
                     {formatPrice(originalPrice, currency)}
                   </span>
                 )}
-                <span className="mt-0.5 block text-lg font-extrabold text-[#0D1B35]">
+                <span className="mt-0.5 block text-base font-mono font-bold text-[#0F0F0F]">
                   {formatPrice(o.price, currency)}
                 </span>
               </div>
               <div>
                 {isBundle ? (
-                  <span className="mt-1 block text-[11px] font-extrabold uppercase tracking-tight" style={{ color }}>
+                  <span className="mt-1 block text-[10px] font-sans font-medium uppercase tracking-tight text-[#0F0F0F]">
                     {totalDiscountPct}% OFF TOTAL
                   </span>
                 ) : (
                   o.discountPct > 0 && (
-                    <span className="mt-0.5 block text-[11px] font-bold" style={{ color }}>
+                    <span className="mt-0.5 block text-[10px] font-sans font-medium uppercase tracking-tight text-[#0F0F0F]">
                       {o.discountPct}% OFF
                     </span>
                   )
@@ -476,27 +580,23 @@ function Eyebrow({ children, color }: { children: React.ReactNode; color: string
   );
 }
 
-function FaqAccordion({ faq, accent }: { faq: PdpMeta["faq"]; accent: string }) {
+function FaqAccordion({ faq }: { faq: PdpMeta["faq"] }) {
   const [open, setOpen] = useState<number | null>(0);
   return (
-    <div className="space-y-3">
+    <div className="divide-y divide-[#E6E1D8] border-y border-[#E6E1D8]">
       {faq.map((item, i) => (
-        <div key={item.q} className="overflow-hidden rounded-2xl bg-white shadow-sm">
+        <div key={item.q} className="py-5 text-left">
           <button
             onClick={() => setOpen(open === i ? null : i)}
             aria-expanded={open === i}
             aria-controls={`faq-panel-${i}`}
-            className="flex w-full items-center justify-between px-6 py-4 text-left"
+            className="flex w-full items-center justify-between text-left group cursor-pointer"
           >
-            <span className="text-sm font-bold text-[#0D1B35]">{item.q}</span>
-            <span
-              className="ml-4 text-xl leading-none transition-transform"
-              style={{
-                transform: open === i ? "rotate(45deg)" : "none",
-                color: open === i ? accent : "rgba(13,27,53,0.45)",
-              }}
-            >
-              +
+            <span className="text-base sm:text-lg font-sans font-semibold text-[#0F0F0F] group-hover:text-[#3A3A37] transition-colors">
+              {item.q}
+            </span>
+            <span className="shrink-0 w-6 h-6 rounded-full border border-[#E6E1D8] bg-[#FAF8F5] flex items-center justify-center font-mono text-xs text-[#0F0F0F]">
+              {open === i ? "−" : "+"}
             </span>
           </button>
           <AnimatePresence initial={false}>
@@ -506,9 +606,12 @@ function FaqAccordion({ faq, accent }: { faq: PdpMeta["faq"]; accent: string }) 
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.25 }}
+                transition={{ duration: 0.25, ease: "easeInOut" }}
+                className="overflow-hidden"
               >
-                <p className="px-6 pb-5 text-sm leading-6 text-[#425066]">{item.a}</p>
+                <p className="pt-3 text-xs sm:text-sm font-sans font-normal text-[#3A3A37] leading-relaxed max-w-2xl">
+                  {item.a}
+                </p>
               </motion.div>
             )}
           </AnimatePresence>
@@ -554,7 +657,7 @@ const QUICK_FAQS: Record<string, { q: string; a: string }[]> = {
     },
     {
       q: "¿Cuándo empiezo a sentirlo?",
-      a: "La absorción transdérmica gradual actúa entre 30 y 45 minutos tras la colocación."
+      a: "La absorción tópica gradual actúa entre 30 y 45 minutos tras la colocación."
     },
     {
       q: "¿Puedo usarlo todos los días?",
@@ -634,7 +737,7 @@ const QUICK_FAQS: Record<string, { q: string; a: string }[]> = {
   "pack-glow-balance": [
     {
       q: "¿Puedo usar ambos parches al mismo tiempo?",
-      a: "Sí. Aplicas 1 parche Glow y 1 parche Woman por la mañana en piel limpia y seca. La absorción transdérmica de ambas fórmulas es totalmente independiente y complementaria."
+      a: "Sí. Aplicas 1 parche Glow y 1 parche Woman por la mañana en piel limpia y seca. La absorción tópica de ambas fórmulas es totalmente independiente y complementaria."
     },
     {
       q: "¿El descuento del 15% viene aplicado?",
@@ -727,15 +830,14 @@ export default function ProductDetail({
 
   const meta: ProductMeta | undefined = PRODUCT_META[product.slug];
   const pdp: PdpMeta | undefined = PDP_META[product.slug];
-  const color = meta?.color ?? "var(--color-coral)";
+  const color = meta?.color ?? "#0F0F0F";
   const bg = meta?.bg ?? "#FFFFFF";
   // Shade del producto para texto/acentos sobre fondos claros (mejor contraste que el base)
   const accent = meta?.taglineColor ?? color;
   // La galería muestra las imágenes del producto.
   const mediaList = product.images.map((img) => ({ type: "image" as const, src: img }));
   
-  const bundleHowItWorks = BUNDLE_HOW_IT_WORKS_IMAGES[product.slug];
-  const howItWorksImages = bundleHowItWorks ?? (meta?.howItWorksImage ? [meta.howItWorksImage] : []);
+  const howItWorksImages = ["/infographic/Howitworks_pdp.webp"];
   const lifestyleB = "/productusers/FAQ_image.webp";                   // Imagen FIJA para FAQ
 
   // Default: Compra única (freq === null)
@@ -764,33 +866,34 @@ export default function ProductDetail({
       : `Suscribirme · cada ${selected.freq} días`;
 
   return (
-    <main className="min-h-screen bg-[#FAF7F2]">
+    <main className="min-h-screen bg-[#FAF8F5]">
       {/* ── Hero: galería + info ── */}
-      <section className="mx-auto grid max-w-6xl gap-10 px-6 pt-28 pb-16 lg:grid-cols-2">
-        <div className="lg:sticky lg:top-28 self-start">
+      <section className="mx-auto grid max-w-[1400px] gap-10 px-4 sm:px-8 pt-28 pb-16 lg:grid-cols-2">
+        <div className="lg:sticky lg:top-28 self-start w-full flex justify-center">
           <Gallery media={mediaList} title={product.title} bg={bg} accent={accent} />
         </div>
 
         <div className="flex flex-col justify-center">
-          <h1 className="text-5xl font-black" style={{ color }}>
-            {product.title}
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-semibold text-[#0F0F0F] tracking-[-0.035em] leading-tight lowercase">
+            {product.title}.
           </h1>
           <a
             href="#reviews-section"
-            className="group flex items-center gap-1.5 mt-2 self-start text-[13px] font-bold text-[#0D1B35]/70 hover:text-[#0D1B35] transition-all duration-300"
+            className="group flex items-center gap-1.5 mt-2 self-start text-[13px] font-sans font-medium text-[#3A3A37] hover:text-[#0F0F0F] transition-all duration-300"
           >
-            <div className="flex text-[#F59E0B] tracking-tight group-hover:scale-105 transition-transform duration-300">
-              {"★".repeat(Math.round(averageRating))}
-              {"☆".repeat(5 - Math.round(averageRating))}
+            <div className="flex gap-0.5 items-center group-hover:scale-105 transition-transform duration-300">
+              {[...Array(5)].map((_, i) => (
+                <StarIcon key={i} size={13} filled={i < Math.round(averageRating)} />
+              ))}
             </div>
-            <span>{averageRating}</span>
-            <span className="text-[#0D1B35]/40 font-normal">|</span>
+            <span className="font-mono">{averageRating}</span>
+            <span className="text-[#A8A29A] font-normal">|</span>
             <span className="underline decoration-black/20 group-hover:decoration-black transition-colors">
               {totalCount} opiniones reales
             </span>
           </a>
           {pdp && (
-            <p className="mt-4 text-lg font-semibold text-[#0D1B35]">{pdp.tagline}</p>
+            <p className="mt-4 text-base sm:text-lg font-sans font-medium text-[#3A3A37] leading-relaxed">{pdp.tagline}</p>
           )}
 
           {/* Precio y Ahorro en PDP */}
@@ -799,17 +902,17 @@ export default function ProductDetail({
             const hasSavings = originalPrice > selected.price;
             const savingsAmount = originalPrice - selected.price;
             return (
-              <div className="mt-3 flex items-baseline gap-3">
-                <span className="text-3xl font-black text-[#0D1B35]">
+              <div className="mt-4 flex items-baseline gap-3">
+                <span className="text-3xl sm:text-4xl font-mono font-bold text-[#0F0F0F]">
                   {formatPrice(selected.price, currency)}
                 </span>
                 {hasSavings && (
-                  <span className="text-lg font-bold text-stone-400 line-through">
+                  <span className="text-lg font-mono font-medium text-[#A8A29A] line-through">
                     {formatPrice(originalPrice, currency)}
                   </span>
                 )}
                 {hasSavings && (
-                  <span className="text-xs font-black uppercase text-[#005088] bg-[#005088]/10 px-3 py-1 rounded-full border border-[#005088]/20">
+                  <span className="text-[11px] font-sans font-medium uppercase tracking-[0.1em] text-[#0F0F0F] bg-white px-3 py-1 rounded-full border border-[#E6E1D8] shadow-2xs">
                     ¡AHORRAS {formatPrice(savingsAmount, currency)}!
                   </span>
                 )}
@@ -817,17 +920,14 @@ export default function ProductDetail({
             );
           })()}
 
-          <p className="mt-3 max-w-md text-sm leading-6 text-[#425066]">
+          <p className="mt-3 max-w-md text-sm font-sans font-normal text-[#3A3A37] leading-relaxed">
             {product.description}
           </p>
 
-          <div className="mt-4 flex flex-wrap gap-2">
-            {/* Solid badge indicating patch count */}
-            <span
-              className="rounded-full px-3 py-1 text-xs font-bold text-white shadow-sm flex items-center gap-1"
-              style={{ backgroundColor: color }}
-            >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24" style={{ width: "12px", height: "12px" }}>
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            {/* Solid Ink Badge Protagonista según Brand Kit v3 */}
+            <span className="rounded-full px-3.5 py-1.5 text-[11px] font-sans font-semibold uppercase tracking-[0.12em] bg-[#0F0F0F] border border-[#0F0F0F] text-white shadow-2xs flex items-center gap-1.5">
+              <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" style={{ width: "12px", height: "12px" }}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               {BUNDLE_PATCH_COUNTS[product.slug] ?? "30 parches por sobre"}
@@ -876,17 +976,13 @@ export default function ProductDetail({
             ].map((b, idx) => (
               <div
                 key={idx}
-                className="flex flex-col gap-1.5 p-3 rounded-2xl border border-black/[0.03] transition-all duration-300 hover:shadow-sm"
-                style={{
-                  background: `color-mix(in srgb, ${bg} 25%, #fff)`,
-                  borderColor: `color-mix(in srgb, ${color} 10%, transparent)`,
-                }}
+                className="flex flex-col gap-1 p-3 rounded-xl bg-white border border-[#E6E1D8] shadow-2xs"
               >
-                <div className="flex items-center gap-2" style={{ color: accent }}>
+                <div className="flex items-center gap-2 text-[#0F0F0F]">
                   {b.icon}
-                  <span className="text-[12px] font-black tracking-tight">{b.title}</span>
+                  <span className="text-[12px] font-sans font-semibold text-[#0F0F0F]">{b.title}</span>
                 </div>
-                <p className="text-[10px] leading-tight text-[#425066] font-medium">{b.desc}</p>
+                <p className="text-[10px] font-sans font-normal text-[#3A3A37] leading-tight">{b.desc}</p>
               </div>
             ))}
           </div>
@@ -906,8 +1002,7 @@ export default function ProductDetail({
 
           <button
             onClick={() => handleAdd(selected)}
-            className="mt-6 w-full rounded-full py-4 text-base font-bold text-white transition hover:opacity-90"
-            style={{ background: color }}
+            className="mt-6 w-full rounded-full py-4 text-xs font-sans font-medium uppercase tracking-[0.12em] bg-[#0F0F0F] text-white border border-[#0F0F0F] hover:bg-white hover:text-[#0F0F0F] transition-all shadow-2xs active:scale-95"
           >
             {ctaLabel}
           </button>
@@ -960,14 +1055,8 @@ export default function ProductDetail({
                         className="flex w-full items-center justify-between text-left text-sm font-semibold text-[#0D1B35] hover:text-black transition-colors py-1.5"
                       >
                         <span>{item.q}</span>
-                        <span
-                          className="text-base leading-none transition-transform duration-200"
-                          style={{
-                            transform: isOpen ? "rotate(45deg)" : "none",
-                            color: isOpen ? accent : "rgba(13,27,53,0.35)",
-                          }}
-                        >
-                          +
+                        <span className="shrink-0 w-5 h-5 rounded-full border border-[#E6E1D8] bg-[#FAF8F5] flex items-center justify-center font-mono text-[11px] text-[#0F0F0F]">
+                          {isOpen ? "−" : "+"}
                         </span>
                       </button>
                       <AnimatePresence initial={false}>
@@ -1006,21 +1095,23 @@ export default function ProductDetail({
               height: { duration: 0.4, ease: [0.4, 0, 0.2, 1] },
               opacity: { duration: 0.25, ease: "easeOut" },
             }}
-            className="overflow-hidden border-y border-[#E8E2D8] bg-[#FAF7F2]"
+            className="overflow-hidden border-y border-[#E6E1D8] bg-[#FAF8F5]"
           >
             <motion.div
               initial={{ y: -6 }}
               animate={{ y: 0 }}
               exit={{ y: -6 }}
               transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-              className="mx-auto grid max-w-6xl gap-8 px-6 py-10 sm:grid-cols-3"
+              className="mx-auto grid max-w-[1240px] gap-8 px-6 sm:px-10 py-10 sm:grid-cols-3 text-left"
             >
               {SUBSCRIPTION_PERKS.map((perk) => (
                 <div key={perk.title}>
-                  <p className="text-sm font-bold" style={{ color }}>
+                  <p className="font-sans font-semibold text-sm text-[#0F0F0F] mb-1">
                     {perk.title}
                   </p>
-                  <p className="mt-1 text-xs leading-5 text-[#425066]">{perk.description}</p>
+                  <p className="font-sans text-xs text-[#3A3A37] leading-relaxed">
+                    {perk.description}
+                  </p>
                 </div>
               ))}
             </motion.div>
@@ -1030,45 +1121,42 @@ export default function ProductDetail({
 
           {/* ── Sección de Sinergia exclusiva para paquetes/bundles ── */}
           {SYNERGY_SECTIONS[product.slug] && (
-            <motion.section {...sectionReveal} className="bg-[#FAF7F2] py-20 px-6 border-t border-b border-[#E8E2D8]">
-              <div className="max-w-5xl mx-auto text-center mb-14">
-                <span className="text-xs font-black tracking-[0.2em] uppercase px-4 py-1.5 rounded-full bg-[#005088]/10 text-[#005088] border border-[#005088]/20">
-                  {SYNERGY_SECTIONS[product.slug].eyebrow}
-                </span>
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mt-4 tracking-tight text-[#0D1B35]">
+            <motion.section {...sectionReveal} className="bg-[#FAF8F5] py-20 px-6 border-t border-b border-[#E6E1D8]">
+              <div className="max-w-5xl mx-auto text-left mb-12">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-semibold text-[#0F0F0F] tracking-[-0.03em] leading-tight lowercase">
                   {SYNERGY_SECTIONS[product.slug].title}
                 </h2>
-                <p className="text-[#425066] max-w-2xl mx-auto mt-3 text-sm md:text-base leading-relaxed font-medium">
+                <p className="text-[#3A3A37] font-sans max-w-2xl mt-3 text-sm sm:text-base leading-relaxed">
                   {SYNERGY_SECTIONS[product.slug].desc}
                 </p>
               </div>
 
               <div className={`max-w-5xl mx-auto grid grid-cols-1 ${SYNERGY_SECTIONS[product.slug].cards.length === 3 ? "md:grid-cols-3" : "md:grid-cols-2"} gap-8`}>
                 {SYNERGY_SECTIONS[product.slug].cards.map((c, idx) => (
-                  <div key={idx} className="bg-white border border-[#E8E2D8]/80 shadow-[0_4px_24px_rgba(13,27,53,0.04)] rounded-3xl p-8 relative overflow-hidden flex flex-col justify-between hover:shadow-[0_12px_36px_rgba(13,27,53,0.08)] transition-shadow duration-300">
+                  <div key={idx} className="bg-[#FAF8F5] border border-[#E6E1D8] shadow-2xs rounded-xl p-8 relative overflow-hidden flex flex-col justify-between">
                     <div>
                       <div className="flex items-center justify-between mb-4">
                         {c.icon ? <span className="text-3xl">{c.icon}</span> : <div />}
-                        <span className="text-xs font-bold px-3.5 py-1 rounded-full text-white shadow-sm" style={{ background: c.timeBg }}>
+                        <span className="text-[10px] font-sans font-medium uppercase tracking-[0.14em] px-3 py-1 rounded-full bg-white border border-[#E6E1D8] text-[#0F0F0F] shadow-2xs">
                           {c.timeTag}
                         </span>
                       </div>
-                      <h3 className="text-2xl font-black text-[#0D1B35]">{c.name}</h3>
-                      <p className="text-[#425066] text-sm mt-2 leading-relaxed font-medium">
+                      <h3 className="text-2xl font-display font-semibold text-[#0F0F0F] lowercase">{c.name}</h3>
+                      <p className="text-[#3A3A37] text-sm font-sans mt-2 leading-relaxed">
                         {c.text}
                       </p>
                     </div>
-                    <div className="mt-8 pt-6 border-t border-[#E8E2D8]/70 flex items-center gap-4">
+                    <div className="mt-8 pt-6 border-t border-[#E6E1D8] flex items-center gap-4">
                       <Image
                         src={c.img}
                         alt={c.name}
                         width={72}
                         height={72}
-                        className="w-18 h-18 rounded-2xl bg-[#FAF7F2] p-1.5 border border-[#E8E2D8] object-contain shadow-sm shrink-0"
+                        className="w-16 h-16 rounded-xl bg-white p-1.5 border border-[#E6E1D8] object-contain shrink-0"
                       />
                       <div>
-                        <p className="text-sm font-extrabold text-[#0D1B35]">Ingredientes activos clave</p>
-                        <p className="text-sm text-stone-600 mt-1 font-medium leading-snug">{c.ingredients}</p>
+                        <p className="text-xs font-sans font-semibold text-[#0F0F0F]">Ingredientes activos clave</p>
+                        <p className="text-xs font-sans text-[#3A3A37] mt-1 leading-snug">{c.ingredients}</p>
                       </div>
                     </div>
                   </div>
@@ -1083,15 +1171,14 @@ export default function ProductDetail({
       {pdp && (
         <>
           {/* ── ¿Cómo te acompaña? — heading lateral + lista con divisores ── */}
-          <motion.section {...sectionReveal} className="bg-white py-24">
-            <div className="mx-auto max-w-6xl px-6 grid gap-10 lg:grid-cols-12">
-              <div className="lg:col-span-5">
-                <Eyebrow color={accent}>{product.title} · todos los días</Eyebrow>
-                <h2 className="mt-3 text-[clamp(28px,3vw,40px)] font-black leading-tight text-[#0D1B35]">
-                  ¿Cómo te acompaña?
+          <motion.section {...sectionReveal} className="bg-[#FAF8F5] py-20 border-b border-[#E6E1D8]">
+            <div className="mx-auto max-w-[1240px] px-6 sm:px-10 grid gap-10 lg:grid-cols-12">
+              <div className="lg:col-span-5 text-left">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-semibold text-[#0F0F0F] tracking-[-0.03em] leading-tight lowercase">
+                  ¿cómo te acompaña?
                 </h2>
                 {meta?.quote && (
-                  <p className="mt-5 max-w-xs text-lg font-medium italic leading-snug" style={{ color: accent }}>
+                  <p className="mt-4 max-w-xs text-base font-sans font-medium text-[#3A3A37] leading-snug">
                     {meta.quote}
                   </p>
                 )}
@@ -1100,13 +1187,12 @@ export default function ProductDetail({
                 {pdp.accompaniment.map((item, i) => (
                   <div
                     key={item}
-                    className="flex items-baseline gap-5 border-b py-5 first:pt-1"
-                    style={{ borderColor: `color-mix(in srgb, ${accent} 22%, transparent)` }}
+                    className="flex items-baseline gap-5 border-b border-[#E6E1D8] py-4 first:pt-0"
                   >
-                    <span className="text-xs font-black tabular-nums" style={{ color: accent }}>
+                    <span className="text-xs font-mono font-semibold tabular-nums text-[#A8A29A]">
                       {String(i + 1).padStart(2, "0")}
                     </span>
-                    <p className="text-[17px] font-semibold leading-snug text-[#0D1B35]">
+                    <p className="text-base sm:text-lg font-sans font-medium leading-snug text-[#0F0F0F]">
                       {item}
                     </p>
                   </div>
@@ -1115,56 +1201,29 @@ export default function ProductDetail({
             </div>
           </motion.section>
 
-          {/* ── Cómo funciona — foto lifestyle a la DERECHA + texto ── */}
-          <motion.section {...sectionReveal} className="py-20">
-            <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 lg:grid-cols-12">
-              
-              {/* Texto a la izquierda */}
-              <div className={howItWorksImages.length > 0 ? "lg:col-span-7" : "lg:col-span-8"}>
-                <Eyebrow color={accent}>La ciencia del parche</Eyebrow>
-                <h2 className="mt-3 text-[clamp(28px,3vw,40px)] font-black leading-tight text-[#0D1B35]">
-                  Cómo funciona
-                </h2>
-                <p className="mt-6 max-w-xl text-[15px] leading-7 text-[#425066]">
-                  {HOW_IT_WORKS_INTRO}
-                </p>
-                <p className="mt-4 max-w-xl text-[15px] leading-7 text-[#425066]">
-                  {pdp.howItWorks}
-                </p>
-              </div>
-
-              {/* Imagen a la derecha (Transición en Bundles) */}
-              {howItWorksImages.length > 0 && (
-                <div className="lg:col-span-5">
-                  <HowItWorksPdpImage
-                    images={howItWorksImages}
-                    title={product.title}
-                    bg={bg}
-                  />
-                </div>
-              )}
-            </div>
+          {/* ── Cómo funciona (Banner 16:9 con Scroll-Driven Zoom Scale) ── */}
+          <motion.section {...sectionReveal} className="py-16 sm:py-20 px-6 sm:px-10 max-w-[1240px] mx-auto">
+            <HowItWorksBannerCard introText={HOW_IT_WORKS_INTRO} detailText={pdp.howItWorks} />
           </motion.section>
 
           {/* ── Ingredientes clave — banda tint del producto ── */}
-          <motion.section {...sectionReveal} style={{ background: bg }} className="py-20">
-            <div className="mx-auto max-w-6xl px-6">
-              <div className="flex flex-wrap items-end justify-between gap-4">
+          <motion.section {...sectionReveal} className="py-20 bg-[#FAF8F5] border-b border-[#E6E1D8]">
+            <div className="mx-auto max-w-[1240px] px-6 sm:px-10 text-left">
+              <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
                 <div>
-                  <Eyebrow color={accent}>Fórmula {product.title}</Eyebrow>
-                  <h2 className="mt-3 text-[clamp(28px,3vw,40px)] font-black leading-tight text-[#0D1B35]">
-                    Ingredientes clave
+                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-semibold text-[#0F0F0F] tracking-[-0.03em] leading-tight lowercase">
+                    ingredientes clave.
                   </h2>
                 </div>
-                <p className="text-sm font-semibold" style={{ color: accent }}>
-                  {pdp.ingredientDetails.length} activos seleccionados
+                <p className="text-xs font-mono font-medium text-[#A8A29A] uppercase tracking-wider">
+                  activos seleccionados
                 </p>
               </div>
-              <div className="mt-10 grid gap-x-12 sm:grid-cols-2">
+              <div className="mt-8 grid gap-x-12 gap-y-6 sm:grid-cols-2">
                 {pdp.ingredientDetails.map((ing) => (
-                  <div key={ing.name} className="border-t border-[#0D1B35]/10 py-4">
-                    <p className="text-[15px] font-bold text-[#0D1B35]">{ing.name}</p>
-                    <p className="mt-1 text-[13px] leading-5 text-[#0D1B35]/65">
+                  <div key={ing.name} className="border-t border-[#E6E1D8] pt-4">
+                    <p className="text-sm sm:text-base font-sans font-semibold text-[#0F0F0F]">{ing.name}</p>
+                    <p className="mt-1 text-xs sm:text-sm font-sans text-[#3A3A37] leading-relaxed">
                       {ing.description}
                     </p>
                   </div>
@@ -1174,36 +1233,24 @@ export default function ProductDetail({
           </motion.section>
 
           {/* ── Modo de uso ── */}
-          <motion.section {...sectionReveal} className="bg-white py-24">
-            <div className="mx-auto max-w-6xl px-6 grid gap-12 lg:grid-cols-2 lg:items-center">
-              {/* Columna Izquierda: Imagen de uso */}
-              <div className="relative aspect-[4/5] sm:aspect-[3/4] lg:aspect-[4/5] overflow-hidden rounded-[32px] bg-[#FAF7F2] shadow-sm border border-[#0D1B35]/5">
-                <Image
-                  src="/productusers/How_to_use_GIF.webp"
-                  alt="Aplicación de parche Novapatch"
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-cover"
-                />
-              </div>
+          <motion.section {...sectionReveal} className="bg-[#FAF8F5] py-20 border-b border-[#E6E1D8]">
+            <div className="mx-auto max-w-[1240px] px-6 sm:px-10 grid gap-12 lg:grid-cols-2 lg:items-center">
+              {/* Columna Izquierda: Imagen de uso animada con transición suave */}
+              <PdpUsageImage />
 
               {/* Columna Derecha: Pasos de uso */}
-              <div className="flex flex-col justify-center">
-                <Eyebrow color={accent}>Un gesto simple</Eyebrow>
-                <h2 className="mt-3 text-[clamp(28px,3vw,40px)] font-black leading-tight text-[#0D1B35]">
-                  Modo de uso
+              <div className="flex flex-col justify-center text-left">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-semibold text-[#0F0F0F] tracking-[-0.03em] leading-tight lowercase mb-6">
+                  modo de uso.
                 </h2>
                 
-                <div className="mt-8 flex flex-col gap-6">
+                <div className="flex flex-col gap-6">
                   {pdp.usageSteps.map((step, i) => (
-                    <div key={step} className="flex gap-6 items-start border-t border-[#0D1B35]/10 pt-5">
-                      <span
-                        className="text-[clamp(32px,3.5vw,48px)] font-black leading-none shrink-0"
-                        style={{ color: accent }}
-                      >
+                    <div key={step} className="flex gap-6 items-start border-t border-[#E6E1D8] pt-5">
+                      <span className="text-2xl sm:text-3xl font-mono font-semibold text-[#0F0F0F] shrink-0">
                         {String(i + 1).padStart(2, '0')}
                       </span>
-                      <p className="text-[14px] leading-6 text-[#425066] pt-1">{step}</p>
+                      <p className="text-sm font-sans text-[#3A3A37] leading-relaxed pt-1">{step}</p>
                     </div>
                   ))}
                 </div>
@@ -1222,40 +1269,33 @@ export default function ProductDetail({
           />
 
           {/* ── FAQ — heading lateral + accordion ── */}
-          <motion.section id="faq-section" {...sectionReveal} className="mx-auto max-w-6xl px-6 py-20">
+          <motion.section id="faq-section" {...sectionReveal} className="mx-auto max-w-[1240px] px-6 sm:px-10 py-20">
             <div className="grid gap-10 lg:grid-cols-12">
-              <div className="lg:col-span-4">
-                <Eyebrow color={accent}>Antes de empezar</Eyebrow>
-                <h2 className="mt-3 text-[clamp(28px,3vw,40px)] font-black leading-tight text-[#0D1B35]">
-                  Preguntas frecuentes
+              <div className="lg:col-span-4 text-left">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-semibold text-[#0F0F0F] tracking-[-0.03em] leading-tight lowercase">
+                  preguntas frecuentes.
                 </h2>
               </div>
               <div className="lg:col-span-8">
-                <FaqAccordion faq={pdp.faq} accent={accent} />
+                <FaqAccordion faq={pdp.faq} />
               </div>
             </div>
           </motion.section>
         </>
       )}
 
-      {/* ── CTA final — banda tint asimétrica ── */}
-      <motion.section {...sectionReveal} className="px-6 pb-24">
-        <div
-          className="mx-auto flex max-w-6xl flex-col items-start gap-6 rounded-[28px] px-10 py-12 sm:flex-row sm:items-center sm:justify-between"
-          style={{ background: bg }}
-        >
-          <div>
-            <h2 className="text-[clamp(24px,2.5vw,32px)] font-black leading-tight text-[#0D1B35]">
-              ¿Listo para probar {product.title}?
-            </h2>
-            <p className="mt-1 text-sm text-[#0D1B35]/65">
-              Pausa, cambia o cancela cuando quieras.
-            </p>
-          </div>
+      {/* ── CTA final simplificado ── */}
+      <motion.section {...sectionReveal} className="px-6 pb-24 max-w-5xl mx-auto">
+        <div className="rounded-xl p-8 sm:p-12 bg-white border border-[#E6E1D8] shadow-2xs text-center flex flex-col items-center gap-4 sm:gap-6">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-semibold text-[#0F0F0F] tracking-[-0.035em] leading-tight lowercase">
+            ¿listo para probar {product.title}?
+          </h2>
+          <p className="text-sm sm:text-base font-sans font-normal text-[#3A3A37] max-w-md">
+            Pausa, cambia o cancela cuando quieras. Sin compromiso.
+          </p>
           <button
             onClick={() => handleAdd(selected)}
-            className="shrink-0 rounded-full px-10 py-4 text-base font-bold text-white transition hover:opacity-90"
-            style={{ background: color }}
+            className="mt-2 rounded-full px-8 py-4 text-[11px] font-sans font-medium uppercase tracking-[0.12em] bg-[#0F0F0F] text-white border border-[#0F0F0F] hover:bg-white hover:text-[#0F0F0F] transition-all shadow-2xs active:scale-95 cursor-pointer"
           >
             {ctaLabel}
           </button>

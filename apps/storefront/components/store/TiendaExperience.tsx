@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
-import { useParams } from "next/navigation";
+import { Link } from "@/lib/i18n-navigation";
 import type { Product } from "@/lib/commerce";
 import { formatPrice } from "@/lib/format";
 import { PRODUCT_META, BUNDLE_ORIGINAL_PRICES } from "@/lib/product-meta";
@@ -15,65 +14,80 @@ import { useCart } from "@/contexts/CartContext";
 const META: Record<string, {
   color: string;
   bg: string;
-  taglineColor: string;
   quote: string;
-  tags: string[];
-  popular?: boolean;
+  ingredients: string;
 }> = {
-  shield: {
-    color: "#A07000",
-    bg: "#FAF6E9",
-    taglineColor: "#A07000",
-    quote: '"Tu rutina de cuidado empieza hoy, no cuando algo pasa."',
-    tags: ["Cuidado preventivo", "Uso diario"],
-  },
-  glow: {
-    color: "#C94030",
-    bg: "#FAF0EE",
-    taglineColor: "#C94030",
-    quote: '"La piel también refleja cómo te cuidas."',
-    tags: ["Bienestar desde adentro", "Constancia"],
+  energy: {
+    color: "#83B5F4",
+    bg: "#FAF8F5",
+    quote: "Tu día no para. Tu energía tampoco.",
+    ingredients: "Té Verde + Ginseng + L-Carnitina + Vit B",
   },
   sleep: {
-    color: "#138A75",
-    bg: "#EBF7F5",
-    taglineColor: "#138A75",
-    quote: '"Porque descansar también es cuidarse."',
-    tags: ["Descanso nocturno", "Sin somníferos"],
-  },
-  energy: {
-    color: "#2B7CC1",
-    bg: "#EBF4FB",
-    taglineColor: "#2B7CC1",
-    quote: '"Tu día no para. Tu energía tampoco."',
-    tags: ["Energía sostenida", "Sin picos ni caídas"],
-    popular: true,
+    color: "#1EB1BC",
+    bg: "#FAF8F5",
+    quote: "Porque descansar también es cuidarse.",
+    ingredients: "Triptófano + Bisglicinato de Magnesio + Glicina",
   },
   zen: {
-    color: "#3A6FA8",
-    bg: "#EBF0F9",
-    taglineColor: "#3A6FA8",
-    quote: '"El equilibrio que no se ve, pero se siente."',
-    tags: ["Calma funcional", "Días intensos"],
+    color: "#4E82BC",
+    bg: "#FAF8F5",
+    quote: "El equilibrio que no se ve, pero se siente.",
+    ingredients: "Triptófano + Taurato de Magnesio + Taurina + Manzanilla",
+  },
+  shield: {
+    color: "#FFA849",
+    bg: "#FAF8F5",
+    quote: "Tu rutina de cuidado empieza hoy.",
+    ingredients: "Vitamina C + Zinc + Vitamina D3 + Vitamina E",
+  },
+  glow: {
+    color: "#F25C54",
+    bg: "#FAF8F5",
+    quote: "La piel también refleja cómo te cuidas.",
+    ingredients: "Colágeno Hidrolizado + Ácido Hialurónico + Biotina",
   },
   woman: {
-    color: "#8A3EBE",
-    bg: "#F3EBF9",
-    taglineColor: "#8A3EBE",
-    quote: '"Escucharte también es una forma de cuidarte."',
-    tags: ["Bienestar femenino", "Ritmos naturales"],
+    color: "#C693C4",
+    bg: "#FAF8F5",
+    quote: "Escucharte también es una forma de cuidarte.",
+    ingredients: "Extracto de Soya + Magnesio + Hierro + Vit B6",
   },
   "pack-dia-noche": {
-    color: "#005088",
-    bg: "#EBF4FB",
-    taglineColor: "#005088",
-    quote: '"Energía para tu día. Descanso para tu noche."',
-    tags: ["Ritual 24h", "15% OFF INCLUIDO"],
-    popular: true,
+    color: "#83B5F4",
+    bg: "#FAF8F5",
+    quote: "Energía para tu día. Descanso para tu noche.",
+    ingredients: "Dúo completo 24h · 15% OFF",
+  },
+  "pack-calma-sueno": {
+    color: "#3A6FA8",
+    bg: "#FAF8F5",
+    quote: "Desconecta la mente de día, descansa profundo de noche.",
+    ingredients: "Dúo calma & descanso · 15% OFF",
+  },
+  "pack-glow-balance": {
+    color: "#8A3EBE",
+    bg: "#FAF8F5",
+    quote: "Piel radiante y equilibrio biológico a tu ritmo.",
+    ingredients: "Dúo belleza & equilibrio · 15% OFF",
+  },
+  "pack-trio-vitalidad": {
+    color: "#138A75",
+    bg: "#FAF8F5",
+    quote: "Energía matutina, calma diurna y descanso nocturno.",
+    ingredients: "Trío vitalidad 360° · 20% OFF",
   },
 };
 
-// ─── Componentes internos ────────────────────────────────────────────────────
+function StarIcon({ size = 12 }: { size?: number }) {
+  return (
+    <svg viewBox="0 0 20 20" fill="#0F0F0F" width={size} height={size} className="shrink-0 inline-block">
+      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+    </svg>
+  );
+}
+
+// ─── Rhode Skin Style Product Card ──────────────────────────────────────────
 
 function ProductCard({
   product,
@@ -86,15 +100,13 @@ function ProductCard({
 }) {
   const meta = META[product.slug] ?? PRODUCT_META[product.slug];
   const { addToCart } = useCart();
-  const params = useParams();
-  const locale = typeof params?.locale === "string" ? params.locale : "mx";
-  const [isHovered, setIsHovered] = useState(false);
 
   if (!meta) return null;
 
   const fallbackMeta = PRODUCT_META[product.slug];
   const isBundle = product.slug.startsWith("pack-");
   const hoverImage = !isBundle ? fallbackMeta?.hoverImgSrc : undefined;
+  const ingredientsList = meta.ingredients ?? fallbackMeta?.ingredients ?? "";
 
   const rating = ratingSummary?.average ?? 5.0;
   const count = ratingSummary?.count ?? 80;
@@ -108,110 +120,118 @@ function ProductCard({
       image: product.image,
       price: product.price,
       color: meta.color,
-      bg: meta.bg,
+      bg: "#FAF8F5",
       mode: "once",
       freq: 30,
     });
   }
 
   return (
-    <Link
-      href={`/${locale}/tienda/${product.slug}`}
-      className="group bg-white rounded-[20px] sm:rounded-[28px] overflow-hidden border border-[#E8E2D8]/60 shadow-[0_4px_24px_rgba(13,27,53,0.03)] hover:shadow-[0_16px_48px_rgba(13,27,53,0.07)] hover:-translate-y-1 transition-all duration-300 flex flex-col h-full"
-    >
-      {/* Imagen Box */}
-      <div
-        className="relative flex items-center justify-center p-2 aspect-square overflow-hidden bg-white"
-        onMouseEnter={() => { if (hoverImage) setIsHovered(true); }}
-        onMouseLeave={() => { if (hoverImage) setIsHovered(false); }}
+    <div className="group relative flex flex-col bg-white rounded-xl overflow-hidden border border-[#E6E1D8] shadow-2xs hover:border-[#AEAEAF] hover:shadow-md transition-all duration-300 h-full">
+      {/* ── Image Container Stage (Aspect ratio 4/5) ── */}
+      <Link
+        href={`/tienda/${product.slug}`}
+        className="relative aspect-[4/5] w-full bg-[#FAF8F5] overflow-hidden flex items-center justify-center p-0"
       >
-        <div className="relative w-full h-full">
-          {/* Base Image */}
-          <Image
-            src={product.image}
-            alt={`Novapatch ${product.title}`}
-            fill
-            sizes="(max-width: 768px) 50vw, 350px"
-            loading="lazy"
-            className={`object-contain drop-shadow-md transition-all duration-500 ease-in-out ${
-              hoverImage && isHovered ? "opacity-0 scale-95" : "opacity-100 scale-100"
-            }`}
-          />
-        </div>
-        {/* Hover Image (Full bleed - absolute inset-0) */}
+        {/* Base Image */}
+        <Image
+          src={fallbackMeta?.imgSrc ?? product.image}
+          alt={`Novapatch ${product.title}`}
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          loading="lazy"
+          className={`object-cover w-full h-full transition-all duration-500 ease-in-out ${
+            hoverImage ? "group-hover:opacity-0 group-hover:scale-95" : "group-hover:scale-105"
+          }`}
+        />
+
+        {/* Hover Image (Full bleed reveal on hover) */}
         {hoverImage && (
           <Image
             src={hoverImage}
             alt={`Detalles de Novapatch ${product.title}`}
             fill
-            sizes="(max-width: 768px) 50vw, 350px"
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
             loading="lazy"
-            className={`object-cover transition-all duration-500 ease-in-out absolute inset-0 w-full h-full z-10 ${
-              isHovered ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"
-            }`}
+            className="object-cover absolute inset-0 w-full h-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-in-out"
           />
         )}
-      </div>
 
-      {/* Cuerpo */}
-      <div className="p-3.5 sm:p-6 flex flex-col gap-2.5 sm:gap-4 flex-1 justify-between">
-        <div>
-          {/* Valoración */}
-          <div className="flex flex-wrap items-center gap-1 sm:gap-1.5 mb-1.5 sm:mb-2">
-            <div className="text-[#F59E0B] text-[10px] sm:text-xs font-bold tracking-tight">
-              {"★".repeat(Math.round(rating))}
-              {"☆".repeat(5 - Math.round(rating))}
+        {/* Direct Link Overlay */}
+        <span className="sr-only">Ver {product.title}</span>
+      </Link>
+
+      {/* ── Card Footer Area (Default Info vs Hover Actions) ── */}
+      <div className="p-5 border-t border-[#E6E1D8] bg-white relative min-h-[140px] flex flex-col justify-between overflow-hidden text-left">
+        
+        {/* DEFAULT VIEW: Visible when NOT hovered, smoothly fades out & slides slightly up on hover */}
+        <div className="flex flex-col justify-between h-full transition-all duration-300 ease-out group-hover:opacity-0 group-hover:-translate-y-2 group-hover:pointer-events-none">
+          <div>
+            {/* Rating Stars + Count */}
+            <div className="flex items-center gap-1.5 mb-2">
+              <div className="flex gap-0.5 items-center">
+                {[...Array(5)].map((_, i) => (
+                  <StarIcon key={i} size={11} />
+                ))}
+              </div>
+              <span className="text-[11px] font-mono font-medium text-[#3A3A37]">
+                {rating} ({count})
+              </span>
             </div>
-            <span className="text-[10px] sm:text-[11px] font-bold text-[#0D1B35]/60">
-              {rating} ({count})
-            </span>
+
+            {/* Title + Color Accent Dot + Price */}
+            <div className="flex items-center justify-between gap-2 mb-1.5">
+              <h3 className="text-lg sm:text-xl font-sans font-semibold tracking-tight text-[#0F0F0F] flex items-center">
+                <span
+                  className="inline-block w-2.5 h-2.5 rounded-full mr-2 shrink-0"
+                  style={{ backgroundColor: meta.color }}
+                />
+                {product.title}
+              </h3>
+              <div className="flex items-baseline gap-1.5">
+                {BUNDLE_ORIGINAL_PRICES[product.slug] && (
+                  <span className="text-xs font-mono font-medium text-stone-400 line-through">
+                    {formatPrice(BUNDLE_ORIGINAL_PRICES[product.slug], currency)}
+                  </span>
+                )}
+                <span className="text-base sm:text-lg font-mono font-bold text-[#0F0F0F]">
+                  {formatPrice(product.price, currency)}
+                </span>
+              </div>
+            </div>
           </div>
 
-          <h3 className="text-base sm:text-2xl font-black tracking-tight text-[#0D1B35] leading-snug sm:leading-none">
-            {product.title}
-          </h3>
-
-          <p className="mt-1.5 sm:mt-3 text-xs sm:text-[13px] leading-snug sm:leading-relaxed text-[#425066] font-medium line-clamp-2 sm:line-clamp-none">
-            {product.description}
+          {/* Key Ingredients */}
+          <p className="text-xs font-sans text-[#3A3A37] font-normal leading-relaxed line-clamp-1 mt-1">
+            {ingredientsList}
           </p>
         </div>
 
-        {/* Precios + Botón */}
-        <div className="pt-2.5 sm:pt-4 border-t border-[#E8E2D8]/50">
-          <div className="flex justify-between items-center mb-2.5 sm:mb-4">
-            <span className="text-[10px] sm:text-xs font-extrabold text-[#0D1B35]/60 uppercase tracking-wider">Precio</span>
-            <div className="flex items-baseline gap-1.5 sm:gap-2">
-              {BUNDLE_ORIGINAL_PRICES[product.slug] && (
-                <span className="text-[10px] sm:text-xs font-bold text-stone-400 line-through">
-                  {formatPrice(BUNDLE_ORIGINAL_PRICES[product.slug], currency)}
-                </span>
-              )}
-              <span className="text-base sm:text-xl font-black text-[#0D1B35]">{formatPrice(product.price, currency)}</span>
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:grid sm:grid-cols-2 gap-1.5 sm:gap-2">
+        {/* HOVER VIEW: Fades in & slides up smoothly from the bottom on hover */}
+        <div className="absolute inset-0 p-5 bg-white flex items-center justify-center transition-all duration-300 ease-out opacity-0 translate-y-6 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto">
+          <div className="grid grid-cols-2 gap-2.5 w-full">
             <button
               onClick={handleAddToCart}
-              className="relative z-10 px-2 py-2 sm:px-3 sm:py-3 rounded-full text-white font-bold text-[11px] sm:text-xs text-center shadow-[0_4px_16px_rgba(0,80,136,0.3)] transition-all duration-200 hover:-translate-y-0.5 bg-ocean hover:bg-ocean-dark active:scale-[0.97] cursor-pointer"
+              className="w-full py-3 px-3 rounded-full text-white font-sans font-medium text-[11px] uppercase tracking-[0.12em] text-center bg-[#0F0F0F] border border-[#0F0F0F] hover:bg-white hover:text-[#0F0F0F] transition-all shadow-2xs active:scale-95 cursor-pointer"
             >
               Comprar ahora
             </button>
 
-            <div
-              className="relative z-10 px-2 py-2 sm:px-3 sm:py-3 rounded-full font-bold text-[11px] sm:text-xs text-center border border-[#E7E1D6] text-[#0D1B35] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#F0ECE1] active:scale-[0.97] flex items-center justify-center gap-1 cursor-pointer"
+            <Link
+              href={`/tienda/${product.slug}`}
+              className="w-full py-3 px-3 rounded-full font-sans font-medium text-[11px] uppercase tracking-[0.12em] text-center bg-white text-[#0F0F0F] border border-[#0F0F0F] hover:bg-[#0F0F0F] hover:text-white transition-all shadow-2xs flex items-center justify-center gap-1 active:scale-95 cursor-pointer"
             >
               Ver detalles
-              <svg className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24" style={{ width: "12px", height: "12px" }}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-              </svg>
-            </div>
+            </Link>
           </div>
         </div>
+
       </div>
-    </Link>
+    </div>
   );
 }
+
+// ─── Inspiration Banner Card Component ───────────────────────────────────────
 
 function InspirationBannerCard({
   imgSrc,
@@ -227,35 +247,46 @@ function InspirationBannerCard({
   textPosition?: "top" | "bottom";
 }) {
   const isTop = textPosition === "top";
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  // Rhode Skin Scroll Effect matching Home banners (WomanBanner & HeroSection)
+  const { scrollYProgress } = useScroll({
+    target: cardRef,
+    offset: ["start end", "end start"],
+  });
+  const imageScale = useTransform(scrollYProgress, [0, 0.6], [1.18, 1.0]);
 
   return (
     <div
-      className={`relative rounded-[20px] sm:rounded-[28px] overflow-hidden min-h-[260px] sm:min-h-[420px] w-full flex flex-col p-4 sm:p-8 border border-[#E8E2D8]/60 shadow-[0_4px_24px_rgba(13,27,53,0.03)] h-full ${
+      ref={cardRef}
+      className={`relative rounded-xl overflow-hidden min-h-[360px] sm:min-h-[420px] w-full flex flex-col p-6 sm:p-8 border border-[#E6E1D8] shadow-2xs hover:border-[#AEAEAF] hover:shadow-md transition-all duration-300 h-full text-left ${
         isTop ? "justify-start" : "justify-end"
       }`}
     >
-      <Image
-        src={imgSrc}
-        alt={title}
-        fill
-        sizes="(max-width: 768px) 50vw, 350px"
-        className="object-cover object-center"
-      />
+      <motion.div style={{ scale: imageScale }} className="absolute inset-0">
+        <Image
+          src={imgSrc}
+          alt={title}
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className="object-cover object-center"
+        />
+      </motion.div>
       <div
-        className={`absolute inset-0 ${
+        className={`absolute inset-0 z-[1] ${
           isTop
-            ? "bg-gradient-to-b from-[#0D1B35]/90 via-[#0D1B35]/50 to-black/10"
-            : "bg-gradient-to-t from-[#0D1B35]/90 via-[#0D1B35]/50 to-black/10"
+            ? "bg-gradient-to-b from-[#0F0F0F]/90 via-[#0F0F0F]/50 to-transparent"
+            : "bg-gradient-to-t from-[#0F0F0F]/90 via-[#0F0F0F]/50 to-transparent"
         }`}
       />
       <div className="relative z-10 text-white">
-        <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-[#5BA8D5] bg-[#5BA8D5]/20 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full border border-[#5BA8D5]/30 inline-block mb-2 sm:mb-3">
+        <span className="text-[10px] font-sans font-medium uppercase tracking-[0.14em] text-[#0F0F0F] bg-white/90 px-3 py-1 rounded-full border border-white/40 inline-block mb-3 backdrop-blur-xs">
           {eyebrow}
         </span>
-        <h3 className="text-base sm:text-2xl font-black tracking-tight leading-tight text-white mb-1.5 sm:mb-2">
+        <h3 className="text-xl sm:text-2xl lg:text-3xl font-display font-semibold tracking-[-0.03em] leading-tight text-white mb-2 lowercase">
           {title}
         </h3>
-        <p className="text-xs text-stone-200 leading-relaxed font-medium line-clamp-3 sm:line-clamp-none">
+        <p className="text-xs sm:text-sm font-sans font-normal text-stone-200 leading-relaxed line-clamp-3 sm:line-clamp-none">
           {text}
         </p>
       </div>
@@ -263,13 +294,10 @@ function InspirationBannerCard({
   );
 }
 
-// ─── Componente principal ────────────────────────────────────────────────────
+// ─── Componente Principal TiendaExperience ───────────────────────────────────
 
 const BUNDLE_COMPONENT_SLUGS: Record<string, string[]> = {
   "pack-dia-noche": ["energy", "sleep"],
-  "pack-calma-sueno": ["zen", "sleep"],
-  "pack-glow-balance": ["glow", "woman"],
-  "pack-trio-vitalidad": ["energy", "sleep", "zen"],
 };
 
 export default function TiendaExperience({
@@ -282,6 +310,14 @@ export default function TiendaExperience({
   const [reviewsSummary, setReviewsSummary] = useState<
     Record<string, { average: number; count: number }>
   >({});
+  const heroRef = useRef<HTMLDivElement>(null);
+
+  // Rhode Skin Scroll Effect on Hero Banner Image matching WomanBanner
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start end", "end start"],
+  });
+  const heroImageScale = useTransform(scrollYProgress, [0, 0.6], [1.18, 1.0]);
 
   useEffect(() => {
     async function loadReviews() {
@@ -330,55 +366,68 @@ export default function TiendaExperience({
     loadReviews();
   }, []);
 
-  const row1Products = products.slice(0, 3);
-  const row2Products = products.slice(3, 6);
-  const remainingProducts = products.slice(6);
+  const row1Products = products.slice(0, 2);
+  const row2Products = products.slice(2, 4);
+  const remainingProducts = products.slice(4);
 
   return (
-    <main className="min-h-screen" style={{ background: "#F8F3EC" }}>
-
-      {/* ── Hero ── */}
-      <section className="pt-32 pb-16 px-6 text-center">
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45 }}
-          className="text-[11px] font-bold uppercase tracking-[0.22em] text-coral mb-3"
+    <main className="min-h-screen bg-[#FAF8F5]">
+      {/* ── Tienda Hero Stage (Medio Alto, Rhode Skin Scroll Effect) ── */}
+      <section className="pt-24 pb-8 px-4 sm:px-8 max-w-[1400px] mx-auto">
+        <div
+          ref={heroRef}
+          className="relative w-full min-h-[340px] sm:min-h-[420px] lg:min-h-[460px] rounded-xl sm:rounded-2xl overflow-hidden bg-[#0F0F0F] shadow-[0_8px_30px_rgba(15,15,15,0.05)] border border-[#E6E1D8] flex flex-col justify-end p-6 sm:p-10 lg:p-12 text-left"
         >
-          Tienda Novapatch
-        </motion.p>
+          {/* Background Image with Scroll-Driven Scale */}
+          <motion.div style={{ scale: heroImageScale }} className="absolute inset-0">
+            <Image
+              src="/productusers/banner_shop.webp"
+              alt="Novapatch Tienda"
+              fill
+              priority
+              sizes="(max-width: 1400px) 100vw, 1400px"
+              className="object-cover object-center"
+            />
+          </motion.div>
 
-        <motion.h1
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45, delay: 0.07 }}
-          className="font-black text-ocean tracking-tight mb-3"
-          style={{ fontSize: "clamp(28px, 4vw, 46px)" }}
-        >
-          Elige el parche que necesita tu cuerpo
-        </motion.h1>
+          {/* Gradient Overlay for Legibility */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent z-[1]" />
 
-        <motion.p
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45, delay: 0.13 }}
-          className="text-[#5A6475] text-base leading-relaxed max-w-md mx-auto"
-        >
-          Seis fórmulas. Un solo formato: pega, olvida y deja que trabaje.
-        </motion.p>
+          {/* Hero Content Over Image */}
+          <div className="relative z-10 max-w-2xl">
+            <motion.h1
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="font-display font-semibold text-white tracking-[-0.035em] leading-tight lowercase text-3xl sm:text-4xl lg:text-5xl mb-3"
+            >
+              elige el parche que necesita tu cuerpo.
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="font-sans font-normal text-sm sm:text-base text-white/90 max-w-lg leading-relaxed"
+            >
+              Seis fórmulas. Un solo formato: pega, olvida y deja que trabaje.
+            </motion.p>
+          </div>
+        </div>
       </section>
 
-      {/* ── Grid de productos (2 columnas en móvil) ── */}
-      <section className="px-3 sm:px-4 pb-24 max-w-7xl mx-auto">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
-          {/* Fila 1: 3 productos + 1 Banner a la Derecha */}
+      {/* ── Grid de Productos de 3 Columnas con Banners Intercalados ── */}
+      <section className="px-6 sm:px-10 pb-24 max-w-[1240px] mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          
+          {/* Fila 1: 2 productos + 1 Banner a la Derecha */}
           {row1Products.map((product, i) => (
             <motion.div
               key={product.slug}
-              initial={{ opacity: 0, y: 28 }}
+              initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.07, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-              className="flex"
+              transition={{ delay: i * 0.05, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              className="flex flex-col h-full"
             >
               <ProductCard
                 product={product}
@@ -389,42 +438,43 @@ export default function TiendaExperience({
           ))}
 
           <motion.div
-            initial={{ opacity: 0, y: 28 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-            className="flex"
+            transition={{ delay: 0.15, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            className="flex flex-col h-full"
           >
             <InspirationBannerCard
               imgSrc="/productusers/Banner_tienda_1.webp"
-              eyebrow="RITUAL NOCTURNO"
-              title="DORMIR MEJOR EMPIEZA BAJANDO EL RITMO"
-              text="Un gesto simple antes de acostarte para acompañar la transición al descanso y despertar renovado de verdad."
-              textPosition="top"
+              eyebrow="NOVAPATCH GLOW"
+              title="NUTRICIÓN QUE SE NOTA EN TU PIEL."
+              text="Biotina, colágeno y antioxidantes esenciales liberados de forma continua para acompañar tu piel en su mejor versión cada día."
+              textPosition="bottom"
             />
           </motion.div>
 
-          {/* Fila 2: 1 Banner a la Izquierda + 3 productos */}
+          {/* Fila 2: 1 Banner a la Izquierda + 2 productos */}
           <motion.div
-            initial={{ opacity: 0, y: 28 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-            className="flex"
+            transition={{ delay: 0.2, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            className="flex flex-col h-full"
           >
             <InspirationBannerCard
               imgSrc="/productusers/Banner_tienda_2.webp"
-              eyebrow="LO SIMPLE SE SOSTIENE"
-              title="TU RITUAL DE CADA DÍA"
-              text="Cuidarte no debería sentirse como una obligación más. Combina tus parches favoritos y suma un hábito simple que sí mantenés."
+              eyebrow="NOVAPATCH ENERGY"
+              title="ENERGÍA CONSTANTE SIN BAJONES."
+              text="Té verde, ginseng y vitaminas esenciales liberados de forma gradual. Cero azúcar, cero picos y toda la vitalidad que necesitás."
+              textPosition="bottom"
             />
           </motion.div>
 
           {row2Products.map((product, i) => (
             <motion.div
               key={product.slug}
-              initial={{ opacity: 0, y: 28 }}
+              initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: (i + 4) * 0.07, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-              className="flex"
+              transition={{ delay: (i + 2) * 0.05, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              className="flex flex-col h-full"
             >
               <ProductCard
                 product={product}
@@ -438,10 +488,10 @@ export default function TiendaExperience({
           {remainingProducts.map((product, i) => (
             <motion.div
               key={product.slug}
-              initial={{ opacity: 0, y: 28 }}
+              initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: (i + 7) * 0.07, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-              className="flex"
+              transition={{ delay: (i + 4) * 0.05, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              className="flex flex-col h-full"
             >
               <ProductCard
                 product={product}
@@ -450,6 +500,7 @@ export default function TiendaExperience({
               />
             </motion.div>
           ))}
+
         </div>
       </section>
     </main>

@@ -12,8 +12,7 @@ const VALUE_PROPS = [
 export default function InfluencerHero() {
   return (
     <section
-      className="relative min-h-screen flex items-center overflow-hidden"
-      style={{ background: "#0D1B35" }}
+      className="relative min-h-screen flex items-center overflow-hidden bg-[#0F0F0F]"
     >
       {/* Full-bleed background image */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
@@ -27,18 +26,14 @@ export default function InfluencerHero() {
           sizes="100vw"
         />
         {/* Base dark overlay — even darkening across the whole image */}
-        <div className="absolute inset-0" style={{ background: "rgba(13,27,53,0.72)" }} />
+        <div className="absolute inset-0 bg-[#0F0F0F]/75" />
         {/* Extra left darkening for text legibility */}
         <div
-          className="absolute inset-0"
-          style={{
-            background: "linear-gradient(105deg, rgba(13,27,53,0.55) 0%, rgba(13,27,53,0.2) 55%, transparent 100%)",
-          }}
+          className="absolute inset-0 bg-gradient-to-r from-[#0F0F0F]/80 via-[#0F0F0F]/40 to-transparent"
         />
         {/* Bottom fade to form section */}
         <div
-          className="absolute bottom-0 left-0 right-0 h-48"
-          style={{ background: "linear-gradient(to bottom, transparent, #FAF7F2)" }}
+          className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-b from-transparent to-[#FAF8F5]"
         />
       </div>
 
@@ -62,8 +57,7 @@ export default function InfluencerHero() {
               }}
             >
               <span
-                className="w-1.5 h-1.5 rounded-full"
-                style={{ background: "#E8503A", boxShadow: "0 0 8px #E8503A" }}
+                className="w-1.5 h-1.5 rounded-full bg-white"
               />
               Creadores Novapatch · México
             </span>
@@ -74,23 +68,10 @@ export default function InfluencerHero() {
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.12, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-            className="font-bold text-white mb-8"
-            style={{
-              fontSize: "clamp(2.8rem, 7vw, 5rem)",
-              lineHeight: 0.95,
-              letterSpacing: "-0.02em",
-            }}
+            className="font-display font-semibold text-white mb-8 text-4xl sm:text-6xl lg:text-7xl tracking-[-0.035em] lowercase leading-none"
           >
-            Crea contenido
-            <br />
-            que{" "}
-            <em
-              className="not-italic"
-              style={{ color: "#E8503A" }}
-            >
-              transforma
-            </em>
-            <br />
+            crea contenido<br />
+            que transforma<br />
             vidas.
           </motion.h1>
 
@@ -99,8 +80,7 @@ export default function InfluencerHero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.26, duration: 0.8 }}
-            className="text-lg leading-relaxed mb-12"
-            style={{ color: "rgba(255,255,255,0.5)", maxWidth: 480 }}
+            className="font-sans text-base sm:text-lg text-white/70 leading-relaxed mb-12 max-w-lg"
           >
             Estamos armando una red chica de creadores con quienes queremos construir Novapatch en México. Si lo que haces conecta con el bienestar real, nos encantaría conocerte.
           </motion.p>
@@ -115,12 +95,11 @@ export default function InfluencerHero() {
             {VALUE_PROPS.map((v) => (
               <div key={v.label} className="flex items-start gap-4">
                 <div
-                  className="w-0.5 rounded-full flex-shrink-0 mt-0.5"
-                  style={{ height: 36, background: "#E8503A" }}
+                  className="w-0.5 rounded-full flex-shrink-0 mt-0.5 h-9 bg-white"
                 />
                 <div>
-                  <div className="font-semibold text-white text-sm">{v.label}</div>
-                  <div className="text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>
+                  <div className="font-sans font-semibold text-white text-sm">{v.label}</div>
+                  <div className="font-sans text-xs text-white/60">
                     {v.sub}
                   </div>
                 </div>
@@ -136,11 +115,7 @@ export default function InfluencerHero() {
             transition={{ delay: 0.5, duration: 0.6 }}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="inline-flex items-center gap-3 px-8 py-4 rounded-full font-semibold text-white text-base transition-shadow"
-            style={{
-              background: "#E8503A",
-              boxShadow: "0 4px 24px rgba(232,80,58,0.35)",
-            }}
+            className="inline-flex items-center gap-3 px-8 py-4 rounded-full font-sans font-medium uppercase tracking-[0.12em] text-xs bg-white text-[#0F0F0F] border border-white hover:bg-[#FAF8F5] transition-all"
           >
             Hablemos
             <svg

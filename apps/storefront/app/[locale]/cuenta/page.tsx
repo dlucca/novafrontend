@@ -56,19 +56,19 @@ const FREQ_LABELS: Record<number, string> = {
 };
 
 const SUB_STATUS_CONFIG: Record<string, { label: string; bg: string; color: string; icon: React.ReactNode }> = {
-  active:                   { label: "Activa",          bg: "#ECFDF5", color: "#059669", icon: <CheckCircle2 size={13} /> },
-  paused:                   { label: "Pausada",         bg: "#FFF7ED", color: "#D97706", icon: <Pause size={13} /> },
-  cancelled:                { label: "Cancelada",       bg: "#FEF2F2", color: "#DC2626", icon: <X size={13} /> },
-  past_due:                 { label: "Pago pendiente",  bg: "#FFF7ED", color: "#DC2626", icon: <AlertCircle size={13} /> },
-  delayed_out_of_stock:     { label: "Sin stock",       bg: "#FFF7ED", color: "#D97706", icon: <AlertCircle size={13} /> },
+  active:                   { label: "Activa",          bg: "#0F0F0F", color: "#FFFFFF", icon: <CheckCircle2 size={13} /> },
+  paused:                   { label: "Pausada",         bg: "#FAF8F5", color: "#3A3A37", icon: <Pause size={13} /> },
+  cancelled:                { label: "Cancelada",       bg: "#FAF8F5", color: "#A8A29A", icon: <X size={13} /> },
+  past_due:                 { label: "Pago pendiente",  bg: "#0F0F0F", color: "#FFFFFF", icon: <AlertCircle size={13} /> },
+  delayed_out_of_stock:     { label: "Sin stock",       bg: "#FAF8F5", color: "#3A3A37", icon: <AlertCircle size={13} /> },
 };
 
 const ORDER_STATUS_CONFIG: Record<string, { label: string; bg: string; color: string }> = {
-  pending:    { label: "Pendiente",  color: "#D97706", bg: "#FFF7ED" },
-  processing: { label: "Procesando", color: "#2563EB", bg: "#EFF6FF" },
-  shipped:    { label: "Enviado",    color: "#7C3AED", bg: "#F5F3FF" },
-  completed:  { label: "Entregado",  color: "#059669", bg: "#ECFDF5" },
-  cancelled:  { label: "Cancelado",  color: "#DC2626", bg: "#FEF2F2" },
+  pending:    { label: "Pendiente",  color: "#3A3A37", bg: "#FAF8F5" },
+  processing: { label: "Procesando", color: "#0F0F0F", bg: "#FAF8F5" },
+  shipped:    { label: "Enviado",    color: "#0F0F0F", bg: "#FAF8F5" },
+  completed:  { label: "Entregado",  color: "#0F0F0F", bg: "#FAF8F5" },
+  cancelled:  { label: "Cancelado",  color: "#A8A29A", bg: "#FAF8F5" },
 };
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -77,7 +77,7 @@ function SubStatusBadge({ status }: { status: MedusaSubscription["status"] }) {
   const cfg = SUB_STATUS_CONFIG[status] ?? SUB_STATUS_CONFIG.active;
   return (
     <span
-      className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full"
+      className="inline-flex items-center gap-1 text-[11px] font-mono font-medium uppercase tracking-[0.12em] px-3 py-1 rounded-full border border-[#E6E1D8]"
       style={{ background: cfg.bg, color: cfg.color }}
     >
       {cfg.icon}
@@ -107,7 +107,7 @@ function FrequencySelector({
       const updated = await medusa.subscriptions.updateFrequency(sub_id, days, token);
       onUpdate(updated);
     } catch {
-      // revert silently — optimistic update not applied here (change never applied)
+      // revert silently
     } finally {
       setLoading(false);
       setOpen(false);
@@ -119,7 +119,7 @@ function FrequencySelector({
       <button
         onClick={() => setOpen((o) => !o)}
         disabled={loading}
-        className="flex items-center gap-1.5 text-[12px] font-bold text-[#0D1B35] hover:text-[#1D3461] transition-colors disabled:opacity-50"
+        className="flex items-center gap-1.5 text-xs font-sans font-semibold text-[#0F0F0F] hover:text-[#3A3A37] transition-colors disabled:opacity-50 cursor-pointer"
       >
         {loading ? <Loader2 size={12} className="animate-spin" /> : <Repeat size={12} />}
         {FREQ_LABELS[current]}
@@ -132,17 +132,18 @@ function FrequencySelector({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -6, scale: 0.95 }}
             transition={{ duration: 0.15 }}
-            className="absolute top-full left-0 mt-1 bg-white rounded-xl border border-[#E5E7EB] shadow-[0_8px_24px_rgba(0,0,0,0.1)] z-20 overflow-hidden min-w-[140px]"
+            className="absolute top-full left-0 mt-1 bg-white rounded-xl border border-[#E6E1D8] shadow-2xs z-20 overflow-hidden min-w-[140px]"
           >
             {([30, 60, 90] as const).map((d) => (
               <button
                 key={d}
                 onClick={() => change(d)}
-                className="w-full flex items-center justify-between px-4 py-2.5 text-[12px] font-semibold hover:bg-[#F3F4F6] transition-colors text-left"
-                style={{ color: d === current ? "#E8503A" : "#0D1B35" }}
+                className={`w-full flex items-center justify-between px-4 py-2.5 text-xs font-sans font-medium transition-colors text-left ${
+                  d === current ? "bg-[#FAF8F5] text-[#0F0F0F] font-semibold" : "text-[#3A3A37] hover:bg-[#FAF8F5]"
+                }`}
               >
                 {FREQ_LABELS[d]}
-                {d === current && <CheckCircle2 size={12} className="text-[#E8503A]" />}
+                {d === current && <CheckCircle2 size={12} className="text-[#0F0F0F]" />}
               </button>
             ))}
           </motion.div>
@@ -174,7 +175,6 @@ function SubscriptionCard({
     setLoading(type);
     setError(null);
     const prev = { ...sub };
-    // Optimistic update
     const statusMap = { pause: "paused", resume: "active", cancel: "cancelled" } as const;
     onUpdate({ ...sub, status: statusMap[type] });
     try {
@@ -184,7 +184,6 @@ function SubscriptionCard({
       else                    updated = await medusa.subscriptions.cancel(sub.id, token);
       onUpdate(updated);
     } catch {
-      // Revert on error
       onUpdate(prev);
       setError(type === "cancel" ? "No se pudo cancelar. Intenta de nuevo." : "No se pudo actualizar. Intenta de nuevo.");
     } finally {
@@ -196,14 +195,13 @@ function SubscriptionCard({
   return (
     <motion.div
       layout
-      className={`bg-white rounded-2xl border overflow-hidden transition-all duration-300 ${
-        isCancelled ? "opacity-60 border-[#F3F4F6]" : "border-[#0D1B35]/8 shadow-[0_4px_20px_rgba(0,80,136,0.07)]"
+      className={`bg-white rounded-xl border border-[#E6E1D8] shadow-2xs overflow-hidden transition-all duration-300 ${
+        isCancelled ? "opacity-60" : ""
       }`}
     >
       <div className="p-5 flex gap-4">
         <div
-          className="flex-shrink-0 w-16 h-16 rounded-xl flex items-center justify-center"
-          style={{ background: meta?.bg ?? "#F3F4F6" }}
+          className="shrink-0 w-16 h-16 rounded-xl border border-[#E6E1D8] bg-[#FAF8F5] flex items-center justify-center"
         >
           {meta && (
             <div className="relative w-12 h-12">
@@ -215,10 +213,10 @@ function SubscriptionCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2 mb-1.5">
             <div>
-              <p className="text-[16px] font-black text-[#0D1B35] leading-tight">
-                NovaPatch {sub.product_title}
+              <p className="text-base font-sans font-semibold text-[#0F0F0F] leading-tight">
+                Novapatch {sub.product_title}
               </p>
-              <p className="text-[12px] text-[#6B7280] mt-0.5">
+              <p className="text-xs font-mono text-[#3A3A37] mt-0.5">
                 {fmt(sub.unit_price * sub.quantity)} / entrega
               </p>
             </div>
@@ -235,19 +233,19 @@ function SubscriptionCard({
               />
             )}
             {sub.status === "active" && (
-              <span className="flex items-center gap-1 text-[11px] text-[#6B7280]">
+              <span className="flex items-center gap-1 text-xs font-mono text-[#A8A29A]">
                 <Clock size={11} />
                 Próxima entrega: {fmtDate(sub.next_delivery_at)}
               </span>
             )}
             {sub.status === "paused" && (
-              <span className="flex items-center gap-1 text-[11px] text-[#D97706]">
+              <span className="flex items-center gap-1 text-xs font-sans text-[#3A3A37]">
                 <Pause size={11} />
                 Envíos pausados
               </span>
             )}
             {isAttention && (
-              <span className="flex items-center gap-1 text-[11px] text-[#DC2626]">
+              <span className="flex items-center gap-1 text-xs font-sans text-[#0F0F0F] font-medium">
                 <AlertCircle size={11} />
                 Requiere atención — contacta a soporte
               </span>
@@ -258,17 +256,17 @@ function SubscriptionCard({
 
       {error && (
         <div className="px-5 pb-2">
-          <p className="text-[11px] text-[#DC2626] font-medium">{error}</p>
+          <p className="text-xs font-sans text-[#0F0F0F] font-medium">{error}</p>
         </div>
       )}
 
       {!isCancelled && !isAttention && (
-        <div className="px-5 pb-4 flex items-center gap-2 flex-wrap">
+        <div className="px-5 pb-4 flex items-center gap-2 flex-wrap pt-2 border-t border-[#E6E1D8]/60">
           {sub.status === "active" && (
             <button
               onClick={() => action("pause")}
               disabled={loading !== null}
-              className="flex items-center gap-1.5 text-[12px] font-bold px-3 py-2 rounded-lg border border-[#E5E7EB] text-[#6B7280] hover:border-[#D97706] hover:text-[#D97706] transition-all disabled:opacity-50"
+              className="flex items-center gap-1.5 text-xs font-sans font-medium px-3.5 py-1.5 rounded-full border border-[#E6E1D8] bg-[#FAF8F5] text-[#3A3A37] hover:bg-white hover:text-[#0F0F0F] transition-all disabled:opacity-50 cursor-pointer"
             >
               {loading === "pause" ? <Loader2 size={12} className="animate-spin" /> : <Pause size={12} />}
               Pausar
@@ -278,7 +276,7 @@ function SubscriptionCard({
             <button
               onClick={() => action("resume")}
               disabled={loading !== null}
-              className="flex items-center gap-1.5 text-[12px] font-bold px-3 py-2 rounded-lg border border-[#E5E7EB] text-[#059669] hover:bg-[#ECFDF5] hover:border-[#059669] transition-all disabled:opacity-50"
+              className="flex items-center gap-1.5 text-xs font-sans font-medium px-3.5 py-1.5 rounded-full bg-[#0F0F0F] text-white border border-[#0F0F0F] hover:bg-white hover:text-[#0F0F0F] transition-all disabled:opacity-50 cursor-pointer"
             >
               {loading === "resume" ? <Loader2 size={12} className="animate-spin" /> : <Play size={12} />}
               Reanudar
@@ -288,7 +286,7 @@ function SubscriptionCard({
           {!confirmCancel ? (
             <button
               onClick={() => setConfirmCancel(true)}
-              className="flex items-center gap-1.5 text-[12px] font-semibold text-[#9CA3AF] hover:text-[#DC2626] transition-colors ml-auto"
+              className="flex items-center gap-1.5 text-xs font-sans text-[#A8A29A] hover:text-[#0F0F0F] transition-colors ml-auto cursor-pointer"
             >
               <X size={12} />
               Cancelar suscripción
@@ -299,17 +297,17 @@ function SubscriptionCard({
               animate={{ opacity: 1, x: 0 }}
               className="ml-auto flex items-center gap-2"
             >
-              <span className="text-[11px] text-[#DC2626] font-bold">¿Confirmar cancelación?</span>
+              <span className="text-xs font-sans text-[#0F0F0F] font-bold">¿Confirmar cancelación?</span>
               <button
                 onClick={() => action("cancel")}
                 disabled={loading !== null}
-                className="text-[11px] font-black px-3 py-1.5 rounded-lg bg-[#DC2626] text-white hover:bg-[#B91C1C] transition-colors disabled:opacity-50"
+                className="text-xs font-sans font-medium px-3 py-1 rounded-full bg-[#0F0F0F] text-white hover:bg-[#3A3A37] transition-colors disabled:opacity-50 cursor-pointer"
               >
                 {loading === "cancel" ? <Loader2 size={11} className="animate-spin" /> : "Sí, cancelar"}
               </button>
               <button
                 onClick={() => setConfirmCancel(false)}
-                className="text-[11px] font-semibold text-[#6B7280] hover:text-[#0D1B35] transition-colors"
+                className="text-xs font-sans text-[#A8A29A] hover:text-[#0F0F0F] transition-colors cursor-pointer"
               >
                 No
               </button>
@@ -322,27 +320,21 @@ function SubscriptionCard({
 }
 
 function PaymentMethodCard({ pm }: { pm: MedusaPaymentMethod }) {
-  const brandColors: Record<string, string> = {
-    Visa: "#1A1F71",
-    Mastercard: "#EB001B",
-    "American Express": "#007BC1",
-  };
   return (
-    <div className="flex items-center gap-4 p-4 bg-white rounded-xl border border-[#0D1B35]/8 shadow-[0_2px_12px_rgba(0,80,136,0.05)]">
+    <div className="flex items-center gap-4 p-4 bg-white rounded-xl border border-[#E6E1D8] shadow-2xs">
       <div
-        className="flex h-10 w-14 items-center justify-center rounded-lg text-[13px] font-black text-white flex-shrink-0"
-        style={{ background: brandColors[pm.brand] ?? "#6B7280" }}
+        className="flex h-10 w-14 items-center justify-center rounded-lg text-xs font-mono font-bold text-white bg-[#0F0F0F] shrink-0"
       >
         {pm.brand.slice(0, 4)}
       </div>
       <div className="flex-1">
-        <p className="text-[13px] font-bold text-[#0D1B35]">•••• {pm.last4.slice(-4)}</p>
-        <p className="text-[11px] text-[#6B7280]">
+        <p className="text-sm font-sans font-semibold text-[#0F0F0F]">•••• {pm.last4.slice(-4)}</p>
+        <p className="text-xs font-mono text-[#A8A29A]">
           Vence {pm.exp_month.toString().padStart(2, "0")}/{pm.exp_year}
         </p>
       </div>
       {pm.is_default && (
-        <span className="text-[10px] font-black px-2.5 py-1 rounded-full bg-[#EAF5FB] text-[#0D1B35]">
+        <span className="text-[10px] font-mono uppercase tracking-wider px-2.5 py-1 rounded-full bg-[#0F0F0F] text-white">
           Principal
         </span>
       )}
@@ -351,23 +343,21 @@ function PaymentMethodCard({ pm }: { pm: MedusaPaymentMethod }) {
 }
 
 function OrderRow({ order }: { order: MedusaOrder }) {
-  const cfg = ORDER_STATUS_CONFIG[order.status] ?? { label: order.status, color: "#6B7280", bg: "#F3F4F6" };
-  const visibleItems = order.items.slice(0, 3);
-  const extraCount = order.items.length - visibleItems.length;
+  const cfg = ORDER_STATUS_CONFIG[order.status] ?? { label: order.status, color: "#3A3A37", bg: "#FAF8F5" };
 
   return (
-    <div className="bg-white rounded-2xl border border-[#0D1B35]/8 shadow-[0_4px_20px_rgba(0,80,136,0.05)] p-5">
+    <div className="bg-white rounded-xl border border-[#E6E1D8] shadow-2xs p-5">
       <div className="flex items-start justify-between gap-3 mb-3">
         <div>
-          <p className="text-[14px] font-black text-[#0D1B35]">
+          <p className="text-sm font-sans font-semibold text-[#0F0F0F]">
             Pedido #{order.display_id}
           </p>
-          <p className="text-[11px] text-[#9CA3AF] mt-0.5">
+          <p className="text-xs font-mono text-[#A8A29A] mt-0.5">
             {fmtDate(order.created_at)}
           </p>
         </div>
         <span
-          className="text-[11px] font-bold px-2.5 py-1 rounded-full flex-shrink-0"
+          className="text-xs font-mono uppercase tracking-wider px-2.5 py-1 rounded-full border border-[#E6E1D8] shrink-0"
           style={{ background: cfg.bg, color: cfg.color }}
         >
           {cfg.label}
@@ -377,11 +367,11 @@ function OrderRow({ order }: { order: MedusaOrder }) {
       <div className="flex flex-col gap-1.5 mt-1">
         {order.items.map((item) => (
           <div key={item.id} className="flex items-center gap-2">
-            <Package size={13} className="text-[#9CA3AF] flex-shrink-0" />
-            <span className="text-[13px] text-[#374151]">
+            <Package size={13} className="text-[#A8A29A] shrink-0" />
+            <span className="text-xs font-sans text-[#3A3A37]">
               {item.title}
               {item.quantity > 1 && (
-                <span className="ml-1.5 text-[11px] font-bold text-[#9CA3AF]">×{item.quantity}</span>
+                <span className="ml-1.5 font-mono text-[11px] text-[#A8A29A]">×{item.quantity}</span>
               )}
             </span>
           </div>
@@ -395,13 +385,13 @@ function TabSkeleton() {
   return (
     <div className="space-y-3">
       {[1, 2].map((i) => (
-        <div key={i} className="bg-white rounded-2xl border border-[#F3F4F6] p-5 animate-pulse">
+        <div key={i} className="bg-white rounded-xl border border-[#E6E1D8] p-5 animate-pulse">
           <div className="flex gap-4">
-            <div className="w-16 h-16 rounded-xl bg-[#F3F4F6]" />
+            <div className="w-16 h-16 rounded-xl bg-[#FAF8F5]" />
             <div className="flex-1 space-y-2">
-              <div className="h-4 w-32 rounded bg-[#F3F4F6]" />
-              <div className="h-3 w-20 rounded bg-[#F3F4F6]" />
-              <div className="h-3 w-28 rounded bg-[#F3F4F6]" />
+              <div className="h-4 w-32 rounded bg-[#FAF8F5]" />
+              <div className="h-3 w-20 rounded bg-[#FAF8F5]" />
+              <div className="h-3 w-28 rounded bg-[#FAF8F5]" />
             </div>
           </div>
         </div>
@@ -412,12 +402,12 @@ function TabSkeleton() {
 
 function TabError({ onRetry }: { onRetry: () => void }) {
   return (
-    <div className="bg-white rounded-2xl border border-[#FEE2E2] p-8 text-center">
-      <AlertCircle size={24} className="mx-auto text-[#DC2626] mb-3" />
-      <p className="text-[14px] text-[#6B7280] mb-4">No se pudo cargar la información.</p>
+    <div className="bg-white rounded-xl border border-[#E6E1D8] p-8 text-center">
+      <AlertCircle size={24} className="mx-auto text-[#0F0F0F] mb-3" />
+      <p className="text-sm font-sans text-[#3A3A37] mb-4">No se pudo cargar la información.</p>
       <button
         onClick={onRetry}
-        className="inline-flex items-center gap-2 text-[13px] font-bold text-[#0D1B35] hover:underline"
+        className="inline-flex items-center gap-2 text-xs font-sans font-medium uppercase tracking-[0.12em] text-[#0F0F0F] hover:underline cursor-pointer"
       >
         <RefreshCw size={13} />
         Reintentar
@@ -458,17 +448,16 @@ function TabSuscripciones({
         animate={{ opacity: 1, y: 0 }}
         className="text-center py-16"
       >
-        <Repeat size={36} className="mx-auto text-[#D1D5DB] mb-4" />
-        <h3 className="text-[17px] font-black text-[#0D1B35] mb-2">
-          Aún no tienes suscripciones
+        <Repeat size={36} className="mx-auto text-[#A8A29A] mb-4" />
+        <h3 className="text-xl font-display font-semibold text-[#0F0F0F] mb-2 tracking-[-0.035em] lowercase">
+          aún no tienes suscripciones
         </h3>
-        <p className="text-[14px] text-[#6B7280] mb-6 max-w-[280px] mx-auto">
+        <p className="text-sm font-sans text-[#3A3A37] mb-6 max-w-[280px] mx-auto leading-relaxed">
           Suscribite a tus parches favoritos y ahorra hasta 20% en cada entrega.
         </p>
         <Link
           href="/tienda"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-[14px] text-white hover:brightness-95 active:scale-[0.97] transition-all"
-          style={{ background: "#E8503A" }}
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs font-sans font-medium uppercase tracking-[0.12em] bg-[#0F0F0F] text-white border border-[#0F0F0F] hover:bg-white hover:text-[#0F0F0F] transition-all cursor-pointer"
         >
           Ver suscripciones disponibles
           <ChevronRight size={14} />
@@ -483,11 +472,11 @@ function TabSuscripciones({
       {attention.length > 0 && (
         <section>
           <div className="flex items-center gap-2 mb-3">
-            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#FFF7ED]">
-              <AlertCircle size={14} className="text-[#D97706]" />
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#FAF8F5] border border-[#E6E1D8]">
+              <AlertCircle size={14} className="text-[#0F0F0F]" />
             </div>
-            <h2 className="text-[14px] font-black text-[#D97706]">
-              Requieren atención ({attention.length})
+            <h2 className="text-base font-display font-semibold text-[#0F0F0F] tracking-[-0.02em] lowercase">
+              requieren atención ({attention.length})
             </h2>
           </div>
           <div className="space-y-3">
@@ -501,18 +490,18 @@ function TabSuscripciones({
       {/* Activas */}
       <section>
         <div className="flex items-center gap-2 mb-3">
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#ECFDF5]">
-            <CheckCircle2 size={14} className="text-[#059669]" />
+          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#FAF8F5] border border-[#E6E1D8]">
+            <CheckCircle2 size={14} className="text-[#0F0F0F]" />
           </div>
-          <h2 className="text-[14px] font-black text-[#0D1B35]">
-            Activas
-            <span className="ml-2 text-[12px] font-semibold text-[#6B7280]">({active.length})</span>
+          <h2 className="text-base font-display font-semibold text-[#0F0F0F] tracking-[-0.02em] lowercase">
+            activas
+            <span className="ml-2 text-xs font-mono text-[#A8A29A]">({active.length})</span>
           </h2>
         </div>
         {active.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-dashed border-[#D1D5DB] p-6 text-center">
-            <p className="text-[13px] text-[#9CA3AF]">No tienes suscripciones activas.</p>
-            <Link href="/tienda" className="inline-flex items-center gap-1.5 mt-3 text-[13px] font-bold text-[#E8503A] hover:underline">
+          <div className="bg-white rounded-xl border border-dashed border-[#E6E1D8] p-6 text-center">
+            <p className="text-xs font-sans text-[#A8A29A]">No tienes suscripciones activas.</p>
+            <Link href="/tienda" className="inline-flex items-center gap-1.5 mt-3 text-xs font-sans font-medium uppercase tracking-[0.12em] text-[#0F0F0F] hover:underline">
               Explorar productos <ChevronRight size={13} />
             </Link>
           </div>
@@ -529,12 +518,12 @@ function TabSuscripciones({
       {paused.length > 0 && (
         <section>
           <div className="flex items-center gap-2 mb-3">
-            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#FFF7ED]">
-              <Pause size={14} className="text-[#D97706]" />
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#FAF8F5] border border-[#E6E1D8]">
+              <Pause size={14} className="text-[#0F0F0F]" />
             </div>
-            <h2 className="text-[14px] font-black text-[#0D1B35]">
-              Pausadas
-              <span className="ml-2 text-[12px] font-semibold text-[#6B7280]">({paused.length})</span>
+            <h2 className="text-base font-display font-semibold text-[#0F0F0F] tracking-[-0.02em] lowercase">
+              pausadas
+              <span className="ml-2 text-xs font-mono text-[#A8A29A]">({paused.length})</span>
             </h2>
           </div>
           <div className="space-y-3">
@@ -550,13 +539,13 @@ function TabSuscripciones({
         <section>
           <details className="group">
             <summary className="flex items-center gap-2 cursor-pointer list-none mb-3">
-              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#FEF2F2]">
-                <X size={14} className="text-[#DC2626]" />
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#FAF8F5] border border-[#E6E1D8]">
+                <X size={14} className="text-[#A8A29A]" />
               </div>
-              <h2 className="text-[13px] font-bold text-[#9CA3AF]">
-                Canceladas ({cancelled.length})
+              <h2 className="text-base font-display font-semibold text-[#A8A29A] tracking-[-0.02em] lowercase">
+                canceladas ({cancelled.length})
               </h2>
-              <ChevronRight size={13} className="text-[#9CA3AF] ml-auto group-open:rotate-90 transition-transform" />
+              <ChevronRight size={13} className="text-[#A8A29A] ml-auto group-open:rotate-90 transition-transform" />
             </summary>
             <div className="space-y-3">
               {cancelled.map((sub) => (
@@ -591,17 +580,16 @@ function TabPedidos({
         animate={{ opacity: 1, y: 0 }}
         className="text-center py-16"
       >
-        <Package size={36} className="mx-auto text-[#D1D5DB] mb-4" />
-        <h3 className="text-[17px] font-black text-[#0D1B35] mb-2">
-          Aún no tienes pedidos
+        <Package size={36} className="mx-auto text-[#A8A29A] mb-4" />
+        <h3 className="text-xl font-display font-semibold text-[#0F0F0F] mb-2 tracking-[-0.035em] lowercase">
+          aún no tienes pedidos
         </h3>
-        <p className="text-[14px] text-[#6B7280] mb-6 max-w-[260px] mx-auto">
+        <p className="text-sm font-sans text-[#3A3A37] mb-6 max-w-[260px] mx-auto leading-relaxed">
           Tus compras aparecerán aquí una vez que realices tu primer pedido.
         </p>
         <Link
           href="/tienda"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-[14px] text-white hover:brightness-95 active:scale-[0.97] transition-all"
-          style={{ background: "#E8503A" }}
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs font-sans font-medium uppercase tracking-[0.12em] bg-[#0F0F0F] text-white border border-[#0F0F0F] hover:bg-white hover:text-[#0F0F0F] transition-all cursor-pointer"
         >
           Ir a la tienda
           <ChevronRight size={14} />
@@ -640,17 +628,17 @@ function TabPago({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-[14px] font-black text-[#0D1B35]">Tarjetas guardadas</h2>
-        <button className="flex items-center gap-1 text-[12px] font-bold text-[#E8503A] hover:underline">
+        <h2 className="text-base font-display font-semibold text-[#0F0F0F] tracking-[-0.02em] lowercase">tarjetas guardadas</h2>
+        <button className="flex items-center gap-1 text-xs font-sans font-medium uppercase tracking-[0.12em] text-[#0F0F0F] hover:underline cursor-pointer">
           <Plus size={12} />
           Agregar
         </button>
       </div>
 
       {paymentMethods.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-dashed border-[#D1D5DB] p-6 text-center">
-          <CreditCard size={24} className="mx-auto text-[#D1D5DB] mb-3" />
-          <p className="text-[13px] text-[#9CA3AF]">No tienes tarjetas guardadas.</p>
+        <div className="bg-white rounded-xl border border-dashed border-[#E6E1D8] p-6 text-center">
+          <CreditCard size={24} className="mx-auto text-[#A8A29A] mb-3" />
+          <p className="text-xs font-sans text-[#A8A29A]">No tienes tarjetas guardadas.</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -660,11 +648,11 @@ function TabPago({
         </div>
       )}
 
-      <div className="flex items-center gap-2 p-3 rounded-xl bg-white border border-[#E5E7EB]">
-        <ShieldCheck size={14} className="text-[#3CBFAB] flex-shrink-0" />
-        <p className="text-[11px] text-[#6B7280]">
+      <div className="flex items-center gap-2 p-3 rounded-xl bg-white border border-[#E6E1D8]">
+        <ShieldCheck size={14} className="text-[#0F0F0F] shrink-0" />
+        <p className="text-xs font-sans text-[#3A3A37] leading-relaxed">
           Tus datos de pago están encriptados y gestionados de forma segura por{" "}
-          <span className="font-bold text-[#0D1B35]">Openpay</span>. Novapatch nunca almacena datos de tarjeta.
+          <span className="font-semibold text-[#0F0F0F]">Openpay</span>. Novapatch nunca almacena datos de tarjeta.
         </p>
       </div>
     </div>
@@ -755,8 +743,8 @@ function MiCuentaContent() {
 
   if (!isLoaded) {
     return (
-      <div className="min-h-screen bg-[#FAF7F2] flex items-center justify-center">
-        <Loader2 size={28} className="animate-spin text-[#0D1B35]" />
+      <div className="min-h-screen bg-[#FAF8F5] flex items-center justify-center">
+        <Loader2 size={28} className="animate-spin text-[#0F0F0F]" />
       </div>
     );
   }
@@ -767,47 +755,32 @@ function MiCuentaContent() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2]">
+    <div className="min-h-screen bg-[#FAF8F5]">
       <Navbar lightBg={true} />
 
-      {/* Account hero — sky brand header */}
+      {/* Account hero — bone brand header */}
       <div className="pt-[76px]">
-        <div className="relative overflow-hidden" style={{ background: "linear-gradient(135deg, #EAF5FB 0%, #D6ECFA 100%)" }}>
-          {/* Decorative radials */}
-          <div
-            className="pointer-events-none absolute -top-16 -right-16 w-72 h-72 rounded-full"
-            style={{ background: "radial-gradient(circle, rgba(91,168,213,0.25) 0%, transparent 70%)" }}
-          />
-          <div
-            className="pointer-events-none absolute -bottom-12 -left-12 w-56 h-56 rounded-full"
-            style={{ background: "radial-gradient(circle, rgba(232,80,58,0.08) 0%, transparent 70%)" }}
-          />
-          {/* Coral accent line at top */}
-          <div
-            className="absolute top-0 left-0 right-0 h-[3px]"
-            style={{ background: "linear-gradient(to right, transparent, #E8503A 30%, #5BA8D5 70%, transparent)" }}
-          />
-
-          <div className="relative z-10 max-w-2xl mx-auto px-6 py-7 flex items-center gap-5">
+        <div className="relative overflow-hidden bg-[#FAF8F5] border-b border-[#E6E1D8]">
+          <div className="relative z-10 max-w-2xl mx-auto px-6 py-8 flex items-center gap-5">
             {/* Avatar */}
-            <div className="relative h-[60px] w-[60px] flex-shrink-0 overflow-hidden rounded-2xl ring-2 ring-[#5BA8D5]/60 ring-offset-2 ring-offset-white/50">
+            <div className="relative h-[60px] w-[60px] shrink-0 overflow-hidden rounded-full border border-[#E6E1D8] bg-white">
               {user.imageUrl ? (
                 <Image src={user.imageUrl} alt={user.fullName ?? "Avatar"} fill sizes="60px" className="object-cover" />
               ) : (
-                <div className="flex h-full w-full items-center justify-center bg-[#5BA8D5] text-[20px] font-black text-white">
+                <div className="flex h-full w-full items-center justify-center bg-[#0F0F0F] text-lg font-mono font-bold text-white">
                   {user.firstName?.[0] ?? "N"}
                 </div>
               )}
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#E8503A] mb-0.5">
-                Mi cuenta
-              </p>
-              <h1 className="text-[22px] font-black text-[#0D1B35] leading-tight tracking-[-0.02em] truncate">
+              <span className="text-[11px] font-sans font-medium uppercase tracking-[0.12em] text-[#A8A29A] block mb-1">
+                mi cuenta
+              </span>
+              <h1 className="text-2xl sm:text-3xl font-display font-semibold text-[#0F0F0F] leading-tight tracking-[-0.035em] truncate lowercase">
                 {user.fullName ?? user.primaryEmailAddress?.emailAddress}
               </h1>
               {user.fullName && (
-                <p className="text-[12px] text-[#5BA8D5] font-medium mt-0.5 truncate">
+                <p className="text-xs font-sans text-[#3A3A37] mt-0.5 truncate">
                   {user.primaryEmailAddress?.emailAddress}
                 </p>
               )}
@@ -816,17 +789,17 @@ function MiCuentaContent() {
         </div>
 
         {/* Sticky tab nav */}
-        <div className="sticky top-[76px] z-30 bg-white border-b border-[#0D1B35]/8 shadow-[0_1px_0_rgba(13,27,53,0.06)]">
+        <div className="sticky top-[76px] z-30 bg-[#FAF8F5] border-b border-[#E6E1D8]">
           <div className="max-w-2xl mx-auto px-6">
             <div className="flex">
               {TABS.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setTab(tab.id)}
-                  className={`px-5 py-4 text-[13px] font-bold border-b-2 transition-all duration-200 ${
+                  className={`px-5 py-4 text-xs font-sans font-medium uppercase tracking-[0.12em] border-b-2 transition-all duration-200 cursor-pointer ${
                     activeTab === tab.id
-                      ? "border-[#E8503A] text-[#E8503A]"
-                      : "border-transparent text-[#9CA3AF] hover:text-[#0D1B35]"
+                      ? "border-[#0F0F0F] text-[#0F0F0F]"
+                      : "border-transparent text-[#A8A29A] hover:text-[#0F0F0F]"
                   }`}
                 >
                   {tab.label}
@@ -883,8 +856,8 @@ function MiCuentaContent() {
 export default function MiCuentaPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-[#EAF5FB] flex items-center justify-center">
-        <Loader2 size={28} className="animate-spin text-[#5BA8D5]" />
+      <div className="min-h-screen bg-[#FAF8F5] flex items-center justify-center">
+        <Loader2 size={28} className="animate-spin text-[#0F0F0F]" />
       </div>
     }>
       <MiCuentaContent />

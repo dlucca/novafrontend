@@ -65,7 +65,7 @@ export default function CountrySelector({ currentLocale }: { currentLocale: Loca
       <button
         onClick={() => { setOpen(!open); setFocusedIndex(-1) }}
         onKeyDown={handleTriggerKeyDown}
-        className="flex items-center gap-1.5 text-[11px] text-navy/45 hover:text-navy/75 transition-colors duration-200 focus-visible:outline-none focus-visible:text-navy/75"
+        className="flex items-center gap-1.5 text-[11px] text-[#A8A29A] hover:text-[#0F0F0F] transition-colors duration-200 focus-visible:outline-none focus-visible:text-[#0F0F0F]"
         aria-expanded={open}
         aria-haspopup="listbox"
         aria-label={`Seleccionar región: ${t(`markets.${currentLocale}`)}`}
@@ -85,7 +85,7 @@ export default function CountrySelector({ currentLocale }: { currentLocale: Loca
         <div
           role="listbox"
           aria-label="Seleccionar región"
-          className="absolute bottom-full mb-2.5 left-1/2 -translate-x-1/2 bg-white border border-navy/8 rounded-xl shadow-md shadow-navy/5 py-1.5 min-w-[130px] z-50"
+          className="absolute bottom-full mb-2.5 left-1/2 -translate-x-1/2 bg-white border border-[#E6E1D8] rounded-xl shadow-md py-1.5 min-w-[130px] z-50"
         >
           {locales.map((locale, index) => (
             <button
@@ -95,10 +95,10 @@ export default function CountrySelector({ currentLocale }: { currentLocale: Loca
               aria-selected={locale === currentLocale}
               onClick={() => select(locale)}
               onKeyDown={(e) => handleOptionKeyDown(e, index, locale)}
-              className={`w-full px-4 py-2 text-left text-[11px] font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:bg-navy/5 ${
+              className={`w-full px-4 py-2 text-left text-[11px] font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:bg-[#FAF8F5] ${
                 locale === currentLocale
-                  ? 'text-coral'
-                  : 'text-navy/55 hover:text-navy hover:bg-navy/3'
+                  ? 'text-[#0F0F0F] font-bold'
+                  : 'text-[#3A3A37] hover:text-[#0F0F0F] hover:bg-[#FAF8F5]'
               }`}
             >
               {t(`markets.${locale}`)}

@@ -26,81 +26,41 @@ const faqs = [
   },
 ];
 
-function FAQItem({
-  faq,
-  id,
-  isOpen,
-  onToggle,
-}: {
-  faq: { q: string; a: string };
-  id: string;
-  isOpen: boolean;
-  onToggle: () => void;
-}) {
-  const triggerId = `sub-faq-trigger-${id}`;
-  const panelId = `sub-faq-panel-${id}`;
-
-  return (
-    <div className="border-b border-gray-200">
-      <button
-        id={triggerId}
-        onClick={onToggle}
-        aria-expanded={isOpen}
-        aria-controls={panelId}
-        className="home-item-title flex w-full items-center justify-between gap-4 py-5 text-left transition-colors hover:text-ocean focus-visible:outline-none focus-visible:text-ocean"
-      >
-        <span>{faq.q}</span>
-        <span
-          aria-hidden="true"
-          className="flex h-[30px] w-[30px] flex-shrink-0 items-center justify-center rounded-full text-lg font-normal leading-none transition-all duration-[250ms]"
-          style={{
-            background: isOpen ? "var(--color-ocean)" : "#F3F4F6",
-            color: isOpen ? "white" : "var(--color-ocean)",
-            transform: isOpen ? "rotate(45deg)" : "rotate(0deg)",
-          }}
-        >
-          +
-        </span>
-      </button>
-
-      <div
-        id={panelId}
-        role="region"
-        aria-labelledby={triggerId}
-        aria-hidden={!isOpen}
-        className="grid transition-[grid-template-rows] duration-350 ease-[cubic-bezier(0.22,1,0.36,1)]"
-        style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
-      >
-        <div className="overflow-hidden">
-          <p
-            className="home-body"
-            style={{
-              paddingBottom: isOpen ? "20px" : "0px",
-              paddingRight: "48px",
-              transition: "padding-bottom 0.35s",
-            }}
-          >
-            {faq.a}
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function SubscriptionsFAQ() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <div>
+    <div className="divide-y divide-[#E6E1D8] border-y border-[#E6E1D8]">
       {faqs.map((faq, i) => (
-        <FAQItem
-          key={faq.q}
-          faq={faq}
-          id={String(i)}
-          isOpen={open === i}
-          onToggle={() => setOpen(open === i ? null : i)}
-        />
+        <div key={faq.q} className="py-5 text-left">
+          <button
+            onClick={() => setOpen(open === i ? null : i)}
+            aria-expanded={open === i}
+            className="flex w-full items-center justify-between text-left group cursor-pointer"
+          >
+            <span className="text-base sm:text-lg font-sans font-semibold text-[#0F0F0F] group-hover:text-[#3A3A37] transition-colors">
+              {faq.q}
+            </span>
+            <span className="shrink-0 w-6 h-6 rounded-full border border-[#E6E1D8] bg-[#FAF8F5] flex items-center justify-center font-mono text-xs text-[#0F0F0F]">
+              {open === i ? "−" : "+"}
+            </span>
+          </button>
+          <AnimatePresence initial={false}>
+            {open === i && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.25, ease: "easeInOut" }}
+                className="overflow-hidden"
+              >
+                <p className="pt-3 text-xs sm:text-sm font-sans font-normal text-[#3A3A37] leading-relaxed max-w-2xl">
+                  {faq.a}
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       ))}
     </div>
   );

@@ -36,17 +36,17 @@ export default function ContactForm() {
 
   if (sent) {
     return (
-      <div className="bg-white rounded-3xl p-10 shadow-[0_4px_20px_rgba(13,27,53,0.06)] border border-[#005088]/6 text-center flex flex-col gap-4 items-center">
-        <div className="w-16 h-16 rounded-2xl bg-[#C9D849]/20 flex items-center justify-center">
-          <Mail className="w-8 h-8 text-[#3CBFAB]" />
+      <div className="bg-white rounded-xl p-8 border border-[#E6E1D8] shadow-2xs text-center flex flex-col gap-4 items-center">
+        <div className="w-14 h-14 rounded-full bg-[#FAF8F5] border border-[#E6E1D8] flex items-center justify-center text-[#0F0F0F]">
+          <Mail className="w-6 h-6" />
         </div>
-        <h2 className="home-item-title text-ocean mb-1">¡Mensaje enviado!</h2>
-        <p className="home-body">
+        <h2 className="text-xl font-display font-semibold text-[#0F0F0F] lowercase">¡mensaje enviado!</h2>
+        <p className="font-sans text-sm text-[#3A3A37]">
           Te responderemos en menos de 24 horas a <strong>{form.email}</strong>
         </p>
         <button
           onClick={() => { setSent(false); setForm({ nombre: "", email: "", asunto: "", mensaje: "" }); }}
-          className="home-body mt-2 font-semibold text-teal hover:underline"
+          className="mt-2 text-xs font-sans font-medium text-[#0F0F0F] underline cursor-pointer"
         >
           Enviar otro mensaje
         </button>
@@ -55,35 +55,35 @@ export default function ContactForm() {
   }
 
   return (
-    <div className="bg-white rounded-3xl p-8 shadow-[0_4px_20px_rgba(13,27,53,0.06)] border border-[#005088]/6">
-      <h2 className="home-item-title text-ocean mb-6">Envíanos un mensaje</h2>
+    <div className="bg-white rounded-xl p-8 border border-[#E6E1D8] shadow-2xs">
+      <h2 className="text-xl font-display font-semibold text-[#0F0F0F] lowercase mb-6">envíanos un mensaje</h2>
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <div className="grid md:grid-cols-2 gap-5">
           <div>
-            <label className="home-body mb-2 block font-semibold">Nombre</label>
+            <label className="font-sans text-xs font-semibold text-[#0F0F0F] mb-2 block">Nombre</label>
             <input
               required type="text" value={form.nombre}
               onChange={(e) => setForm({ ...form, nombre: e.target.value })}
               placeholder="Tu nombre"
-              className="w-full px-4 py-3 rounded-xl border border-[#005088]/10 text-sm text-[#005088] placeholder-[#0D1B35]/30 focus:outline-none focus:border-[#3CBFAB]/60 focus:ring-2 focus:ring-[#3CBFAB]/10 transition-all duration-200 bg-[#FAF7F2]"
+              className="w-full px-4 py-3 rounded-xl border border-[#E6E1D8] text-xs font-sans text-[#0F0F0F] placeholder-[#A8A29A] focus:outline-none focus:border-[#0F0F0F] transition-all bg-[#FAF8F5]"
             />
           </div>
           <div>
-            <label className="home-body mb-2 block font-semibold">Email</label>
+            <label className="font-sans text-xs font-semibold text-[#0F0F0F] mb-2 block">Email</label>
             <input
               required type="email" value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
               placeholder="tu@correo.com"
-              className="w-full px-4 py-3 rounded-xl border border-[#005088]/10 text-sm text-[#005088] placeholder-[#0D1B35]/30 focus:outline-none focus:border-[#3CBFAB]/60 focus:ring-2 focus:ring-[#3CBFAB]/10 transition-all duration-200 bg-[#FAF7F2]"
+              className="w-full px-4 py-3 rounded-xl border border-[#E6E1D8] text-xs font-sans text-[#0F0F0F] placeholder-[#A8A29A] focus:outline-none focus:border-[#0F0F0F] transition-all bg-[#FAF8F5]"
             />
           </div>
         </div>
         <div>
-          <label className="home-body mb-2 block font-semibold">Asunto</label>
+          <label className="font-sans text-xs font-semibold text-[#0F0F0F] mb-2 block">Asunto</label>
           <select
             required value={form.asunto}
             onChange={(e) => setForm({ ...form, asunto: e.target.value })}
-            className="w-full px-4 py-3 rounded-xl border border-[#005088]/10 text-sm text-[#005088] focus:outline-none focus:border-[#3CBFAB]/60 focus:ring-2 focus:ring-[#3CBFAB]/10 transition-all duration-200 bg-[#FAF7F2] appearance-none"
+            className="w-full px-4 py-3 rounded-xl border border-[#E6E1D8] text-xs font-sans text-[#0F0F0F] focus:outline-none focus:border-[#0F0F0F] transition-all bg-[#FAF8F5] appearance-none"
           >
             <option value="" disabled>Selecciona un asunto</option>
             <option value="pedido">Pedido</option>
@@ -93,20 +93,20 @@ export default function ContactForm() {
           </select>
         </div>
         <div>
-          <label className="home-body mb-2 block font-semibold">Mensaje</label>
+          <label className="font-sans text-xs font-semibold text-[#0F0F0F] mb-2 block">Mensaje</label>
           <textarea
             required rows={5} value={form.mensaje}
             onChange={(e) => setForm({ ...form, mensaje: e.target.value })}
             placeholder="Cuéntanos en qué podemos ayudarte..."
-            className="w-full px-4 py-3 rounded-xl border border-[#005088]/10 text-sm text-[#005088] placeholder-[#0D1B35]/30 focus:outline-none focus:border-[#3CBFAB]/60 focus:ring-2 focus:ring-[#3CBFAB]/10 transition-all duration-200 bg-[#FAF7F2] resize-none"
+            className="w-full px-4 py-3 rounded-xl border border-[#E6E1D8] text-xs font-sans text-[#0F0F0F] placeholder-[#A8A29A] focus:outline-none focus:border-[#0F0F0F] transition-all bg-[#FAF8F5] resize-none"
           />
         </div>
         {error && (
-          <p className="home-body text-center font-medium text-[#E8503A]">{error}</p>
+          <p className="font-sans text-center text-xs font-medium text-red-600">{error}</p>
         )}
         <button
           type="submit" disabled={loading}
-          className="w-full rounded-full bg-[#3CBFAB] py-4 font-bold text-white shadow-[0_4px_20px_rgba(60,191,171,0.3)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#2da898] hover:shadow-[0_8px_32px_rgba(60,191,171,0.4)] active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 disabled:active:scale-100"
+          className="w-full rounded-full bg-[#0F0F0F] text-white border border-[#0F0F0F] hover:bg-white hover:text-[#0F0F0F] text-[11px] font-sans font-medium uppercase tracking-[0.12em] py-3.5 transition-all disabled:opacity-40 cursor-pointer"
         >
           {loading ? "Enviando..." : "Enviar mensaje"}
         </button>

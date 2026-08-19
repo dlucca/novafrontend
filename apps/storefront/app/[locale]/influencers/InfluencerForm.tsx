@@ -125,20 +125,20 @@ const STEPS = [
 
 // ─── Primitives ───────────────────────────────────────────────────────────────
 
-const NAVY = "#0D1B35";
-const CORAL = "#E8503A";
-const CREAM = "#FAF7F2";
+const NAVY = "#0F0F0F";
+const CORAL = "#0F0F0F";
+const CREAM = "#FAF8F5";
 
 const inputBase: React.CSSProperties = {
   width: "100%",
   borderRadius: 12,
   padding: "12px 16px",
   fontSize: 14,
-  border: `1.5px solid rgba(13,27,53,0.14)`,
-  background: "white",
+  border: `1px solid #E6E1D8`,
+  background: "#FAF8F5",
   color: NAVY,
   outline: "none",
-  transition: "border-color 0.2s, box-shadow 0.2s",
+  transition: "border-color 0.2s, background-color 0.2s",
   appearance: "none" as const,
 };
 
@@ -167,18 +167,12 @@ function Input({
         onBlur={() => setFocused(false)}
         style={{
           ...inputBase,
-          borderColor: error
-            ? CORAL
-            : focused
-            ? CORAL
-            : "rgba(13,27,53,0.14)",
-          boxShadow: focused && !error
-            ? `0 0 0 3px rgba(232,80,58,0.1)`
-            : "none",
+          borderColor: error ? CORAL : focused ? CORAL : "#E6E1D8",
+          background: focused ? "white" : "#FAF8F5",
         }}
       />
       {error && (
-        <p className="mt-1 text-xs" style={{ color: CORAL }}>
+        <p className="mt-1 text-xs font-sans text-[#0F0F0F]">
           {error}
         </p>
       )}

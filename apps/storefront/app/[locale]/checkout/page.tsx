@@ -24,6 +24,7 @@ import {
   FREQ_DISCOUNTS,
   itemDisplayPrice,
   cartTotals,
+  getSmartUpsell,
   clearCart,
 } from "@/lib/cart";
 import {
@@ -51,54 +52,59 @@ function fmt(n: number, region: string = "mxn") {
 
 // ─── Sub-components ──────────────────────────────────────────────────────────
 
+// ─── Sub-components ──────────────────────────────────────────────────────────
+
 function OrderItem({ item, region }: { item: CartItem; region: string }) {
   const price = itemDisplayPrice(item);
   const isSub = item.mode === "sub";
 
   return (
     <div className="flex items-center gap-3 py-3">
-      {/* image chip — outer div is relative so badge escapes overflow-hidden */}
-      <div className="relative flex-shrink-0 w-14 h-14">
+      {/* image chip */}
+      <Link
+        href={`/tienda/${item.slug}`}
+        className="relative shrink-0 w-14 h-14 block group/item"
+      >
         <div
-          className="w-full h-full rounded-xl overflow-hidden flex items-center justify-center"
-          style={{ background: item.bg }}
+          className="w-full h-full rounded-xl overflow-hidden flex items-center justify-center border border-[#E6E1D8] bg-[#FAF8F5] group-hover/item:border-[#0F0F0F] transition-colors"
         >
           <Image
             src={item.image}
             alt={item.title}
             fill
-            className="object-contain p-1"
+            className="object-contain p-1 group-hover/item:scale-105 transition-transform"
           />
         </div>
         <span
-          className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-black text-white shadow-sm"
-          style={{ background: item.color }}
+          className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-mono font-bold text-white bg-[#0F0F0F] shadow-2xs"
         >
           {item.quantity}
         </span>
-      </div>
+      </Link>
 
       {/* info */}
       <div className="flex-1 min-w-0">
-        <p className="text-[14px] font-bold text-[#005088] leading-tight truncate">
+        <Link
+          href={`/tienda/${item.slug}`}
+          className="text-[14px] font-sans font-semibold text-[#0F0F0F] leading-tight truncate hover:underline block"
+        >
           {item.title}
-        </p>
+        </Link>
         {isSub ? (
           <span
-            className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full mt-0.5"
-            style={{ background: `${item.color}18`, color: item.color }}
+            className="inline-flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full mt-1 bg-[#0F0F0F] text-white"
           >
             <Repeat size={9} />
             {FREQ_LABELS[item.freq]}
           </span>
         ) : (
-          <span className="text-[11px] text-[#6B7280]">Compra única</span>
+          <span className="block text-[11px] font-sans text-[#A8A29A] mt-0.5">Compra única</span>
         )}
       </div>
 
-      {/* price — always original so it matches the subtotal line */}
-      <div className="text-right flex-shrink-0">
-        <p className="text-[14px] font-black text-[#005088]">
+      {/* price */}
+      <div className="text-right shrink-0">
+        <p className="text-[14px] font-mono font-bold text-[#0F0F0F]">
           {fmt(item.price * item.quantity, region)}
         </p>
       </div>
@@ -116,19 +122,18 @@ function AuthGate() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="rounded-2xl border border-[#005088]/12 bg-white p-8 text-center shadow-[0_4px_24px_rgba(0,80,136,0.08)]"
+      className="rounded-xl border border-[#E6E1D8] bg-white p-8 text-center shadow-2xs"
     >
       <div
-        className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl"
-        style={{ background: "#EBF4FB" }}
+        className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[#FAF8F5] border border-[#E6E1D8] text-[#0F0F0F]"
       >
-        <Lock size={28} className="text-[#005088]" />
+        <Lock size={24} />
       </div>
 
-      <h3 className="text-[20px] font-black text-[#005088] mb-2 tracking-[-0.02em]">
-        Crea tu cuenta para suscribirte
+      <h3 className="text-xl font-display font-semibold text-[#0F0F0F] mb-2 tracking-[-0.035em] lowercase">
+        crea tu cuenta para suscribirte
       </h3>
-      <p className="text-[14px] text-[#6B7280] leading-[1.6] mb-6 max-w-[320px] mx-auto">
+      <p className="font-sans text-sm text-[#3A3A37] leading-relaxed mb-6 max-w-[340px] mx-auto">
         Tu carrito incluye productos en modo suscripción. Necesitamos una
         cuenta para gestionar tus envíos recurrentes y descuentos.
       </p>
@@ -138,20 +143,16 @@ function AuthGate() {
           onClick={() =>
             openSignIn({
               forceRedirectUrl: "/checkout",
-              appearance: {
-                variables: { colorPrimary: "#E8503A" },
-              },
             })
           }
-          className="w-full py-3.5 rounded-xl text-[15px] font-bold text-white transition-all duration-200 active:scale-[0.97] hover:brightness-95"
-          style={{ background: "#E8503A" }}
+          className="w-full py-3.5 rounded-full text-[11px] font-sans font-medium uppercase tracking-[0.12em] bg-[#0F0F0F] text-white border border-[#0F0F0F] hover:bg-white hover:text-[#0F0F0F] transition-all cursor-pointer"
         >
           Crear cuenta / Iniciar sesión
         </button>
 
         <Link
           href="/tienda"
-          className="text-[13px] text-[#6B7280] hover:text-[#005088] transition-colors"
+          className="text-xs font-sans text-[#A8A29A] hover:text-[#0F0F0F] transition-colors"
         >
           Volver a la tienda
         </Link>
@@ -160,17 +161,16 @@ function AuthGate() {
       {/* perks */}
       <div className="mt-7 grid grid-cols-3 gap-3 text-center">
         {[
-          { icon: <ShieldCheck className="w-6 h-6 mx-auto text-[#005088]" />, label: "Datos seguros" },
-          { icon: <Truck className="w-6 h-6 mx-auto text-[#005088]" />, label: "Envíos gestionados" },
-          { icon: <XCircle className="w-6 h-6 mx-auto text-[#005088]" />, label: "Cancela cuando quieras" },
+          { icon: <ShieldCheck className="w-5 h-5 mx-auto text-[#0F0F0F]" />, label: "Datos seguros" },
+          { icon: <Truck className="w-5 h-5 mx-auto text-[#0F0F0F]" />, label: "Envíos gestionados" },
+          { icon: <XCircle className="w-5 h-5 mx-auto text-[#0F0F0F]" />, label: "Cancela cuando quieras" },
         ].map((p) => (
           <div
             key={p.label}
-            className="rounded-xl p-3"
-            style={{ background: "#F9FAFB" }}
+            className="rounded-xl p-3 bg-[#FAF8F5] border border-[#E6E1D8]"
           >
             <div className="mb-1">{p.icon}</div>
-            <p className="text-[10px] font-semibold text-[#6B7280] leading-tight">
+            <p className="text-[10px] font-sans font-semibold text-[#3A3A37] leading-tight">
               {p.label}
             </p>
           </div>
@@ -205,9 +205,9 @@ function Field({
 }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-[12px] font-bold text-[#005088] uppercase tracking-[0.06em]">
+      <label htmlFor={id} className="text-[11px] font-sans font-medium uppercase tracking-[0.1em] text-[#0F0F0F]">
         {label}
-        {required && <span className="text-[#E8503A] ml-0.5">*</span>}
+        {required && <span className="text-[#0F0F0F] ml-0.5">*</span>}
       </label>
       <input
         id={id}
@@ -216,8 +216,8 @@ function Field({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         autoComplete={autoComplete}
-        className={`w-full px-4 py-3 rounded-xl text-[14px] text-[#005088] placeholder-[#9CA3AF] border bg-white transition-all duration-200 outline-none focus:ring-2 focus:ring-[#005088]/20 focus:border-[#005088] ${
-          error ? "border-[#E8503A] ring-2 ring-[#E8503A]/20" : "border-[#E5E7EB]"
+        className={`w-full px-4 py-3 rounded-xl text-sm font-sans text-[#0F0F0F] placeholder-[#A8A29A] border bg-[#FAF8F5] transition-all duration-200 outline-none focus:bg-white focus:border-[#0F0F0F] ${
+          error ? "border-[#0F0F0F] ring-1 ring-[#0F0F0F]" : "border-[#E6E1D8]"
         }`}
       />
       <AnimatePresence>
@@ -226,7 +226,7 @@ function Field({
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
-            className="text-[11px] text-[#E8503A] flex items-center gap-1"
+            className="text-[11px] font-sans text-[#0F0F0F] flex items-center gap-1"
           >
             <AlertCircle size={11} />
             {error}
@@ -251,14 +251,13 @@ function SectionHeader({
   return (
     <div className="flex items-center gap-3 mb-5">
       <div
-        className="flex h-8 w-8 items-center justify-center rounded-full text-[13px] font-black text-white flex-shrink-0"
-        style={{ background: "#005088" }}
+        className="flex h-7 w-7 items-center justify-center rounded-full text-xs font-mono font-bold text-white bg-[#0F0F0F] shrink-0"
       >
         {step}
       </div>
       <div className="flex items-center gap-2">
-        <span className="text-[#005088]">{icon}</span>
-        <h2 className="text-[17px] font-black text-[#005088] tracking-[-0.01em]">
+        <span className="text-[#0F0F0F]">{icon}</span>
+        <h2 className="text-lg font-display font-semibold text-[#0F0F0F] tracking-[-0.02em] lowercase">
           {title}
         </h2>
       </div>
@@ -269,7 +268,7 @@ function SectionHeader({
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function CheckoutPage() {
-  const { items, openCart, coupons } = useCart();
+  const { items, openCart, coupons, addToCart } = useCart();
   const { user, isLoaded } = useUser();
   const { openSignIn } = useClerk();
   const { getToken } = useAuth();
@@ -1085,53 +1084,49 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2]">
+    <div className="min-h-screen bg-[#FAF8F5]">
       {/* ── Overlay 3DS: tapa la pantalla mientras el browser navega a Openpay ── */}
       {paymentStep === 5 && (
-        <div className="fixed inset-0 z-[9999] bg-[#FAF7F2] flex flex-col items-center justify-center gap-4">
-          <span className="h-10 w-10 border-4 border-[#005088] border-t-transparent rounded-full animate-spin" />
-          <p className="text-[16px] font-semibold text-[#005088]">Redirigiendo a tu banco…</p>
-          <p className="text-[13px] text-[#9CA3AF]">No cierres esta página</p>
+        <div className="fixed inset-0 z-[9999] bg-[#FAF8F5] flex flex-col items-center justify-center gap-4">
+          <span className="h-10 w-10 border-4 border-[#0F0F0F] border-t-transparent rounded-full animate-spin" />
+          <p className="text-[15px] font-sans font-semibold text-[#0F0F0F]">Redirigiendo a tu banco…</p>
+          <p className="text-[13px] font-sans text-[#A8A29A]">No cierres esta página</p>
         </div>
       )}
 
       {/* ── Minimal Header ── */}
-      <header className="sticky top-0 z-40 bg-[#FAF7F2]/95 backdrop-blur-xl border-b border-[#005088]/8">
-        <div className="max-w-6xl mx-auto px-6 h-[64px] flex items-center justify-between">
+      <header className="sticky top-0 z-40 bg-[#FAF8F5]/95 backdrop-blur-xl border-b border-[#E6E1D8]">
+        <div className="max-w-[1240px] mx-auto px-6 sm:px-10 h-[64px] flex items-center justify-between">
           <button
             onClick={openCart}
-            className="flex items-center gap-1.5 text-[13px] font-semibold text-[#005088] hover:text-[#003d6b] transition-colors"
+            className="flex items-center gap-1.5 text-xs font-sans font-medium uppercase tracking-[0.12em] text-[#0F0F0F] hover:text-[#3A3A37] transition-colors cursor-pointer"
           >
             <ChevronLeft size={16} />
             Editar carrito
           </button>
 
-          <Link href="/" className="absolute left-1/2 -translate-x-1/2">
-            <Image
-              src="/logos/logocolor.webp"
-              alt="NovaPatch"
-              width={140}
-              height={40}
-              className="h-[36px] w-auto object-contain"
-              priority
-            />
+          <Link
+            href="/"
+            className="absolute left-1/2 -translate-x-1/2 font-sans font-bold text-[22px] tracking-[-0.035em] text-[#0F0F0F] hover:opacity-85 transition-opacity lowercase"
+          >
+            novapatch
           </Link>
 
-          <div className="flex items-center gap-1.5 text-[12px] font-semibold text-[#6B7280]">
-            <Lock size={12} className="text-[#3CBFAB]" />
+          <div className="flex items-center gap-1.5 text-xs font-sans text-[#A8A29A]">
+            <Lock size={12} className="text-[#0F0F0F]" />
             Pago seguro
           </div>
         </div>
       </header>
 
       {/* ── Content ── */}
-      <div className="max-w-6xl mx-auto px-6 py-8 lg:py-12">
+      <div className="max-w-[1240px] mx-auto px-6 sm:px-10 py-8 lg:py-12">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8 items-start">
 
           {/* ── LEFT: Form ── */}
           <div>
-            <h1 className="text-[26px] font-black text-[#005088] tracking-[-0.02em] mb-7">
-              Finalizar compra
+            <h1 className="text-3xl sm:text-4xl font-display font-semibold text-[#0F0F0F] tracking-[-0.035em] lowercase mb-8">
+              finalizar compra
             </h1>
 
             {/* AUTH GATE */}
@@ -1150,14 +1145,14 @@ export default function CheckoutPage() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="mb-6 flex items-start gap-3 rounded-xl px-4 py-3 bg-[#EBF4FB] border border-[#005088]/12"
+                className="mb-6 flex items-start gap-3 rounded-xl px-4 py-3 bg-white border border-[#E6E1D8] shadow-2xs"
               >
-                <CheckCircle2 size={18} className="text-[#005088] mt-0.5 flex-shrink-0" />
+                <CheckCircle2 size={18} className="text-[#0F0F0F] mt-0.5 shrink-0" />
                 <div>
-                  <p className="text-[13px] font-bold text-[#005088]">
+                  <p className="text-xs font-sans font-semibold text-[#0F0F0F]">
                     Sesión activa — {user.fullName || user.primaryEmailAddress?.emailAddress}
                   </p>
-                  <p className="text-[12px] text-[#5A7A9A] mt-0.5">
+                  <p className="text-xs font-sans text-[#3A3A37] mt-0.5">
                     Tus suscripciones quedarán vinculadas a esta cuenta.
                   </p>
                 </div>
@@ -1172,12 +1167,12 @@ export default function CheckoutPage() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.05 }}
-                className="bg-white rounded-2xl p-6 border border-[#005088]/8 shadow-[0_2px_16px_rgba(0,80,136,0.05)]"
+                className="bg-white rounded-xl p-6 border border-[#E6E1D8] shadow-2xs"
               >
                 <SectionHeader
                   step={1}
                   icon={<User size={16} />}
-                  title="Información de contacto"
+                  title="información de contacto"
                 />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="sm:col-span-2">
@@ -1218,14 +1213,14 @@ export default function CheckoutPage() {
 
                 {/* guest note */}
                 {!hasSubscriptions && !isSignedIn && (
-                  <div className="mt-4 flex items-start gap-2 p-3 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB]">
-                    <LogIn size={14} className="text-[#6B7280] mt-0.5 flex-shrink-0" />
-                    <p className="text-[12px] text-[#6B7280] leading-[1.5]">
+                  <div className="mt-4 flex items-start gap-2 p-3 rounded-xl bg-[#FAF8F5] border border-[#E6E1D8]">
+                    <LogIn size={14} className="text-[#A8A29A] mt-0.5 shrink-0" />
+                    <p className="text-xs font-sans text-[#3A3A37] leading-relaxed">
                       Comprando como invitado.{" "}
                       <button
                         type="button"
                         onClick={() => openSignIn({ forceRedirectUrl: "/checkout" })}
-                        className="font-semibold text-[#005088] hover:underline"
+                        className="font-semibold text-[#0F0F0F] hover:underline"
                       >
                         Iniciar sesión
                       </button>{" "}
@@ -1240,12 +1235,12 @@ export default function CheckoutPage() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="bg-white rounded-2xl p-6 border border-[#005088]/8 shadow-[0_2px_16px_rgba(0,80,136,0.05)]"
+                className="bg-white rounded-xl p-6 border border-[#E6E1D8] shadow-2xs"
               >
                 <SectionHeader
                   step={2}
                   icon={<Truck size={16} />}
-                  title="Dirección de envío"
+                  title="dirección de envío"
                 />
 
                 {/* ── Formulario Argentina ── */}
@@ -1253,8 +1248,8 @@ export default function CheckoutPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Calle + número con Google Places */}
                     <div className="sm:col-span-2 flex flex-col gap-1.5">
-                      <label htmlFor="ar-street" className="text-[12px] font-bold text-[#005088] uppercase tracking-[0.06em]">
-                        Calle y número<span className="text-[#E8503A] ml-0.5">*</span>
+                      <label htmlFor="ar-street" className="text-[11px] font-sans font-medium uppercase tracking-[0.1em] text-[#0F0F0F]">
+                        Calle y número<span className="text-[#0F0F0F] ml-0.5">*</span>
                       </label>
                       <div className="relative">
                         <input
@@ -1265,21 +1260,21 @@ export default function CheckoutPage() {
                           value={addressAR.street}
                           onChange={(e) => { setAddressAR((a) => ({ ...a, street: e.target.value })); clearErr("street"); }}
                           autoComplete="new-password"
-                          className={`w-full px-4 py-3 pr-10 rounded-xl text-[14px] text-[#005088] placeholder-[#9CA3AF] border bg-white transition-all duration-200 outline-none focus:ring-2 focus:ring-[#005088]/20 focus:border-[#005088] ${
-                            errors.street ? "border-[#E8503A] ring-2 ring-[#E8503A]/20" : "border-[#E5E7EB]"
+                          className={`w-full px-4 py-3 pr-10 rounded-xl text-sm font-sans text-[#0F0F0F] placeholder-[#A8A29A] border bg-[#FAF8F5] transition-all duration-200 outline-none focus:bg-white focus:border-[#0F0F0F] ${
+                            errors.street ? "border-[#0F0F0F] ring-1 ring-[#0F0F0F]" : "border-[#E6E1D8]"
                           }`}
                         />
-                        <MapPin size={15} className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: placesReady ? "#005088" : "#D1D5DB" }} />
+                        <MapPin size={15} className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: placesReady ? "#0F0F0F" : "#A8A29A" }} />
                       </div>
                       {placesReady && (
-                        <p className="text-[10px] text-[#9CA3AF] flex items-center gap-1">
-                          <span className="text-[#4285F4] font-bold">G</span>
+                        <p className="text-[10px] text-[#A8A29A] flex items-center gap-1 font-sans">
+                          <span className="text-[#0F0F0F] font-bold">G</span>
                           Autocompletado con Google
                         </p>
                       )}
                       <AnimatePresence>
                         {errors.street && (
-                          <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} className="text-[11px] text-[#E8503A] flex items-center gap-1">
+                          <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} className="text-[11px] text-[#0F0F0F] flex items-center gap-1 font-sans">
                             <AlertCircle size={11} />{errors.street}
                           </motion.p>
                         )}
@@ -1288,8 +1283,8 @@ export default function CheckoutPage() {
 
                     {/* Depto — opcional */}
                     <div className="sm:col-span-2 flex flex-col gap-1.5">
-                      <label htmlFor="ar-depto" className="text-[12px] font-bold text-[#005088] uppercase tracking-[0.06em]">
-                        Depto / Piso <span className="text-[#9CA3AF] font-normal normal-case">(opcional)</span>
+                      <label htmlFor="ar-depto" className="text-[11px] font-sans font-medium uppercase tracking-[0.1em] text-[#0F0F0F]">
+                        Depto / Piso <span className="text-[#A8A29A] font-normal normal-case">(opcional)</span>
                       </label>
                       <input
                         id="ar-depto"
@@ -1298,7 +1293,7 @@ export default function CheckoutPage() {
                         value={addressAR.depto}
                         onChange={(e) => setAddressAR((a) => ({ ...a, depto: e.target.value.slice(0, 20) }))}
                         autoComplete="address-line2"
-                        className="w-full px-4 py-3 rounded-xl text-[14px] text-[#005088] placeholder-[#9CA3AF] border border-[#E5E7EB] bg-white transition-all duration-200 outline-none focus:ring-2 focus:ring-[#005088]/20 focus:border-[#005088]"
+                        className="w-full px-4 py-3 rounded-xl text-sm font-sans text-[#0F0F0F] placeholder-[#A8A29A] border border-[#E6E1D8] bg-[#FAF8F5] transition-all duration-200 outline-none focus:bg-white focus:border-[#0F0F0F]"
                       />
                     </div>
 
@@ -1348,8 +1343,8 @@ export default function CheckoutPage() {
 
                   {/* Calle — con Google Places Autocomplete */}
                   <div className="sm:col-span-2 flex flex-col gap-1.5">
-                    <label htmlFor="street" className="text-[12px] font-bold text-[#005088] uppercase tracking-[0.06em]">
-                      Calle y número<span className="text-[#E8503A] ml-0.5">*</span>
+                    <label htmlFor="street" className="text-[11px] font-sans font-medium uppercase tracking-[0.1em] text-[#0F0F0F]">
+                      Calle y número<span className="text-[#0F0F0F] ml-0.5">*</span>
                     </label>
                     <div className="relative">
                       <input
@@ -1360,19 +1355,19 @@ export default function CheckoutPage() {
                         value={address.street}
                         onChange={(e) => { setAddress((a) => ({ ...a, street: e.target.value })); clearErr("street"); }}
                         autoComplete="new-password"
-                        className={`w-full px-4 py-3 pr-10 rounded-xl text-[14px] text-[#005088] placeholder-[#9CA3AF] border bg-white transition-all duration-200 outline-none focus:ring-2 focus:ring-[#005088]/20 focus:border-[#005088] ${
-                          errors.street ? "border-[#E8503A] ring-2 ring-[#E8503A]/20" : "border-[#E5E7EB]"
+                        className={`w-full px-4 py-3 pr-10 rounded-xl text-sm font-sans text-[#0F0F0F] placeholder-[#A8A29A] border bg-[#FAF8F5] transition-all duration-200 outline-none focus:bg-white focus:border-[#0F0F0F] ${
+                          errors.street ? "border-[#0F0F0F] ring-1 ring-[#0F0F0F]" : "border-[#E6E1D8]"
                         }`}
                       />
                       <MapPin
                         size={15}
                         className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
-                        style={{ color: placesReady ? "#005088" : "#D1D5DB" }}
+                        style={{ color: placesReady ? "#0F0F0F" : "#A8A29A" }}
                       />
                     </div>
                     {placesReady && (
-                      <p className="text-[10px] text-[#9CA3AF] flex items-center gap-1">
-                        <span className="text-[#4285F4] font-bold">G</span>
+                      <p className="text-[10px] text-[#A8A29A] flex items-center gap-1 font-sans">
+                        <span className="text-[#0F0F0F] font-bold">G</span>
                         Autocompletado con Google
                       </p>
                     )}
@@ -1382,7 +1377,7 @@ export default function CheckoutPage() {
                           initial={{ opacity: 0, y: -4 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -4 }}
-                          className="text-[11px] text-[#E8503A] flex items-center gap-1"
+                          className="text-[11px] font-sans text-[#0F0F0F] flex items-center gap-1"
                         >
                           <AlertCircle size={11} />{errors.street}
                         </motion.p>
@@ -1392,8 +1387,8 @@ export default function CheckoutPage() {
 
                   {/* Número interior — opcional */}
                   <div className="flex flex-col gap-1.5">
-                    <label htmlFor="interior" className="text-[12px] font-bold text-[#005088] uppercase tracking-[0.06em]">
-                      Número interior <span className="text-[#9CA3AF] font-normal normal-case">(opcional)</span>
+                    <label htmlFor="interior" className="text-[11px] font-sans font-medium uppercase tracking-[0.1em] text-[#0F0F0F]">
+                      Número interior <span className="text-[#A8A29A] font-normal normal-case">(opcional)</span>
                     </label>
                     <input
                       id="interior"
@@ -1402,14 +1397,14 @@ export default function CheckoutPage() {
                       value={address.interior}
                       onChange={(e) => setAddress((a) => ({ ...a, interior: e.target.value.slice(0, 20) }))}
                       autoComplete="address-line3"
-                      className="w-full px-4 py-3 rounded-xl text-[14px] text-[#005088] placeholder-[#9CA3AF] border border-[#E5E7EB] bg-white transition-all duration-200 outline-none focus:ring-2 focus:ring-[#005088]/20 focus:border-[#005088]"
+                      className="w-full px-4 py-3 rounded-xl text-sm font-sans text-[#0F0F0F] placeholder-[#A8A29A] border border-[#E6E1D8] bg-[#FAF8F5] transition-all duration-200 outline-none focus:bg-white focus:border-[#0F0F0F]"
                     />
                   </div>
 
                   {/* Indicaciones de entrega — opcional */}
                   <div className="sm:col-span-2 flex flex-col gap-1.5">
-                    <label htmlFor="instructions" className="text-[12px] font-bold text-[#005088] uppercase tracking-[0.06em]">
-                      Indicaciones de entrega <span className="text-[#9CA3AF] font-normal normal-case">(opcional)</span>
+                    <label htmlFor="instructions" className="text-[11px] font-sans font-medium uppercase tracking-[0.1em] text-[#0F0F0F]">
+                      Indicaciones de entrega <span className="text-[#A8A29A] font-normal normal-case">(opcional)</span>
                     </label>
                     <textarea
                       id="instructions"
@@ -1417,15 +1412,15 @@ export default function CheckoutPage() {
                       value={address.instructions}
                       onChange={(e) => setAddress((a) => ({ ...a, instructions: e.target.value.slice(0, 200) }))}
                       rows={3}
-                      className="w-full px-4 py-3 rounded-xl text-[14px] text-[#005088] placeholder-[#9CA3AF] border border-[#E5E7EB] bg-white transition-all duration-200 outline-none focus:ring-2 focus:ring-[#005088]/20 focus:border-[#005088] resize-none"
+                      className="w-full px-4 py-3 rounded-xl text-sm font-sans text-[#0F0F0F] placeholder-[#A8A29A] border border-[#E6E1D8] bg-[#FAF8F5] transition-all duration-200 outline-none focus:bg-white focus:border-[#0F0F0F] resize-none"
                     />
-                    <p className="text-[10px] text-[#9CA3AF] text-right">{address.instructions.length}/200</p>
+                    <p className="text-[10px] font-mono text-[#A8A29A] text-right">{address.instructions.length}/200</p>
                   </div>
 
                   {/* CP — dispara COPOMEX */}
                   <div className="flex flex-col gap-1.5">
-                    <label htmlFor="zip" className="text-[12px] font-bold text-[#005088] uppercase tracking-[0.06em]">
-                      Código postal<span className="text-[#E8503A] ml-0.5">*</span>
+                    <label htmlFor="zip" className="text-[11px] font-sans font-medium uppercase tracking-[0.1em] text-[#0F0F0F]">
+                      Código postal<span className="text-[#0F0F0F] ml-0.5">*</span>
                     </label>
                     <div className="relative">
                       <input
@@ -1440,7 +1435,6 @@ export default function CheckoutPage() {
                           clearErr("zip");
                           if (v.length === 5) {
                             lookupCp(v);
-                            // Cuando COPOMEX responda con éxito, ciudad/estado quedarán válidos
                             clearErr("city");
                             clearErr("state");
                           } else {
@@ -1449,23 +1443,23 @@ export default function CheckoutPage() {
                           }
                         }}
                         autoComplete="postal-code"
-                        className={`w-full px-4 py-3 pr-10 rounded-xl text-[14px] text-[#005088] placeholder-[#9CA3AF] border bg-white transition-all duration-200 outline-none focus:ring-2 focus:ring-[#005088]/20 focus:border-[#005088] ${
-                          errors.zip ? "border-[#E8503A] ring-2 ring-[#E8503A]/20" : "border-[#E5E7EB]"
+                        className={`w-full px-4 py-3 pr-10 rounded-xl text-sm font-sans text-[#0F0F0F] placeholder-[#A8A29A] border bg-[#FAF8F5] transition-all duration-200 outline-none focus:bg-white focus:border-[#0F0F0F] ${
+                          errors.zip ? "border-[#0F0F0F] ring-1 ring-[#0F0F0F]" : "border-[#E6E1D8]"
                         }`}
                       />
                       {/* status icon */}
                       <span className="absolute right-3 top-1/2 -translate-y-1/2">
                         {copomex.status === "loading" && (
-                          <Loader2 size={14} className="animate-spin text-[#005088]" />
+                          <Loader2 size={14} className="animate-spin text-[#0F0F0F]" />
                         )}
                         {copomex.status === "success" && (
-                          <CheckCircle2 size={14} className="text-[#3CBFAB]" />
+                          <CheckCircle2 size={14} className="text-[#0F0F0F]" />
                         )}
                         {copomex.status === "error" && !address.colonia.trim() && (
-                          <AlertCircle size={14} className="text-[#E8503A]" />
+                          <AlertCircle size={14} className="text-[#0F0F0F]" />
                         )}
                         {copomex.status === "error" && address.colonia.trim() && (
-                          <CheckCircle2 size={14} className="text-[#3CBFAB]" />
+                          <CheckCircle2 size={14} className="text-[#0F0F0F]" />
                         )}
                       </span>
                     </div>
@@ -1475,7 +1469,7 @@ export default function CheckoutPage() {
                           initial={{ opacity: 0, y: -4 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0 }}
-                          className="text-[10px] text-[#3CBFAB] font-semibold"
+                          className="text-[10px] text-[#0F0F0F] font-sans font-semibold"
                         >
                           ✓ {copomex.data.municipio}, {copomex.data.estado}
                         </motion.p>
@@ -1485,7 +1479,7 @@ export default function CheckoutPage() {
                           initial={{ opacity: 0, y: -4 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0 }}
-                          className="text-[11px] text-[#E8503A] flex items-center gap-1"
+                          className="text-[11px] font-sans text-[#0F0F0F] flex items-center gap-1"
                         >
                           <AlertCircle size={11} />CP no encontrado — completá colonia manualmente
                         </motion.p>
@@ -1495,7 +1489,7 @@ export default function CheckoutPage() {
                           initial={{ opacity: 0, y: -4 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0 }}
-                          className="text-[11px] text-[#E8503A] flex items-center gap-1"
+                          className="text-[11px] font-sans text-[#0F0F0F] flex items-center gap-1"
                         >
                           <AlertCircle size={11} />{errors.zip}
                         </motion.p>
@@ -1505,8 +1499,8 @@ export default function CheckoutPage() {
 
                   {/* Colonia — select cuando COPOMEX OK, text input si no */}
                   <div className="flex flex-col gap-1.5">
-                    <label htmlFor="colonia" className="text-[12px] font-bold text-[#005088] uppercase tracking-[0.06em]">
-                      Colonia<span className="text-[#E8503A] ml-0.5">*</span>
+                    <label htmlFor="colonia" className="text-[11px] font-sans font-medium uppercase tracking-[0.1em] text-[#0F0F0F]">
+                      Colonia<span className="text-[#0F0F0F] ml-0.5">*</span>
                     </label>
                     {copomex.status === "success" && copomex.data.colonias.length > 0 ? (
                       <div className="relative">
@@ -1514,8 +1508,8 @@ export default function CheckoutPage() {
                           id="colonia"
                           value={address.colonia}
                           onChange={(e) => { setAddress((a) => ({ ...a, colonia: e.target.value })); clearErr("colonia"); }}
-                          className={`w-full px-4 py-3 pr-9 rounded-xl text-[14px] text-[#005088] border bg-white appearance-none transition-all duration-200 outline-none focus:ring-2 focus:ring-[#005088]/20 focus:border-[#005088] cursor-pointer ${
-                            errors.colonia ? "border-[#E8503A] ring-2 ring-[#E8503A]/20" : "border-[#E5E7EB]"
+                          className={`w-full px-4 py-3 pr-9 rounded-xl text-sm font-sans text-[#0F0F0F] border bg-[#FAF8F5] appearance-none transition-all duration-200 outline-none focus:bg-white focus:border-[#0F0F0F] cursor-pointer ${
+                            errors.colonia ? "border-[#0F0F0F] ring-1 ring-[#0F0F0F]" : "border-[#E6E1D8]"
                           }`}
                         >
                           <option value="">Selecciona tu colonia</option>
@@ -1525,7 +1519,7 @@ export default function CheckoutPage() {
                         </select>
                         <ChevronDown
                           size={14}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#9CA3AF]"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#A8A29A]"
                         />
                       </div>
                     ) : (
@@ -1537,8 +1531,8 @@ export default function CheckoutPage() {
                         onChange={(e) => { setAddress((a) => ({ ...a, colonia: e.target.value })); clearErr("colonia"); }}
                         autoComplete="address-line2"
                         disabled={copomex.status === "loading"}
-                        className={`w-full px-4 py-3 rounded-xl text-[14px] text-[#005088] placeholder-[#9CA3AF] border bg-white transition-all duration-200 outline-none focus:ring-2 focus:ring-[#005088]/20 focus:border-[#005088] disabled:opacity-60 disabled:cursor-wait ${
-                          errors.colonia ? "border-[#E8503A] ring-2 ring-[#E8503A]/20" : "border-[#E5E7EB]"
+                        className={`w-full px-4 py-3 rounded-xl text-sm font-sans text-[#0F0F0F] placeholder-[#A8A29A] border bg-[#FAF8F5] transition-all duration-200 outline-none focus:bg-white focus:border-[#0F0F0F] disabled:opacity-60 disabled:cursor-wait ${
+                          errors.colonia ? "border-[#0F0F0F] ring-1 ring-[#0F0F0F]" : "border-[#E6E1D8]"
                         }`}
                       />
                     )}
@@ -1548,7 +1542,7 @@ export default function CheckoutPage() {
                           initial={{ opacity: 0, y: -4 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -4 }}
-                          className="text-[11px] text-[#E8503A] flex items-center gap-1"
+                          className="text-[11px] font-sans text-[#0F0F0F] flex items-center gap-1"
                         >
                           <AlertCircle size={11} />{errors.colonia}
                         </motion.p>
@@ -1558,8 +1552,8 @@ export default function CheckoutPage() {
 
                   {/* Ciudad — auto-filled desde COPOMEX */}
                   <div className="flex flex-col gap-1.5">
-                    <label htmlFor="city" className="text-[12px] font-bold text-[#005088] uppercase tracking-[0.06em]">
-                      Municipio / Alcaldía<span className="text-[#E8503A] ml-0.5">*</span>
+                    <label htmlFor="city" className="text-[11px] font-sans font-medium uppercase tracking-[0.1em] text-[#0F0F0F]">
+                      Municipio / Alcaldía<span className="text-[#0F0F0F] ml-0.5">*</span>
                     </label>
                     <input
                       id="city"
@@ -1568,16 +1562,16 @@ export default function CheckoutPage() {
                       value={copomex.status === "success" ? (copomex.data.municipio || address.city) : address.city}
                       onChange={(e) => { setAddress((a) => ({ ...a, city: e.target.value })); clearErr("city"); }}
                       autoComplete="address-level2"
-                      className={`w-full px-4 py-3 rounded-xl text-[14px] border bg-white transition-all duration-200 outline-none focus:ring-2 focus:ring-[#005088]/20 focus:border-[#005088] ${
-                        copomex.status === "success" ? "text-[#005088] font-semibold" : "text-[#005088] placeholder-[#9CA3AF]"
-                      } ${errors.city ? "border-[#E8503A] ring-2 ring-[#E8503A]/20" : "border-[#E5E7EB]"}`}
+                      className={`w-full px-4 py-3 rounded-xl text-sm font-sans border bg-[#FAF8F5] transition-all duration-200 outline-none focus:bg-white focus:border-[#0F0F0F] ${
+                        copomex.status === "success" ? "text-[#0F0F0F] font-semibold" : "text-[#0F0F0F] placeholder-[#A8A29A]"
+                      } ${errors.city ? "border-[#0F0F0F] ring-1 ring-[#0F0F0F]" : "border-[#E6E1D8]"}`}
                     />
                   </div>
 
                   {/* Estado — auto-filled desde COPOMEX */}
                   <div className="flex flex-col gap-1.5">
-                    <label htmlFor="state" className="text-[12px] font-bold text-[#005088] uppercase tracking-[0.06em]">
-                      Estado<span className="text-[#E8503A] ml-0.5">*</span>
+                    <label htmlFor="state" className="text-[11px] font-sans font-medium uppercase tracking-[0.1em] text-[#0F0F0F]">
+                      Estado<span className="text-[#0F0F0F] ml-0.5">*</span>
                     </label>
                     <input
                       id="state"
@@ -1586,9 +1580,9 @@ export default function CheckoutPage() {
                       value={copomex.status === "success" ? (copomex.data.estado || address.state) : address.state}
                       onChange={(e) => { setAddress((a) => ({ ...a, state: e.target.value })); clearErr("state"); }}
                       autoComplete="address-level1"
-                      className={`w-full px-4 py-3 rounded-xl text-[14px] border bg-white transition-all duration-200 outline-none focus:ring-2 focus:ring-[#005088]/20 focus:border-[#005088] ${
-                        copomex.status === "success" ? "text-[#005088] font-semibold" : "text-[#005088] placeholder-[#9CA3AF]"
-                      } ${errors.state ? "border-[#E8503A] ring-2 ring-[#E8503A]/20" : "border-[#E5E7EB]"}`}
+                      className={`w-full px-4 py-3 rounded-xl text-sm font-sans border bg-[#FAF8F5] transition-all duration-200 outline-none focus:bg-white focus:border-[#0F0F0F] ${
+                        copomex.status === "success" ? "text-[#0F0F0F] font-semibold" : "text-[#0F0F0F] placeholder-[#A8A29A]"
+                      } ${errors.state ? "border-[#0F0F0F] ring-1 ring-[#0F0F0F]" : "border-[#E6E1D8]"}`}
                     />
                   </div>
 
@@ -1602,12 +1596,12 @@ export default function CheckoutPage() {
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.15 }}
-                  className="bg-white rounded-2xl p-6 border border-[#005088]/8 shadow-[0_2px_16px_rgba(0,80,136,0.05)]"
+                  className="bg-white rounded-xl p-6 border border-[#E6E1D8] shadow-2xs"
                 >
                   <SectionHeader
                     step={3}
                     icon={<CreditCard size={16} />}
-                    title="Datos de pago"
+                    title="datos de pago"
                   />
 
                   {/* card brand logos */}
@@ -1615,12 +1609,12 @@ export default function CheckoutPage() {
                     {["VISA", "MC", "AMEX"].map((b) => (
                       <span
                         key={b}
-                        className="px-2.5 py-1 rounded-md border border-[#E5E7EB] text-[10px] font-black text-[#6B7280] bg-[#F9FAFB]"
+                        className="px-2.5 py-1 rounded-md border border-[#E6E1D8] text-[10px] font-mono font-bold text-[#3A3A37] bg-[#FAF8F5]"
                       >
                         {b}
                       </span>
                     ))}
-                    <span className="text-[11px] text-[#9CA3AF] ml-1">
+                    <span className="text-xs font-sans text-[#A8A29A] ml-1">
                       {cartRegion === "ars" ? "Vía MercadoPago" : "Vía Openpay"}
                     </span>
                   </div>
@@ -1687,12 +1681,12 @@ export default function CheckoutPage() {
                   </div>
 
                   {/* Payment provider security badge */}
-                  <div className="mt-5 flex items-center gap-2 p-3 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB]">
-                    <ShieldCheck size={16} className="text-[#3CBFAB] flex-shrink-0" />
-                    <p className="text-[11px] text-[#6B7280] leading-[1.5]">
+                  <div className="mt-5 flex items-center gap-2 p-3 rounded-xl bg-[#FAF8F5] border border-[#E6E1D8]">
+                    <ShieldCheck size={16} className="text-[#0F0F0F] shrink-0" />
+                    <p className="text-xs font-sans text-[#3A3A37] leading-relaxed">
                       Tus datos están protegidos con encriptación SSL de 256 bits.
                       El procesamiento es a través de{" "}
-                      <span className="font-bold text-[#005088]">
+                      <span className="font-semibold text-[#0F0F0F]">
                         {cartRegion === "ars" ? "MercadoPago" : "Openpay"}
                       </span>.
                     </p>
@@ -1705,10 +1699,10 @@ export default function CheckoutPage() {
                         initial={{ opacity: 0, y: -8 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0 }}
-                        className="mt-4 flex items-start gap-2 p-3 rounded-xl bg-[#FEF2F2] border border-[#FECACA]"
+                        className="mt-4 flex items-start gap-2 p-3 rounded-xl bg-white border border-[#0F0F0F]"
                       >
-                        <AlertCircle size={15} className="text-[#E8503A] mt-0.5 flex-shrink-0" />
-                        <p className="text-[12px] text-[#B91C1C] leading-[1.5]">{submitError}</p>
+                        <AlertCircle size={15} className="text-[#0F0F0F] mt-0.5 shrink-0" />
+                        <p className="text-xs font-sans font-medium text-[#0F0F0F] leading-relaxed">{submitError}</p>
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -1723,12 +1717,12 @@ export default function CheckoutPage() {
                         { step: 4, label: "Procesando cobro" },
                       ].map(({ step, label }) => (
                         <div key={step} className="flex items-center gap-3">
-                          <div className={`flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-[12px] font-bold transition-all duration-300 ${
+                          <div className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-mono font-bold transition-all duration-300 ${
                             paymentStep > step
-                              ? "bg-green-500 text-white"
+                              ? "bg-[#0F0F0F] text-white"
                               : paymentStep === step
-                              ? "bg-[#005088] text-white"
-                              : "bg-[#E5E7EB] text-[#9CA3AF]"
+                              ? "bg-[#0F0F0F] text-white"
+                              : "bg-[#FAF8F5] border border-[#E6E1D8] text-[#A8A29A]"
                           }`}>
                             {paymentStep > step ? (
                               <CheckCircle2 size={16} />
@@ -1738,18 +1732,18 @@ export default function CheckoutPage() {
                               step
                             )}
                           </div>
-                          <span className={`text-[14px] font-medium transition-colors duration-300 ${
+                          <span className={`text-xs font-sans transition-colors duration-300 ${
                             paymentStep > step
-                              ? "text-green-600"
+                              ? "text-[#0F0F0F] font-medium"
                               : paymentStep === step
-                              ? "text-[#005088] font-bold"
-                              : "text-[#9CA3AF]"
+                              ? "text-[#0F0F0F] font-bold"
+                              : "text-[#A8A29A]"
                           }`}>
                             {label}
                           </span>
                         </div>
                       ))}
-                      <p className="text-center text-[12px] text-[#9CA3AF] pt-2">
+                      <p className="text-center text-xs font-sans text-[#A8A29A] pt-2">
                         No cierres esta página...
                       </p>
                     </div>
@@ -1757,10 +1751,9 @@ export default function CheckoutPage() {
                     <button
                       type="submit"
                       disabled={submitting}
-                      className="mt-6 w-full py-4 rounded-full text-[16px] font-black text-white transition-all duration-200 active:scale-[0.97] hover:brightness-95 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                      style={{ background: "#22c55e" }}
+                      className="mt-6 w-full py-4 rounded-full text-xs font-sans font-medium uppercase tracking-[0.14em] bg-[#0F0F0F] text-white border border-[#0F0F0F] hover:bg-white hover:text-[#0F0F0F] transition-all cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
-                      <Lock size={16} />
+                      <Lock size={15} />
                       Pagar {fmt(confirmedTotal ?? (finalTotal + displayShippingCost), cartRegion)}
                     </button>
                   )}
@@ -1769,7 +1762,7 @@ export default function CheckoutPage() {
 
               {/* Gate blocker message when auth needed */}
               {needsAuth && (
-                <p className="text-center text-[13px] text-[#9CA3AF] pb-4">
+                <p className="text-center text-xs font-sans text-[#A8A29A] pb-4">
                   Inicia sesión para continuar con el pago.
                 </p>
               )}
@@ -1782,97 +1775,167 @@ export default function CheckoutPage() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-white rounded-2xl border border-[#005088]/8 shadow-[0_4px_24px_rgba(0,80,136,0.08)] overflow-hidden"
+              className="bg-white rounded-xl border border-[#E6E1D8] shadow-2xs overflow-hidden"
             >
               {/* header */}
-              <div className="px-6 py-4 border-b border-[#005088]/8">
-                <h2 className="text-[15px] font-black text-[#005088] tracking-[-0.01em]">
-                  Resumen del pedido
+              <div className="px-6 py-4 border-b border-[#E6E1D8]">
+                <h2 className="text-lg font-display font-semibold text-[#0F0F0F] tracking-[-0.02em] lowercase">
+                  resumen del pedido
                 </h2>
-                <p className="text-[12px] text-[#6B7280] mt-0.5">
+                <p className="text-xs font-sans text-[#A8A29A] mt-0.5">
                   {items.reduce((s, i) => s + i.quantity, 0)} artículo(s)
                 </p>
               </div>
 
               {/* items */}
-              <div className="px-6 divide-y divide-[#F3F4F6]">
+              <div className="px-6 divide-y divide-[#E6E1D8]">
                 {items.map((item) => (
                   <OrderItem key={`${item.slug}__${item.mode}__${item.freq}`} item={item} region={cartRegion} />
                 ))}
               </div>
 
+              {/* Upsell / Cross-sell Inteligente de Bundle */}
+              {(() => {
+                const upsell = getSmartUpsell(items);
+                if (!upsell) return null;
+                const { candidate } = upsell;
+
+                return (
+                  <div className="px-6 py-4 border-t border-[#E6E1D8] bg-[#FAF8F5]">
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="text-xs font-display font-semibold text-[#0F0F0F] tracking-[-0.02em] lowercase">
+                        {upsell.title}
+                      </p>
+                      <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#0F0F0F] text-white">
+                        {upsell.badge}
+                      </span>
+                    </div>
+                    <div className="bg-white border border-[#E6E1D8] rounded-xl p-3 flex items-center justify-between gap-3 shadow-2xs">
+                      <Link
+                        href={`/tienda/${candidate.slug}`}
+                        className="flex items-center gap-3 min-w-0 group/upsell"
+                      >
+                        <div className="relative w-11 h-11 shrink-0 overflow-hidden rounded-lg border border-[#E6E1D8] bg-[#FAF8F5] p-1 group-hover/upsell:border-[#0F0F0F] transition-colors">
+                          <Image src={candidate.image} alt={candidate.name} fill className="object-contain group-hover/upsell:scale-105 transition-transform" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs font-sans font-semibold text-[#0F0F0F] truncate group-hover/upsell:underline">{candidate.name}</p>
+                          <p className="text-[11px] font-sans text-[#3A3A37] leading-tight line-clamp-2 mt-0.5">{upsell.subtitle}</p>
+                          <p className="text-[11px] font-mono font-bold text-[#0F0F0F] mt-1">
+                            {fmt(candidate.price, cartRegion)}
+                          </p>
+                        </div>
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          addToCart({
+                            slug: candidate.slug,
+                            title: candidate.name,
+                            price: candidate.price,
+                            image: candidate.image,
+                            color: candidate.color,
+                            bg: candidate.bg,
+                            mode: "once",
+                            freq: 30,
+                            quantity: 1,
+                          })
+                        }
+                        className="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-sans font-medium uppercase tracking-[0.12em] bg-[#0F0F0F] text-white border border-[#0F0F0F] hover:bg-white hover:text-[#0F0F0F] transition-all duration-200 cursor-pointer"
+                      >
+                        + agregar
+                      </button>
+                    </div>
+                  </div>
+                );
+              })()}
+
               {/* totals */}
-              <div className="px-6 py-5 bg-[#F9FAFB] space-y-2.5">
-                <div className="flex justify-between text-[13px] text-[#6B7280]">
+              <div className="px-6 py-5 bg-[#FAF8F5] space-y-2.5">
+                <div className="flex justify-between text-xs font-sans text-[#3A3A37]">
                   <span>Subtotal</span>
-                  <span>{fmt(totals.subtotal, cartRegion)}</span>
+                  <span className="font-mono font-semibold text-[#0F0F0F]">{fmt(totals.subtotal, cartRegion)}</span>
                 </div>
 
+                {totals.bundleDiscount > 0 && totals.bundleName && (
+                  <div className="flex justify-between text-xs font-sans text-[#3A3A37]">
+                    <span className="flex items-center gap-1.5 min-w-0">
+                      <span
+                        className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full text-white bg-[#0F0F0F] shrink-0"
+                      >
+                        BUNDLE
+                      </span>
+                      <span className="truncate">{totals.bundleName}</span>
+                    </span>
+                    <span className="font-mono font-bold text-[#0F0F0F] shrink-0">
+                      −{fmt(totals.bundleDiscount, cartRegion)}
+                    </span>
+                  </div>
+                )}
+
                 {totals.savings > 0 && (
-                  <div className="flex justify-between text-[13px]">
+                  <div className="flex justify-between text-xs font-sans text-[#3A3A37]">
                     <span className="flex items-center gap-1.5">
                       <span
-                        className="text-[10px] font-black px-2 py-0.5 rounded-full text-white"
-                        style={{ background: "#E8503A" }}
+                        className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full text-white bg-[#0F0F0F]"
                       >
                         AHORRO
                       </span>
                       Descuento suscripción
                     </span>
-                    <span className="font-bold" style={{ color: "#E8503A" }}>
+                    <span className="font-mono font-bold text-[#0F0F0F]">
                       −{fmt(totals.savings, cartRegion)}
                     </span>
                   </div>
                 )}
 
                 {coupons.length > 0 && effectiveCouponDiscount > 0 && (
-                  <div className="flex justify-between text-[13px]">
+                  <div className="flex justify-between text-xs font-sans text-[#3A3A37]">
                     <span className="flex items-center gap-1.5 flex-wrap">
                       <span
-                        className="text-[10px] font-black px-2 py-0.5 rounded-full text-white"
-                        style={{ background: "#16A34A" }}
+                        className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full text-white bg-[#0F0F0F]"
                       >
                         {coupons.length > 1 ? "CUPONES" : "CUPÓN"}
                       </span>
                       {coupons.map((c) => c.code).join(" · ")}
                     </span>
-                    <span className="font-bold text-[#16A34A]">
+                    <span className="font-mono font-bold text-[#0F0F0F]">
                       −{fmt(effectiveCouponDiscount, cartRegion)}
                     </span>
                   </div>
                 )}
                 {shippingCoupon && (
-                  <div className="flex justify-between text-[12px] text-[#16A34A]">
+                  <div className="flex justify-between text-xs font-sans text-[#0F0F0F]">
                     <span>Envío gratis ({shippingCoupon.code})</span>
-                    <span className="font-bold">aplicado</span>
+                    <span className="font-mono font-bold">aplicado</span>
                   </div>
                 )}
 
                 {FREE_SHIPPING ? (
-                  <div className="flex justify-between text-[13px]">
-                    <span className="text-[#6B7280]">Envío</span>
+                  <div className="flex justify-between text-xs font-sans text-[#3A3A37]">
+                    <span>Envío</span>
                     <span className="flex items-center gap-1.5">
                       {shippingPreview > 0 && (
-                        <span className="text-[#9CA3AF] line-through">{fmt(shippingPreview, cartRegion)}</span>
+                        <span className="text-[#A8A29A] line-through font-mono">{fmt(shippingPreview, cartRegion)}</span>
                       )}
-                      <span className="font-bold text-[#16A34A]">GRATIS</span>
+                      <span className="font-mono font-bold text-[#0F0F0F]">GRATIS</span>
                     </span>
                   </div>
                 ) : (
                   displayShippingCost > 0 && (
-                    <div className="flex justify-between text-[13px] text-[#6B7280]">
-                      <span>Envío{shippingCost === 0 && <span className="text-[11px] text-[#9CA3AF] ml-1">(estimado)</span>}</span>
-                      <span className="font-semibold text-[#005088]">{fmt(displayShippingCost, cartRegion)}</span>
+                    <div className="flex justify-between text-xs font-sans text-[#3A3A37]">
+                      <span>Envío{shippingCost === 0 && <span className="text-[11px] text-[#A8A29A] ml-1">(estimado)</span>}</span>
+                      <span className="font-mono font-bold text-[#0F0F0F]">{fmt(displayShippingCost, cartRegion)}</span>
                     </div>
                   )
                 )}
 
-                <div className="pt-2.5 border-t border-[#E5E7EB] flex justify-between">
-                  <span className="text-[15px] font-black text-[#005088]">Total</span>
+                <div className="pt-3 border-t border-[#E6E1D8] flex justify-between items-baseline">
+                  <span className="text-base font-display font-semibold text-[#0F0F0F] lowercase">total</span>
                   <div className="text-right">
-                    <p className="text-[18px] font-black text-[#005088]">{fmt(confirmedTotal ?? (finalTotal + displayShippingCost), cartRegion)}</p>
-                    {(totals.savings > 0 || effectiveCouponDiscount > 0) && (
-                      <p className="text-[11px] text-[#6B7280]">
+                    <p className="text-xl font-mono font-bold text-[#0F0F0F]">{fmt(confirmedTotal ?? (finalTotal + displayShippingCost), cartRegion)}</p>
+                    {(totals.savings > 0 || totals.bundleDiscount > 0 || effectiveCouponDiscount > 0) && (
+                      <p className="text-[11px] font-mono text-[#A8A29A]">
                         antes {fmt(totals.subtotal + displayShippingCost, cartRegion)}
                       </p>
                     )}
@@ -1881,7 +1944,7 @@ export default function CheckoutPage() {
               </div>
 
               {/* trust badges */}
-              <div className="px-6 py-4 border-t border-[#005088]/8">
+              <div className="px-6 py-4 border-t border-[#E6E1D8]">
                 <div className="flex items-center justify-center gap-6">
                   {[
                     { icon: <Truck size={14} />, label: "Envío rápido" },
@@ -1890,10 +1953,10 @@ export default function CheckoutPage() {
                   ].map((b) => (
                     <div
                       key={b.label}
-                      className="flex flex-col items-center gap-1 text-[#6B7280]"
+                      className="flex flex-col items-center gap-1 text-[#3A3A37]"
                     >
                       {b.icon}
-                      <span className="text-[10px] font-semibold text-center leading-tight">
+                      <span className="text-[10px] font-sans font-medium text-center leading-tight">
                         {b.label}
                       </span>
                     </div>

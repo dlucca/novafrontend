@@ -2,58 +2,90 @@
 
 import { useRef, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import Link from "next/link";
-import { useParams } from "next/navigation";
+import Image from "next/image";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const COMMUNITY_ITEMS = [
+type ImageItem = {
+  type: "image";
+  imageUrl: string;
+  name: string;
+  productName: string;
+  productColor: string;
+};
+
+type CardItem = {
+  type: "card";
+  rating: number;
+  text: string;
+  name: string;
+  productSlug: string;
+  productName: string;
+  productColor: string;
+};
+
+type CommunityItem = ImageItem | CardItem;
+
+const COMMUNITY_ITEMS: CommunityItem[] = [
   {
-    type: "video" as const,
-    videoUrl: "/videos/Video1.mp4",
+    type: "image",
+    imageUrl: "/socialproof/Social_1.webp",
+    name: "Renata C.",
+    productName: "Woman",
+    productColor: "#C693C4",
   },
   {
-    type: "card" as const,
+    type: "card",
     rating: 5,
-    text: "Probé el parche Energy para mi entrenamiento de la mañana y es una maravilla. Siento un foco mental increíble sin la taquicardia del pre-workout.",
-    name: "Sofi Valenzuela",
+    text: "Esto es lo más padre que he probado. Odio tomar tabletas, pero ya voy a mitad de mis 30 y quiero cuidar mi salud, así que esto me quedó perfecto: viene en forma de un parche chiquito, como una calcomanía, y tiene un montón de vitaminas.",
+    name: "María Paula B.",
+    productSlug: "glow",
+    productName: "Glow",
+    productColor: "#F25C54",
+  },
+  {
+    type: "image",
+    imageUrl: "/socialproof/Social_2.webp",
+    name: "Debanhi G.",
+    productName: "Energy",
+    productColor: "#83B5F4",
+  },
+  {
+    type: "card",
+    rating: 5,
+    text: "Estoy genuinamente sorprendida. Como alguien que siempre anda buscando soluciones de bienestar prácticas para el día a día, este producto se volvió parte de mi rutina sin esfuerzo. Lo práctico de estos parches lo cambia todo.",
+    name: "Carla V.",
     productSlug: "energy",
     productName: "Energy",
     productColor: "#83B5F4",
   },
   {
-    type: "video" as const,
-    videoUrl: "/videos/video2.mp4",
+    type: "image",
+    imageUrl: "/socialproof/Social_3.webp",
+    name: "Gilda C.",
+    productName: "Glow",
+    productColor: "#F25C54",
   },
   {
-    type: "card" as const,
+    type: "card",
     rating: 5,
-    text: "Me lo pongo una hora antes de dormir y es como un interruptor para apagar el estrés del día. Despierto súper fresca, nada de atontamiento al otro día.",
-    name: "Mariana L.",
-    productSlug: "sleep",
-    productName: "Sleep",
-    productColor: "#1EB1BC",
-  },
-  {
-    type: "video" as const,
-    videoUrl: "/videos/Video3.mp4",
-  },
-  {
-    type: "card" as const,
-    rating: 5,
-    text: "Me ha ayudado muchísimo con el enfoque en el trabajo creativo. Siento que mi mente fluye súper rápido y sin distracciones.",
-    name: "Paulina F.",
+    text: "Es un concepto buenísimo y por fin siento que puedo construir una rutina diaria de vitaminas con esto. Ya había probado de todo, desde pastilleros hasta ponerme un recordatorio diario, y aun así nunca lograba tomarlas todos los días de forma constante.",
+    name: "Alondra A.",
     productSlug: "zen",
     productName: "Zen",
     productColor: "#4E82BC",
   },
   {
-    type: "video" as const,
-    videoUrl: "/videos/video4.mp4",
+    type: "image",
+    imageUrl: "/socialproof/Social_4.webp",
+    name: "Galia P.",
+    productName: "Shield",
+    productColor: "#FFA849",
   },
   {
-    type: "card" as const,
+    type: "card",
     rating: 5,
-    text: "Tengo insomnio recurrente por la presión del trabajo y Sleep me ayudó a regularizar mi descanso de corrido de forma súper natural.",
-    name: "Diego Torres",
+    text: "Regalo de Novapatch para mi review honesta. El adhesivo es lo bastante fuerte para aguantar todo el día sin despegarse, pero no tanto como para que duela al quitarlo. El diseño es chiquito y bonito, y ya me han hecho cumplidos por él.",
+    name: "Fátima B.",
     productSlug: "sleep",
     productName: "Sleep",
     productColor: "#1EB1BC",
@@ -62,7 +94,7 @@ const COMMUNITY_ITEMS = [
 
 function StarIcon() {
   return (
-    <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14" className="text-[#005088]">
+    <svg viewBox="0 0 20 20" fill="#0F0F0F" width="11" height="11">
       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
     </svg>
   );
@@ -70,25 +102,20 @@ function StarIcon() {
 
 export default function SocialCommunity() {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const params = useParams();
-  const locale = typeof params?.locale === "string" ? params.locale : "mx";
+  const isPausedRef = useRef(false);
 
-  // Triple render list to support infinite scroll smoothly
+  // Triple render list for smooth infinite scroll loop
   const items = [...COMMUNITY_ITEMS, ...COMMUNITY_ITEMS, ...COMMUNITY_ITEMS];
 
-  // Set initial scroll position to the middle third on mount
   useEffect(() => {
     const el = scrollRef.current;
     if (el) {
-      const initScroll = () => {
+      setTimeout(() => {
         el.scrollLeft = el.scrollWidth / 3;
-      };
-      // Wait for styles and DOM rendering
-      setTimeout(initScroll, 150);
+      }, 150);
     }
   }, []);
 
-  // Listen to scrolls and silently jump to the middle third if reaching edges
   const handleScroll = () => {
     const el = scrollRef.current;
     if (!el) return;
@@ -96,7 +123,6 @@ export default function SocialCommunity() {
     const scrollLeft = el.scrollLeft;
     const widthThird = el.scrollWidth / 3;
 
-    // Buffer region to switch relative sets
     if (scrollLeft < widthThird - 200) {
       el.scrollLeft = scrollLeft + widthThird;
     } else if (scrollLeft > widthThird * 2 + 200) {
@@ -104,80 +130,69 @@ export default function SocialCommunity() {
     }
   };
 
-  const isPausedRef = useRef(false);
-
   const scroll = useCallback((direction: "left" | "right") => {
     if (scrollRef.current) {
-      const step = 234; // Card width (210px) + gap (24px)
+      const step = 270; // Card width + gap
       const offset = direction === "left" ? -step : step;
       scrollRef.current.scrollBy({ left: offset, behavior: "smooth" });
     }
   }, []);
 
-  // Auto-advance every 7 seconds in an infinite loop
   useEffect(() => {
     const timer = setInterval(() => {
       if (!isPausedRef.current) {
         scroll("right");
       }
-    }, 7000);
+    }, 6500);
 
     return () => clearInterval(timer);
   }, [scroll]);
 
   return (
-    <section className="py-20 bg-stone-50 overflow-hidden relative">
-      <div className="max-w-7xl mx-auto px-4 mb-12">
-        {/* Header */}
+    <section className="py-16 sm:py-24 bg-[#FAF8F5] border-t border-[#E6E1D8] overflow-hidden">
+      <div className="max-w-[1240px] mx-auto px-6 sm:px-10">
         <motion.div
-          className="text-center"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="mb-8 text-left"
         >
-          <p className="home-section-eyebrow text-center block">
-            COMUNIDAD NOVAPATCH
-          </p>
-          <h2 className="home-section-title text-ocean text-center">
-            Resultados Reales de Gente Real
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-display font-semibold text-[#0F0F0F] tracking-[-0.03em] leading-tight lowercase">
+            comunidad novapatch.
           </h2>
         </motion.div>
       </div>
 
-      {/* Container con botones Glassmorphism */}
+      {/* Carousel Track with Floating Controls */}
       <div
-        className="relative w-full overflow-visible group"
+        className="relative w-full group/carousel"
         onMouseEnter={() => (isPausedRef.current = true)}
         onMouseLeave={() => (isPausedRef.current = false)}
       >
-        {/* Flecha Izquierda */}
+        {/* Left Arrow Button */}
         <button
           onClick={() => scroll("left")}
-          className="absolute left-6 md:left-14 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full border border-black/5 bg-white/80 backdrop-blur-md shadow-md flex items-center justify-center hover:bg-white active:scale-95 transition-all duration-200 cursor-pointer opacity-0 group-hover:opacity-100 focus:opacity-100"
+          className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full border border-[#E6E1D8] bg-white/95 backdrop-blur-md flex items-center justify-center text-[#0F0F0F] hover:bg-white transition-all shadow-md active:scale-95 cursor-pointer opacity-90 group-hover/carousel:opacity-100"
           aria-label="Anterior"
         >
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-[#0D1B35]">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
+          <ChevronLeft size={20} />
         </button>
 
-        {/* Flecha Derecha */}
+        {/* Right Arrow Button */}
         <button
           onClick={() => scroll("right")}
-          className="absolute right-6 md:right-14 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full border border-black/5 bg-white/80 backdrop-blur-md shadow-md flex items-center justify-center hover:bg-white active:scale-95 transition-all duration-200 cursor-pointer opacity-0 group-hover:opacity-100 focus:opacity-100"
+          className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full border border-[#E6E1D8] bg-white/95 backdrop-blur-md flex items-center justify-center text-[#0F0F0F] hover:bg-white transition-all shadow-md active:scale-95 cursor-pointer opacity-90 group-hover/carousel:opacity-100"
           aria-label="Siguiente"
         >
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-[#0D1B35]">
-            <polyline points="9 18 15 12 9 6" />
-          </svg>
+          <ChevronRight size={20} />
         </button>
 
-        {/* Carrusel Desplazable con snaps al centro y padding lateral */}
+        {/* Scrollable Track */}
         <div
           ref={scrollRef}
           onScroll={handleScroll}
-          className="flex gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-hide py-4 px-[8vw] select-none"
+          className="flex gap-5 overflow-x-auto snap-x snap-mandatory scrollbar-none py-3 px-6 sm:px-12 select-none"
           style={{
             scrollbarWidth: "none",
             msOverflowStyle: "none",
@@ -186,41 +201,69 @@ export default function SocialCommunity() {
           {items.map((item, idx) => (
             <div
               key={idx}
-              className="flex-shrink-0 w-[180px] md:w-[210px] h-[300px] md:h-[350px] snap-center"
+              className="flex-shrink-0 w-[220px] sm:w-[250px] h-[310px] sm:h-[340px] snap-start"
             >
-              {item.type === "video" ? (
-                <div className="relative w-full h-full rounded-2xl overflow-hidden border border-stone-200/80 shadow-[0_4px_20px_rgba(0,0,0,0.03)] bg-stone-900 group/video">
-                  <video
-                    src={item.videoUrl}
-                    className="w-full h-full object-cover rounded-2xl brightness-[0.82] group-hover/video:brightness-[0.95] transition-all duration-300"
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                  />
-                  {/* Soft Gradient Overlay Filter */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0D1B35]/40 via-black/10 to-transparent pointer-events-none rounded-2xl group-hover/video:opacity-50 transition-opacity duration-300" />
+              {item.type === "image" ? (
+                /* Photo Card Stage + Brand Kit Caption Bar */
+                <div className="flex flex-col h-full bg-white border border-[#E6E1D8] rounded-xl overflow-hidden shadow-2xs group/card hover:border-[#0F0F0F]/30 transition-colors">
+                  <div className="relative flex-1 bg-[#FAF8F5] overflow-hidden">
+                    <Image
+                      src={item.imageUrl}
+                      alt={item.name}
+                      fill
+                      sizes="(max-width: 768px) 50vw, 25vw"
+                      className="object-cover group-hover/card:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                  {/* Caption Bar */}
+                  <div className="p-3 border-t border-[#E6E1D8] bg-white flex flex-col justify-between">
+                    <div className="flex items-center justify-between gap-1 mb-0.5">
+                      <span className="font-sans font-semibold text-xs text-[#0F0F0F] truncate">
+                        {item.name}
+                      </span>
+                      <div className="flex gap-0.5 flex-shrink-0">
+                        {[...Array(5)].map((_, i) => (
+                          <StarIcon key={i} />
+                        ))}
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-sans font-normal text-[#A8A29A] flex items-center">
+                      <span
+                        className="inline-block w-2 h-2 rounded-full mr-1.5 flex-shrink-0"
+                        style={{ backgroundColor: item.productColor }}
+                      />
+                      {item.productName}
+                    </span>
+                  </div>
                 </div>
               ) : (
-                <div className="w-full h-full rounded-2xl bg-white p-6 flex flex-col justify-center border border-black/[0.06] shadow-[0_4px_20px_rgba(0,0,0,0.03)] relative overflow-hidden">
-                  <div className="absolute -top-10 -right-10 w-28 h-28 bg-[#1a4b8c]/5 rounded-full blur-xl" />
-
-                  {/* Estrellas */}
-                  <div className="flex gap-0.5 mb-3.5 justify-center">
-                    {[...Array(item.rating)].map((_, i) => (
-                      <StarIcon key={i} />
-                    ))}
+                /* Text Review Stage + Brand Kit Caption Bar */
+                <div className="flex flex-col h-full bg-white border border-[#E6E1D8] rounded-xl overflow-hidden shadow-2xs group/card hover:border-[#0F0F0F]/30 transition-colors">
+                  <div className="flex-1 bg-[#FAF8F5] p-4 sm:p-5 flex items-center justify-center text-center">
+                    <p className="font-serif italic text-xs sm:text-sm text-[#0F0F0F] leading-relaxed line-clamp-8">
+                      "{item.text}"
+                    </p>
                   </div>
-
-                  {/* Testimonio */}
-                  <p className="home-body mb-3 italic font-medium text-center">
-                    "{item.text}"
-                  </p>
-
-                  {/* Nombre */}
-                  <p className="text-[10px] font-black tracking-wider uppercase text-[#0D1B35] text-center">
-                    {item.name}
-                  </p>
+                  {/* Caption Bar */}
+                  <div className="p-3 border-t border-[#E6E1D8] bg-white flex flex-col justify-between">
+                    <div className="flex items-center justify-between gap-1 mb-0.5">
+                      <span className="font-sans font-semibold text-xs text-[#0F0F0F] truncate">
+                        {item.name}
+                      </span>
+                      <div className="flex gap-0.5 flex-shrink-0">
+                        {[...Array(item.rating)].map((_, i) => (
+                          <StarIcon key={i} />
+                        ))}
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-sans font-normal text-[#A8A29A] flex items-center">
+                      <span
+                        className="inline-block w-2 h-2 rounded-full mr-1.5 flex-shrink-0"
+                        style={{ backgroundColor: item.productColor }}
+                      />
+                      {item.productName}
+                    </span>
+                  </div>
                 </div>
               )}
             </div>

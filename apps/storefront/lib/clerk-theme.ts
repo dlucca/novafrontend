@@ -24,24 +24,24 @@ export const novapatchAppearance: Record<string, any> = {
 
   // ── Variables globales ─────────────────────────────────────────────────────
   variables: {
-    colorPrimary:                  "#E8503A",   // coral
-    colorBackground:               "#FAF7F2",   // cream — iguala el fondo de página
-    colorNeutral:                  "#0D1B35",   // navy — tinta todos los neutrales
-    colorText:                     "#0D1B35",
-    colorTextSecondary:            "#5F7080",
-    colorTextOnPrimaryBackground:  "#FAF7F2",
+    colorPrimary:                  "#0F0F0F",   // ink
+    colorBackground:               "#FAF8F5",   // bone
+    colorNeutral:                  "#0F0F0F",   // ink
+    colorText:                     "#0F0F0F",
+    colorTextSecondary:            "#3A3A37",
+    colorTextOnPrimaryBackground:  "#FFFFFF",
     colorInputBackground:          "#FFFFFF",
-    colorInputText:                "#0D1B35",
+    colorInputText:                "#0F0F0F",
     colorDanger:                   "#E8503A",
-    colorSuccess:                  "#059669",
+    colorSuccess:                  "#0F0F0F",
     colorWarning:                  "#D97706",
     borderRadius:                  "0.75rem",
     fontFamily:                    "inherit",
     fontSize:                      "14px",
     fontWeight: {
       normal: 400,
-      medium: 600,
-      bold:   800,
+      medium: 500,
+      bold:   700,
     },
     spacingUnit: "1rem",
   },

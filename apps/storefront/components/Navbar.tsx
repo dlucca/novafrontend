@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingBag, Menu, X, ChevronDown, User, LogOut } from "lucide-react";
 import { SignInButton, useClerk, useUser } from "@clerk/nextjs";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/lib/i18n-navigation";
 import Image from "next/image";
 import { CART_UPDATED_EVENT, getCartItemCount } from "@/lib/cart";
@@ -12,13 +12,15 @@ import { useCart } from "@/contexts/CartContext";
 
 export default function Navbar({ lightBg = false }: { lightBg?: boolean }) {
   const t = useTranslations('nav');
+  const locale = useLocale();
 
   const navLinks = [
     { label: t('tienda'), href: "/tienda" },
+    { label: t('ciencia'), href: "/ciencia" },
     { label: t('suscripciones'), href: "/suscripciones" },
-    { label: t('nosotros'), href: "/nosotros" },
   ];
   const [scrolled, setScrolled] = useState(false);
+  const [visible, setVisible] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
@@ -26,11 +28,30 @@ export default function Navbar({ lightBg = false }: { lightBg?: boolean }) {
   const { isSignedIn, user } = useUser();
   const { signOut } = useClerk();
   const accountMenuRef = useRef<HTMLDivElement | null>(null);
+  const lastScrollY = useRef(0);
 
+  // Rhode Skin Smart Scroll Header: Hides on scroll down, reveals on scroll up
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY > 60) {
+        setScrolled(true);
+        if (currentScrollY > lastScrollY.current && currentScrollY - lastScrollY.current > 8) {
+          setVisible(false); // Hide on scroll down
+        } else if (lastScrollY.current - currentScrollY > 8) {
+          setVisible(true); // Reveal on scroll up
+        }
+      } else {
+        setScrolled(false);
+        setVisible(true); // Always visible at top
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
@@ -82,68 +103,55 @@ export default function Navbar({ lightBg = false }: { lightBg?: boolean }) {
 
   return (
     <motion.header
-      initial={{ y: -88, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      initial={{ y: 0, opacity: 1 }}
+      animate={{
+        y: visible ? 0 : "-100%",
+        opacity: visible ? 1 : 0,
+      }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 border-b ${
         scrolled || lightBg
-          ? "bg-warm/97 backdrop-blur-xl shadow-[0_1px_24px_rgba(0,0,0,0.09)]"
-          : "bg-gradient-to-b from-black/55 via-black/20 to-transparent"
+          ? "bg-[#FAF8F5]/92 backdrop-blur-md border-[#E6E1D8] shadow-2xs"
+          : "bg-[#FAF8F5]/80 backdrop-blur-md border-[#E6E1D8]/60"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-8 lg:px-12 h-[76px] flex items-center justify-between">
+      <div className="max-w-[1240px] mx-auto px-6 lg:px-10 h-[72px] flex items-center justify-between">
 
-        {/* Left nav */}
-        <nav className="hidden md:flex items-center gap-9">
+        {/* Left Logo (Brand Kit V2 — Open Sauce Sans 700/800, tracking -0.035em) */}
+        <Link
+          href="/"
+          className="font-sans font-bold text-[24px] tracking-[-0.035em] text-[#0F0F0F] hover:opacity-85 transition-opacity lowercase"
+        >
+          novapatch
+        </Link>
+
+        {/* Center Nav Links (Brand Kit V2 — Open Sauce Sans 500, lowercase) */}
+        <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className={`text-[15px] font-semibold tracking-wide transition-colors duration-200 relative group rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 ${
-                scrolled || lightBg
-                  ? "text-ocean hover:text-ocean-dark focus-visible:outline-ocean"
-                  : "text-white hover:text-white/80 focus-visible:outline-white"
-              }`}
+              className="text-[15px] font-sans font-medium tracking-[-0.01em] text-[#3A3A37] hover:text-[#0F0F0F] transition-colors lowercase"
             >
               {link.label}
-              <span
-                className={`absolute -bottom-0.5 left-0 w-0 h-[2px] group-hover:w-full transition-all duration-300 rounded-full ${
-                  scrolled || lightBg ? "bg-ocean" : "bg-white"
-                }`}
-              />
             </Link>
           ))}
         </nav>
 
-        {/* Logo — centered */}
-        <Link href="/" className="absolute left-1/2 -translate-x-1/2">
-          <Image
-            src={scrolled || lightBg ? "/logos/logocolor.webp" : "/logos/logowht.webp"}
-            alt="NovaPatch"
-            width={180}
-            height={50}
-            className="h-[44px] w-auto object-contain transition-opacity duration-300"
-            priority
-          />
-        </Link>
-
-        {/* Right */}
-        <div className="flex items-center gap-1">
-<button
+        {/* Right Actions */}
+        <div className="flex items-center gap-3">
+          <button
             onClick={openCart}
             aria-label="Carrito"
-            className={`relative p-2.5 rounded-xl transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 ${
-              scrolled || lightBg
-                ? "text-ocean hover:text-ocean-dark hover:bg-ocean/8 focus-visible:outline-ocean"
-                : "text-white hover:text-white/80 hover:bg-white/10 focus-visible:outline-white"
-            }`}
+            className="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#E6E1D8] text-[12px] font-sans font-medium text-[#0F0F0F] bg-white hover:bg-[#F2EEE7] transition-colors shadow-2xs"
           >
-            <ShoppingBag size={20} />
-            {cartCount > 0 ? (
-              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-coral px-1 text-[11px] font-bold text-white">
+            <ShoppingBag size={15} className="text-[#0F0F0F]" />
+            <span>carrito</span>
+            {cartCount > 0 && (
+              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-[#0F0F0F] px-1 text-[10px] font-bold text-[#FAF8F5]">
                 {cartCount}
               </span>
-            ) : null}
+            )}
           </button>
           {/* Cuenta — UserButton si logueado, link a /sign-in si no */}
           <div className="hidden md:flex items-center">
@@ -154,28 +162,26 @@ export default function Navbar({ lightBg = false }: { lightBg?: boolean }) {
                   onClick={() => setAccountOpen((open) => !open)}
                   aria-haspopup="menu"
                   aria-expanded={accountOpen}
-                  className="flex items-center gap-2 rounded-full p-1 transition-all duration-200"
+                  className="flex items-center gap-1.5 rounded-full p-1 transition-all duration-200 focus:outline-none cursor-pointer"
                 >
-                  <span className="relative h-10 w-10 overflow-hidden rounded-full ring-2 ring-coral/60 ring-offset-2 ring-offset-transparent">
+                  <span className="relative h-9 w-9 overflow-hidden rounded-full border border-[#E6E1D8] bg-[#FAF8F5]">
                     {user?.imageUrl ? (
                       <Image
                         src={user.imageUrl}
                         alt={user.fullName ?? "Mi cuenta"}
                         fill
-                        sizes="40px"
+                        sizes="36px"
                         className="object-cover"
                       />
                     ) : (
-                      <span className="flex h-full w-full items-center justify-center bg-white text-[14px] font-bold text-ocean">
+                      <span className="flex h-full w-full items-center justify-center text-[13px] font-sans font-bold text-[#0F0F0F]">
                         {user?.firstName?.[0] ?? "N"}
                       </span>
                     )}
                   </span>
                   <ChevronDown
-                    size={16}
-                    className={`transition-transform duration-200 ${
-                      scrolled || lightBg ? "text-ocean" : "text-white"
-                    } ${accountOpen ? "rotate-180" : ""}`}
+                    size={15}
+                    className={`text-[#0F0F0F] transition-transform duration-200 ${accountOpen ? "rotate-180" : ""}`}
                   />
                 </button>
 
@@ -186,51 +192,49 @@ export default function Navbar({ lightBg = false }: { lightBg?: boolean }) {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -8, scale: 0.98 }}
                       transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-                      className="absolute right-0 top-[calc(100%+12px)] w-[320px] overflow-hidden rounded-[28px] border border-navy/10 bg-[#FFFDF9] shadow-[0_24px_80px_rgba(13,27,53,0.22)]"
+                      className="absolute right-0 top-[calc(100%+12px)] w-[280px] overflow-hidden rounded-xl border border-[#E6E1D8] bg-white p-2 shadow-lg z-50"
                     >
-                      <div className="border-b border-navy/8 px-5 py-4">
-                        <div className="flex items-center gap-4">
-                          <span className="relative h-14 w-14 overflow-hidden rounded-full bg-white">
-                            {user?.imageUrl ? (
-                              <Image
-                                src={user.imageUrl}
-                                alt={user.fullName ?? "Mi cuenta"}
-                                fill
-                                sizes="56px"
-                                className="object-cover"
-                              />
-                            ) : (
-                              <span className="flex h-full w-full items-center justify-center text-[18px] font-bold text-ocean">
-                                {user?.firstName?.[0] ?? "N"}
-                              </span>
-                            )}
-                          </span>
-                          <div className="min-w-0">
-                            <p className="truncate text-[18px] font-bold text-navy">
-                              {user?.fullName ?? "Mi cuenta"}
-                            </p>
-                            <p className="truncate text-[15px] text-[#667085]">
-                              {user?.primaryEmailAddress?.emailAddress ?? ""}
-                            </p>
-                          </div>
+                      <div className="border-b border-[#E6E1D8] px-3.5 py-3 flex items-center gap-3">
+                        <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full border border-[#E6E1D8] bg-[#FAF8F5]">
+                          {user?.imageUrl ? (
+                            <Image
+                              src={user.imageUrl}
+                              alt={user.fullName ?? "Mi cuenta"}
+                              fill
+                              sizes="40px"
+                              className="object-cover"
+                            />
+                          ) : (
+                            <span className="flex h-full w-full items-center justify-center text-[14px] font-sans font-bold text-[#0F0F0F]">
+                              {user?.firstName?.[0] ?? "N"}
+                            </span>
+                          )}
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-sans font-semibold text-[#0F0F0F]">
+                            {user?.fullName ?? "Mi cuenta"}
+                          </p>
+                          <p className="truncate text-xs font-mono text-[#A8A29A]">
+                            {user?.primaryEmailAddress?.emailAddress ?? ""}
+                          </p>
                         </div>
                       </div>
 
-                      <div className="px-3 py-3">
+                      <div className="pt-1.5 pb-0.5 flex flex-col gap-0.5">
                         <Link
                           href="/cuenta"
                           onClick={closeMenus}
-                          className="flex w-full items-center gap-4 rounded-[20px] px-4 py-4 text-left text-[15px] font-semibold text-[#667085] transition-colors duration-150 hover:bg-[#F7F2EB] hover:text-navy"
+                          className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-xs font-sans font-medium uppercase tracking-[0.12em] text-[#0F0F0F] transition-colors duration-150 hover:bg-[#FAF8F5]"
                         >
-                          <User size={18} />
+                          <User size={16} className="text-[#0F0F0F]" />
                           <span>{t('cuenta')}</span>
                         </Link>
                         <button
                           type="button"
                           onClick={handleSignOut}
-                          className="mt-2 flex w-full items-center gap-4 rounded-[20px] border border-navy/8 px-4 py-4 text-left text-[15px] font-semibold text-[#667085] transition-colors duration-150 hover:bg-[#F7F2EB] hover:text-navy"
+                          className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-xs font-sans font-medium uppercase tracking-[0.12em] text-[#0F0F0F] transition-colors duration-150 hover:bg-[#FAF8F5] cursor-pointer"
                         >
-                          <LogOut size={18} />
+                          <LogOut size={16} className="text-[#0F0F0F]" />
                           <span>Cerrar sesión</span>
                         </button>
                       </div>
@@ -242,16 +246,9 @@ export default function Navbar({ lightBg = false }: { lightBg?: boolean }) {
               <SignInButton mode="modal">
                 <button
                   aria-label="Iniciar sesión"
-                  className={`p-2.5 rounded-xl transition-all duration-200 ${
-                    scrolled || lightBg
-                      ? "text-ocean hover:text-ocean-dark hover:bg-ocean/8"
-                      : "text-white hover:text-white/80 hover:bg-white/10"
-                  }`}
+                  className="p-2 rounded-full text-[#0F0F0F] hover:bg-[#F2EEE7] transition-all duration-200 cursor-pointer"
                 >
-                  <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <circle cx="12" cy="7" r="4" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                  <User size={20} className="text-[#0F0F0F]" />
                 </button>
               </SignInButton>
             )}
@@ -262,13 +259,9 @@ export default function Navbar({ lightBg = false }: { lightBg?: boolean }) {
             aria-expanded={menuOpen}
             aria-controls="mobile-nav"
             onClick={() => setMenuOpen(!menuOpen)}
-            className={`md:hidden p-2.5 rounded-xl transition-colors duration-200 ${
-              scrolled || lightBg
-                ? "text-ocean hover:text-ocean-dark"
-                : "text-white hover:text-white/80"
-            }`}
+            className="md:hidden p-2 rounded-xl text-[#0F0F0F] hover:bg-[#F2EEE7] transition-colors duration-200 cursor-pointer"
           >
-            {menuOpen ? <X size={22} /> : <Menu size={22} />}
+            {menuOpen ? <X size={22} className="text-[#0F0F0F]" /> : <Menu size={22} className="text-[#0F0F0F]" />}
           </button>
         </div>
       </div>
@@ -282,7 +275,7 @@ export default function Navbar({ lightBg = false }: { lightBg?: boolean }) {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.25 }}
-            className="md:hidden bg-warm border-t border-navy/8 overflow-hidden"
+            className="md:hidden bg-[#FAF8F5] border-t border-[#E6E1D8] overflow-hidden"
           >
             <div className="px-8 py-6 flex flex-col gap-5">
               <nav aria-label="Menú principal">
@@ -291,7 +284,7 @@ export default function Navbar({ lightBg = false }: { lightBg?: boolean }) {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMenuOpen(false)}
-                  className="block text-[16px] font-semibold text-ocean hover:text-ocean-dark transition-colors py-1"
+                  className="block text-[15px] font-sans font-medium text-[#3A3A37] hover:text-[#0F0F0F] transition-colors py-1.5 lowercase"
                 >
                   {link.label}
                 </Link>
@@ -299,11 +292,11 @@ export default function Navbar({ lightBg = false }: { lightBg?: boolean }) {
               </nav>
 
               {/* Cuenta mobile */}
-              <div className="pt-2 border-t border-ocean/10">
+              <div className="pt-3 border-t border-[#E6E1D8]">
                 {isSignedIn ? (
                   <div className="flex flex-col gap-3">
                     <div className="flex items-center gap-3">
-                      <span className="relative h-10 w-10 overflow-hidden rounded-full bg-white ring-2 ring-coral/60">
+                      <span className="relative h-10 w-10 overflow-hidden rounded-full bg-[#FAF8F5] border border-[#E6E1D8]">
                         {user?.imageUrl ? (
                           <Image
                             src={user.imageUrl}
@@ -313,16 +306,16 @@ export default function Navbar({ lightBg = false }: { lightBg?: boolean }) {
                             className="object-cover"
                           />
                         ) : (
-                          <span className="flex h-full w-full items-center justify-center text-[14px] font-bold text-ocean">
+                          <span className="flex h-full w-full items-center justify-center text-[14px] font-sans font-bold text-[#0F0F0F]">
                             {user?.firstName?.[0] ?? "N"}
                           </span>
                         )}
                       </span>
                       <div className="min-w-0">
-                        <p className="truncate text-[15px] font-semibold text-ocean">
+                        <p className="truncate text-sm font-sans font-semibold text-[#0F0F0F]">
                           {user?.fullName ?? "Mi cuenta"}
                         </p>
-                        <p className="truncate text-[13px] text-[#667085]">
+                        <p className="truncate text-xs font-mono text-[#A8A29A]">
                           {user?.primaryEmailAddress?.emailAddress ?? ""}
                         </p>
                       </div>
@@ -331,17 +324,17 @@ export default function Navbar({ lightBg = false }: { lightBg?: boolean }) {
                     <Link
                       href="/cuenta"
                       onClick={closeMenus}
-                      className="flex items-center gap-3 text-[15px] font-semibold text-ocean transition-colors hover:text-ocean-dark"
+                      className="flex items-center gap-3 text-xs font-sans font-medium uppercase tracking-[0.12em] text-[#0F0F0F] transition-colors py-1"
                     >
-                      <User size={16} />
+                      <User size={16} className="text-[#0F0F0F]" />
                       <span>{t('cuenta')}</span>
                     </Link>
                     <button
                       type="button"
                       onClick={handleSignOut}
-                      className="flex items-center gap-3 text-[15px] font-semibold text-coral transition-colors hover:text-coral-dark"
+                      className="flex items-center gap-3 text-xs font-sans font-medium uppercase tracking-[0.12em] text-[#0F0F0F] transition-colors py-1 cursor-pointer"
                     >
-                      <LogOut size={16} />
+                      <LogOut size={16} className="text-[#0F0F0F]" />
                       <span>Cerrar sesión</span>
                     </button>
                   </div>
@@ -349,9 +342,10 @@ export default function Navbar({ lightBg = false }: { lightBg?: boolean }) {
                   <SignInButton mode="modal">
                     <button
                       onClick={() => setMenuOpen(false)}
-                      className="text-[16px] font-semibold text-coral hover:text-coral-dark transition-colors"
+                      className="flex items-center gap-3 text-xs font-sans font-medium uppercase tracking-[0.12em] text-[#0F0F0F] transition-colors py-1 cursor-pointer"
                     >
-                      {t('signIn')}
+                      <User size={16} className="text-[#0F0F0F]" />
+                      <span>{t('signIn')}</span>
                     </button>
                   </SignInButton>
                 )}

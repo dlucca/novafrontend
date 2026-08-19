@@ -1,279 +1,86 @@
 "use client";
 
-import { useRef, useCallback } from "react";
-import Link from "next/link";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { Link } from "@/lib/i18n-navigation";
 import Image from "next/image";
-import { useParams } from "next/navigation";
-import { useTranslations } from "next-intl";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
-interface Slide {
-  src: string;
-  alt: string;
-  accent: string;
-  key: string;
-}
+export default function HeroSection() {
+  const containerRef = useRef<HTMLDivElement>(null);
 
-interface HeroSectionProps {
-  slides: Slide[];
-  current: number;
-  onNav: (dir: number) => void;
-  onDot: (i: number) => void;
-  onPause: () => void;
-  onResume: () => void;
-}
-
-const SWIPE_THRESHOLD = 50;
-
-export default function HeroSection({ slides, current, onNav, onDot, onPause, onResume }: HeroSectionProps) {
-  const t = useTranslations("home.hero");
-  const params = useParams();
-  const locale = typeof params?.locale === "string" ? params.locale : "mx";
-  const shouldReduceMotion = useReducedMotion();
-  const pointerStartX = useRef<number | null>(null);
-  const swiping = useRef(false);
-
-  const handlePointerDown = useCallback((e: React.PointerEvent) => {
-    pointerStartX.current = e.clientX;
-    swiping.current = false;
-    if (e.pointerType === "touch") {
-      onPause();
-    }
-  }, [onPause]);
-
-  const handlePointerMove = useCallback((e: React.PointerEvent) => {
-    if (pointerStartX.current === null) return;
-    const dx = e.clientX - pointerStartX.current;
-    if (Math.abs(dx) >= SWIPE_THRESHOLD) {
-      swiping.current = true;
-    }
-  }, []);
-
-  const handlePointerUp = useCallback((e: React.PointerEvent) => {
-    if (pointerStartX.current === null) return;
-    const dx = e.clientX - pointerStartX.current;
-    pointerStartX.current = null;
-
-    if (Math.abs(dx) >= SWIPE_THRESHOLD) {
-      onNav(dx < 0 ? 1 : -1);
-    } else if (e.pointerType === "touch") {
-      onResume();
-    }
-  }, [onNav, onResume]);
-
-  const handlePointerCancel = useCallback(() => {
-    pointerStartX.current = null;
-    swiping.current = false;
-    onResume();
-  }, [onResume]);
-
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === "ArrowLeft") {
-      e.preventDefault();
-      onNav(-1);
-    } else if (e.key === "ArrowRight") {
-      e.preventDefault();
-      onNav(1);
-    }
-  }, [onNav]);
+  // Rhode Skin Scroll Effect: Starts slightly scaled up (1.15) and scales down smoothly to (1.0) on scroll
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"],
+  });
+  const imageScale = useTransform(scrollYProgress, [0, 1], [1.15, 1.0]);
 
   return (
-    <section
-      role="region"
-      aria-roledescription="carrusel"
-      aria-label="Imágenes destacadas"
-      tabIndex={0}
-      className="relative w-full overflow-hidden min-h-[580px] sm:min-h-0 sm:aspect-video touch-pan-y focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-inset bg-[#001423]"
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
-      onPointerCancel={handlePointerCancel}
-      onMouseEnter={onPause}
-      onMouseLeave={onResume}
-      onFocus={onPause}
-      onBlur={onResume}
-      onKeyDown={handleKeyDown}
-    >
-      {/* Screen-reader live announcement — visually hidden */}
-      <div aria-live="polite" aria-atomic="true" className="sr-only">
-        Imagen {current + 1} de {slides.length}: {slides[current]?.alt}
-      </div>
-
-      {/* Cinematic Slide cross-fade and zoom */}
-      <div className="absolute inset-0 w-full h-full">
-        <AnimatePresence mode="popLayout" initial={false}>
-          <motion.div
-            key={current}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute inset-0 w-full h-full overflow-hidden"
-          >
-            <motion.div
-              initial={{ scale: shouldReduceMotion ? 1 : 1.02, x: 0 }}
-              animate={{ scale: shouldReduceMotion ? 1 : 1.07, x: shouldReduceMotion ? 0 : "-1.2%" }}
-              transition={{ duration: 6.5, ease: "linear" }}
-              className="relative w-full h-full"
-            >
-              <Image
-                src={slides[current].src}
-                alt={slides[current].alt}
-                fill
-                className="object-cover object-center sm:object-top"
-                priority
-                sizes="100vw"
-              />
-            </motion.div>
-          </motion.div>
-        </AnimatePresence>
-      </div>
-
-      {/* Dynamic ambient color gradients */}
-      <AnimatePresence mode="popLayout" initial={false}>
-        <motion.div
-          key={`gradient-${current}`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.85, ease: "easeInOut" }}
-          className="absolute inset-0 z-[1]"
-          style={{
-            background: `linear-gradient(to top, rgba(0, 20, 35, 0.85) 0%, rgba(0, 20, 35, 0.4) 50%, ${slides[current].accent}15 100%)`,
-          }}
-        />
-      </AnimatePresence>
+    <section className="pt-24 pb-12 sm:pb-16 px-4 sm:px-8 max-w-[1400px] mx-auto bg-[#FAF8F5]">
+      {/* Full-width Rhode Skin Style Hero Stage */}
       <div
-        className="absolute inset-0 z-[1] hidden sm:block"
-        style={{
-          background: "linear-gradient(100deg, rgba(0,35,45,0.6) 0%, rgba(0,35,45,0.2) 45%, rgba(0,0,0,0) 100%)",
-        }}
-      />
+        ref={containerRef}
+        className="relative w-full min-h-[540px] sm:min-h-[640px] lg:min-h-[700px] rounded-xl sm:rounded-2xl overflow-hidden bg-[#0F0F0F] shadow-[0_12px_40px_rgba(15,15,15,0.06)] border border-[#E6E1D8]/80 flex flex-col justify-between p-6 sm:p-12 lg:p-16"
+      >
+        {/* Background Carousel Image with Scroll-Driven Scale */}
+        <motion.div style={{ scale: imageScale }} className="absolute inset-0">
+          <Image
+            src="/carousel/Banner_hero.webp"
+            alt="Novapatch Bienestar Silencioso"
+            fill
+            priority
+            sizes="(max-width: 1400px) 100vw, 1400px"
+            className="object-cover object-center"
+          />
+        </motion.div>
 
-      {/* ── Text overlay ────────────────────────────────────────────────────────── */}
-      <div className="absolute inset-0 z-[2] flex items-end sm:items-center pb-14 sm:pb-0">
-        <div className="max-w-[1200px] mx-auto px-5 sm:px-8 lg:px-14 w-full">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={current}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              variants={{
-                hidden: { opacity: 0 },
-                visible: {
-                  opacity: 1,
-                  transition: {
-                    staggerChildren: 0.12,
-                  },
-                },
-                exit: {
-                  opacity: 0,
-                  transition: {
-                    duration: 0.2,
-                  },
-                },
-              }}
-              className="max-w-[560px] mx-auto sm:mx-0"
+        {/* Gradient Overlay for Legibility */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/15 z-[1]" />
+
+        {/* Bottom Floating Text Content (Brand Kit V2 — Open Sauce Sans, Lowercase, Left Aligned) */}
+        <div className="relative z-10 max-w-2xl mt-auto pt-16 text-left">
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="font-display font-bold text-white tracking-[-0.035em] leading-[0.95] mb-5 lowercase"
+            style={{ fontSize: "clamp(48px, 7.5vw, 108px)" }}
+          >
+            bienestar<br />
+            silencioso.
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.25 }}
+            className="font-sans font-normal text-base sm:text-lg text-white/90 leading-relaxed max-w-xl mb-8"
+          >
+            Suplementación en parches que acompaña tu cuerpo sin estorbar: transparente, sin pastillas y sin horarios rígidos. Te lo pegas y te olvidas. En un mundo de ruidos y distracciones, cuidarte no debería ser un ruido más.
+          </motion.p>
+
+          {/* Action Pill Buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.35 }}
+            className="flex flex-wrap items-center gap-4"
+          >
+            <Link
+              href="/tienda"
+              className="inline-flex items-center justify-center px-8 py-4 bg-white text-[#0F0F0F] hover:bg-[#FAF8F5] rounded-full text-[12px] font-sans font-medium uppercase tracking-[0.14em] transition-all shadow-md active:scale-95"
             >
-              {/* Product Badge */}
-              <motion.span
-                variants={{
-                  hidden: { opacity: 0, y: 15 },
-                  visible: { opacity: 0.9, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
-                }}
-                className="inline-block text-[11px] font-extrabold uppercase tracking-[0.15em] mb-2 px-3.5 py-1 rounded-full text-white"
-                style={{ background: `${slides[current].accent}33`, border: `1px solid ${slides[current].accent}66` }}
-              >
-                {t("badge")} · {slides[current].alt.split(" ").slice(-1)[0]}
-              </motion.span>
-
-              {/* Dynamic Title */}
-              <motion.h1
-                variants={{
-                  hidden: { opacity: 0, y: 24 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.75, ease: [0.16, 1, 0.3, 1] } },
-                }}
-                className="text-white font-black leading-[1.08] mb-3 sm:mb-4 tracking-[-0.02em] text-center sm:text-left text-balance"
-                style={{ fontSize: "clamp(34px, 8vw, 62px)" }}
-              >
-                {t(`slides.${slides[current].key}.title`)}
-              </motion.h1>
-
-              {/* Dynamic Subtitle */}
-              <motion.p
-                variants={{
-                  hidden: { opacity: 0, y: 20 },
-                  visible: { opacity: 0.85, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
-                }}
-                className="text-white font-normal mb-6 sm:mb-9 leading-[1.6] max-w-[440px] mx-auto sm:mx-0 text-center sm:text-left"
-                style={{ fontSize: "clamp(14px, 3.5vw, 17px)" }}
-              >
-                {t(`slides.${slides[current].key}.subtitle`)}
-              </motion.p>
-
-              {/* Staggered CTAs */}
-              <motion.div
-                variants={{
-                  hidden: { opacity: 0, y: 16 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } },
-                }}
-                className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center"
-              >
-                <Link
-                  href={`/${locale}/tienda`}
-                  className="group inline-flex items-center justify-center gap-2 bg-white font-bold px-7 py-3.5 rounded-full transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_28px_rgba(0,0,0,0.25)] shadow-[0_4px_20px_rgba(0,0,0,0.15)]"
-                  style={{ color: "var(--color-ocean)", fontSize: "clamp(14px, 3.5vw, 15px)" }}
-                >
-                  {t("cta")}
-                  <svg
-                    width="15"
-                    height="15"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    viewBox="0 0 24 24"
-                    className="group-hover:translate-x-0.5 transition-transform duration-200"
-                  >
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
-                </Link>
-                <Link
-                  href="#como-funciona"
-                  className="inline-flex items-center justify-center gap-2 bg-transparent text-white font-semibold px-6 py-3.5 rounded-full transition-all duration-200 hover:bg-white/15"
-                  style={{
-                    border: "2px solid rgba(255,255,255,0.4)",
-                    fontSize: "clamp(14px, 3.5vw, 15px)",
-                  }}
-                >
-                  {t("ctaSecondary")}
-                </Link>
-              </motion.div>
-            </motion.div>
-          </AnimatePresence>
+              ir a tienda
+            </Link>
+            <Link
+              href="/ciencia"
+              className="inline-flex items-center justify-center px-8 py-4 bg-black/20 text-white hover:bg-white hover:text-[#0F0F0F] border border-white/70 rounded-full text-[12px] font-sans font-medium uppercase tracking-[0.14em] transition-all backdrop-blur-sm active:scale-95"
+            >
+              conocer la ciencia
+            </Link>
+          </motion.div>
         </div>
       </div>
-
-      {/* Prev/Next — ocultos en mobile */}
-      <button
-        onClick={() => onNav(-1)}
-        aria-label="Anterior"
-        className="hidden sm:flex absolute left-3 top-1/2 -translate-y-1/2 z-[5] w-10 h-10 rounded-full bg-white/90 items-center justify-center text-[#111827] shadow-[0_4px_16px_rgba(0,0,0,0.10)] transition-all duration-200 hover:bg-white hover:scale-105"
-      >
-        <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-          <path d="M15 18l-6-6 6-6" />
-        </svg>
-      </button>
-      <button
-        onClick={() => onNav(1)}
-        aria-label="Siguiente"
-        className="hidden sm:flex absolute right-3 top-1/2 -translate-y-1/2 z-[5] w-10 h-10 rounded-full bg-white/90 items-center justify-center text-[#111827] shadow-[0_4px_16px_rgba(0,0,0,0.10)] transition-all duration-200 hover:bg-white hover:scale-105"
-      >
-        <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-          <path d="M9 18l6-6-6-6" />
-        </svg>
-      </button>
-
     </section>
   );
 }

@@ -7,17 +7,11 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 const fade = (delay = 0) => ({
-  initial: { opacity: 0, y: 22 },
+  initial: { opacity: 0, y: 16 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true },
-  transition: { delay, duration: 0.7, ease: [0.22, 1, 0.36, 1] as const },
+  transition: { delay, duration: 0.5, ease: [0.22, 1, 0.36, 1] as const },
 });
-
-const dotTexture = {
-  backgroundImage:
-    "radial-gradient(circle, rgba(0,80,136,0.05) 1px, transparent 1px)",
-  backgroundSize: "28px 28px",
-};
 
 // ── DATA ──────────────────────────────────────────────────────────────────────
 
@@ -95,32 +89,15 @@ function FAQItem({
   onToggle: () => void;
 }) {
   return (
-    <div
-      className="rounded-2xl border overflow-hidden transition-all duration-200"
-      style={{
-        borderColor: isOpen ? "rgba(0,80,136,0.2)" : "#E5E7EB",
-        boxShadow: isOpen ? "0 4px 20px rgba(0,80,136,0.08)" : "none",
-        background: "#fff",
-      }}
-    >
+    <div className="py-5 border-b border-[#E6E1D8]">
       <button
         onClick={onToggle}
-        className="w-full flex items-center justify-between gap-4 p-5 text-left"
+        className="w-full flex items-center justify-between gap-4 text-left group cursor-pointer"
       >
-        <span
-          className={`home-item-title leading-snug ${isOpen ? "text-teal" : "text-ocean"}`}
-        >
+        <span className="font-sans font-semibold text-base text-[#0F0F0F] leading-snug group-hover:text-[#3A3A37] transition-colors">
           {faq.q}
         </span>
-        <span
-          className="flex-shrink-0 w-6 h-6 rounded-lg flex items-center justify-center font-bold select-none"
-          style={{
-            background: isOpen ? "#3CBFAB" : "rgba(0,80,136,0.08)",
-            color: isOpen ? "#fff" : "#3CBFAB",
-            fontSize: "16px",
-            lineHeight: 1,
-          }}
-        >
+        <span className="shrink-0 w-6 h-6 rounded-full border border-[#E6E1D8] bg-[#FAF8F5] flex items-center justify-center font-mono text-xs text-[#0F0F0F]">
           {isOpen ? "−" : "+"}
         </span>
       </button>
@@ -131,11 +108,11 @@ function FAQItem({
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            className="overflow-hidden"
           >
-            <div className="px-5 pb-5">
-              <div className="h-px mb-4" style={{ background: "rgba(0,80,136,0.08)" }} />
-              <p className="home-body">{faq.a}</p>
-            </div>
+            <p className="pt-3 font-sans text-sm text-[#3A3A37] leading-relaxed">
+              {faq.a}
+            </p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -151,240 +128,142 @@ export default function GarantiaPage() {
   return (
     <>
       <Navbar lightBg />
-      <main>
+      <main className="min-h-screen bg-[#FAF8F5]">
 
         {/* ── HERO ────────────────────────────────────────────────── */}
-        <section
-          className="pt-32 pb-24 px-6 relative overflow-hidden"
-          style={{ background: "#FEF7ED" }}
-        >
-          <div className="absolute inset-0 pointer-events-none opacity-60" style={dotTexture} />
-
-          <div className="max-w-3xl mx-auto text-center relative z-10">
+        <section className="pt-32 pb-16 px-6 sm:px-10 max-w-[1240px] mx-auto">
+          <div className="bg-white rounded-xl border border-[#E6E1D8] p-8 sm:p-14 text-left shadow-2xs">
             <motion.p
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="home-section-eyebrow"
+              transition={{ duration: 0.5 }}
+              className="text-xs font-sans font-medium uppercase tracking-[0.14em] text-[#A8A29A] mb-3"
             >
-              Garantía de satisfacción
+              garantía de satisfacción
             </motion.p>
 
             <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.65, delay: 0.08 }}
-              className="home-section-title text-ocean"
-            >
-              30 días de garantía.<br />Sin riesgo.
-            </motion.h1>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="w-12 h-[3px] mx-auto mb-8"
-              style={{ background: "linear-gradient(90deg, #3CBFAB, #005088)" }}
-            />
-
-            <motion.p
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.65, delay: 0.22 }}
-              className="home-section-subtitle"
+              transition={{ duration: 0.55, delay: 0.08 }}
+              className="text-4xl sm:text-5xl lg:text-6xl font-display font-semibold text-[#0F0F0F] tracking-[-0.035em] leading-tight lowercase mb-5"
             >
-              Si tu primer pedido no te convence, te devolvemos el dinero.
-              Sin trámites complicados, sin devolver el producto.
+              30 días de garantía. sin riesgo.
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, delay: 0.16 }}
+              className="font-sans text-base sm:text-lg text-[#3A3A37] max-w-2xl leading-relaxed"
+            >
+              Si tu primer pedido no te convence, te devolvemos el 100% de tu dinero. Sin trámites complicados ni necesidad de devolver el producto.
             </motion.p>
           </div>
         </section>
 
         {/* ── STATS BAND ──────────────────────────────────────────── */}
-        <section className="py-10 px-6" style={{ background: "#F8EDEB" }}>
-          <div className="max-w-4xl mx-auto">
-            <div className="grid grid-cols-3 divide-x" style={{ borderColor: "rgba(0,80,136,0.15)" }}>
-              {stats.map((s, i) => (
-                <motion.div key={i} {...fade(i * 0.08)} className="text-center px-6">
-                  <p className="home-section-title text-ocean leading-none mb-1">
-                    {s.value}
-                    {s.unit && (
-                      <span className="home-caption ml-1 font-semibold text-teal">
-                        {s.unit}
-                      </span>
-                    )}
-                  </p>
-                  <p className="home-caption text-xs font-bold uppercase tracking-widest">
-                    {s.label}
-                  </p>
-                </motion.div>
-              ))}
-            </div>
+        <section className="py-12 px-6 sm:px-10 max-w-[1240px] mx-auto border-t border-[#E6E1D8] text-left">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {stats.map((s, i) => (
+              <motion.div key={i} {...fade(i * 0.08)} className="bg-white rounded-xl border border-[#E6E1D8] p-6 text-left shadow-2xs">
+                <p className="font-mono font-bold text-3xl sm:text-4xl text-[#0F0F0F] leading-none mb-2">
+                  {s.value}
+                  {s.unit && <span className="font-sans text-base font-normal text-[#3A3A37] ml-1">{s.unit}</span>}
+                </p>
+                <p className="font-sans text-xs text-[#A8A29A] uppercase tracking-[0.12em] font-medium">
+                  {s.label}
+                </p>
+              </motion.div>
+            ))}
           </div>
         </section>
 
         {/* ── 3 CARDS ─────────────────────────────────────────────── */}
-        <section className="py-24 px-6 bg-white">
-          <div className="max-w-7xl mx-auto">
-
-            <motion.div {...fade(0)} className="text-center mb-14">
-              <p className="home-section-eyebrow">
-                Cómo funciona
-              </p>
-              <h2 className="home-section-title text-ocean">
-                Todo lo que necesitas saber
-              </h2>
-            </motion.div>
-
-            <div className="grid md:grid-cols-3 gap-6">
-              {cards.map((card, i) => (
-                <motion.div
-                  key={card.title}
-                  {...fade(i * 0.1)}
-                  className="rounded-3xl p-8 relative overflow-hidden flex flex-col gap-6"
-                  style={
-                    card.featured
-                      ? {
-                          background: "#3CBFAB",
-                          boxShadow: "0 12px 48px rgba(60,191,171,0.28)",
-                        }
-                      : {
-                          background: "#FAF7F2",
-                          border: "1px solid #E5E7EB",
-                        }
-                  }
-                >
-                  {card.featured && (
-                    <div
-                      className="absolute inset-0 pointer-events-none opacity-40"
-                      style={dotTexture}
-                    />
-                  )}
-
-                  <div className="relative z-10">
-                    <div
-                      className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-6"
-                      style={
-                        card.featured
-                          ? { background: "rgba(255,255,255,0.15)", color: "#fff" }
-                          : { background: "rgba(0,80,136,0.08)", color: "#3CBFAB" }
-                      }
-                    >
-                      {card.title}
-                    </div>
-
-                    <ul
-                      className="flex flex-col gap-0 divide-y"
-                      style={{ borderColor: card.featured ? "rgba(255,255,255,0.12)" : "#E5E7EB" }}
-                    >
-                      {card.items.map((item, j) => (
-                        <li
-                          key={j}
-                          className={`py-3.5 ${
-                            card.featured
-                              ? j === card.items.length - 1
-                                ? "home-body text-white/50"
-                                : "home-body text-white/80"
-                              : j === card.items.length - 1
-                              ? "home-caption"
-                              : "home-body"
-                          }`}
-                        >
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+        <section className="py-20 px-6 sm:px-10 max-w-[1240px] mx-auto border-t border-[#E6E1D8] text-left">
+          <div className="max-w-3xl mb-12">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-semibold text-[#0F0F0F] tracking-[-0.035em] leading-tight lowercase mb-3">
+              cómo funciona la garantía.
+            </h2>
+            <p className="font-sans text-base text-[#3A3A37]">
+              Transparencia total para que pruebes Novapatch con absoluta tranquilidad.
+            </p>
           </div>
-        </section>
 
-        {/* ── CONTACT BAND ────────────────────────────────────────── */}
-        <section
-          className="py-8 px-6"
-          style={{ background: "#FAF7F2", borderTop: "1px solid #E5E7EB", borderBottom: "1px solid #E5E7EB" }}
-        >
-          <div className="max-w-3xl mx-auto text-center">
-            <motion.p {...fade(0)} className="home-body">
-              Llenas el{" "}
-              <Link
-                href="/reembolso"
-                className="home-body font-semibold text-teal transition-colors hover:underline"
+          <div className="grid md:grid-cols-3 gap-6 items-stretch">
+            {cards.map((card, i) => (
+              <motion.div
+                key={card.title}
+                {...fade(i * 0.1)}
+                className={`rounded-xl p-8 border flex flex-col justify-between ${
+                  card.featured
+                    ? "bg-[#0F0F0F] text-white border-[#0F0F0F] shadow-2xs"
+                    : "bg-white text-[#0F0F0F] border-[#E6E1D8] shadow-2xs"
+                }`}
               >
-                formulario de Solicitar reembolso
-              </Link>{" "}
-              y nos encargamos del resto. Respondemos en 24–48 horas.
-            </motion.p>
+                <div>
+                  <span
+                    className={`inline-block text-[11px] font-sans font-medium uppercase tracking-[0.14em] mb-6 px-3 py-1 rounded-full ${
+                      card.featured ? "bg-white/10 text-white" : "bg-[#FAF8F5] text-[#3A3A37] border border-[#E6E1D8]"
+                    }`}
+                  >
+                    {card.title}
+                  </span>
+
+                  <ul className="space-y-3">
+                    {card.items.map((item, j) => (
+                      <li
+                        key={j}
+                        className={`text-xs font-sans leading-relaxed flex items-start gap-2 ${
+                          card.featured ? "text-white/80" : "text-[#3A3A37]"
+                        }`}
+                      >
+                        <span className={`shrink-0 ${card.featured ? "text-white" : "text-[#0F0F0F]"}`}>•</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </section>
 
-        {/* ── FAQ ─────────────────────────────────────────────────── */}
-        <section className="py-24 px-6 bg-white">
-          <div className="max-w-3xl mx-auto">
-            <motion.div {...fade(0)} className="text-center mb-12">
-              <p className="home-section-eyebrow">
-                Preguntas frecuentes
-              </p>
-              <h2 className="home-section-title text-ocean">
-                Dudas sobre la garantía
-              </h2>
-            </motion.div>
-
-            <div className="flex flex-col gap-3">
-              {faqs.map((faq, i) => (
-                <motion.div key={i} {...fade(i * 0.06)}>
-                  <FAQItem
-                    faq={faq}
-                    isOpen={openIdx === i}
-                    onToggle={() => setOpenIdx(openIdx === i ? null : i)}
-                  />
-                </motion.div>
-              ))}
-            </div>
+        {/* ── FAQ & CONTACT LINK ──────────────────────────────────── */}
+        <section className="py-20 px-6 sm:px-10 max-w-[1240px] mx-auto border-t border-[#E6E1D8] text-left">
+          <div className="max-w-4xl mx-auto mb-12">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-semibold text-[#0F0F0F] tracking-[-0.035em] leading-tight lowercase mb-3">
+              preguntas frecuentes sobre la garantía.
+            </h2>
+            <p className="font-sans text-base text-[#3A3A37]">
+              Respuestas rápidas a las dudas más comunes sobre reembolsos.
+            </p>
           </div>
-        </section>
 
-        {/* ── CTA ─────────────────────────────────────────────────── */}
-        <section
-          className="py-24 px-6 text-center relative overflow-hidden"
-          style={{ background: "#FAF7F2" }}
-        >
-          <div className="absolute inset-0 pointer-events-none opacity-60" style={dotTexture} />
+          <div className="max-w-4xl mx-auto border-t border-[#E6E1D8]">
+            {faqs.map((faq, i) => (
+              <FAQItem
+                key={i}
+                faq={faq}
+                isOpen={openIdx === i}
+                onToggle={() => setOpenIdx(openIdx === i ? null : i)}
+              />
+            ))}
+          </div>
 
-          <div className="max-w-xl mx-auto relative z-10">
-            <motion.p
-              {...fade(0)}
-              className="home-section-eyebrow"
+          <div className="mt-12 p-6 rounded-xl bg-white border border-[#E6E1D8] flex flex-col sm:flex-row items-center justify-between gap-4 max-w-4xl mx-auto">
+            <p className="font-sans text-sm text-[#3A3A37]">
+              ¿Listo para solicitar tu garantía? Completa el formulario digital.
+            </p>
+            <Link
+              href="/reembolso"
+              className="inline-flex items-center gap-2 bg-[#0F0F0F] text-white border border-[#0F0F0F] hover:bg-white hover:text-[#0F0F0F] text-[11px] font-sans font-medium uppercase tracking-[0.12em] px-6 py-3 rounded-full transition-all shrink-0"
             >
-              Sin riesgo
-            </motion.p>
-
-            <motion.h2
-              {...fade(0.1)}
-              className="home-section-title text-ocean"
-            >
-              Prueba Novapatch.<br />Si no funciona, te devolvemos tu dinero.
-            </motion.h2>
-
-            <motion.p
-              {...fade(0.18)}
-              className="home-section-subtitle mb-10"
-            >
-              30 días de garantía total sobre tu primer pedido.
-            </motion.p>
-
-            <motion.div {...fade(0.25)}>
-              <Link
-                href="/tienda"
-                className="inline-flex items-center gap-2.5 rounded-full bg-[#3CBFAB] px-9 py-4 font-bold text-white shadow-[0_4px_20px_rgba(60,191,171,0.3)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#2da898] hover:shadow-[0_8px_32px_rgba(60,191,171,0.4)] active:scale-[0.97]"
-              >
-                Ver los parches
-                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </Link>
-            </motion.div>
+              Solicitar reembolso
+              <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </Link>
           </div>
         </section>
 

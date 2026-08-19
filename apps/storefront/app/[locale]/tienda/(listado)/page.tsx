@@ -41,16 +41,16 @@ export default async function TiendaPage({ params }: { params: Promise<{ locale:
     return (
       <>
         <Navbar lightBg />
-        <main className="min-h-screen bg-[#F8F0E5] px-6 pt-32 pb-24">
-          <div className="mx-auto max-w-5xl rounded-[36px] border border-[#E8D7BF] bg-white/85 px-10 py-20 text-center shadow-[0_24px_80px_rgba(13,27,53,0.08)]">
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[#0AA6C6]">
-              Tienda Novapatch
-            </p>
-            <h1 className="mt-4 text-4xl font-black text-[#0D1B35]">
-              Aun no hay productos publicados
+        <main className="min-h-screen bg-[#FAF8F5] px-6 pt-32 pb-24">
+          <div className="mx-auto max-w-5xl rounded-xl border border-[#E6E1D8] bg-white px-10 py-20 text-center shadow-2xs">
+            <span className="text-[11px] font-sans font-medium uppercase tracking-[0.14em] text-[#A8A29A]">
+              tienda novapatch
+            </span>
+            <h1 className="mt-4 text-3xl sm:text-4xl font-display font-semibold text-[#0F0F0F] tracking-[-0.035em] lowercase">
+              aún no hay productos publicados.
             </h1>
-            <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-[#425066]">
-              Aun no hay productos disponibles en la tienda.
+            <p className="mx-auto mt-4 max-w-2xl text-sm font-sans leading-relaxed text-[#3A3A37]">
+              Aún no hay productos disponibles en la tienda.
             </p>
           </div>
         </main>
