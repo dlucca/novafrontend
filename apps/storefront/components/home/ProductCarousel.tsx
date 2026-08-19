@@ -199,17 +199,17 @@ function CleanProductCard({ item, locale, currency }: { item: ProductMeta; local
             </span>
           </div>
 
-          <div className="flex items-center justify-between gap-2 mb-1">
-            <h3 className="text-base font-sans font-semibold text-[#0F0F0F] tracking-tight flex items-center">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2 mb-1">
+            <h3 className="text-sm sm:text-base font-sans font-semibold text-[#0F0F0F] tracking-tight flex items-center min-w-0">
               <span
-                className="inline-block w-2.5 h-2.5 rounded-full mr-2 flex-shrink-0"
+                className="inline-block w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full mr-1.5 sm:mr-2 shrink-0"
                 style={{ backgroundColor: item.color }}
               />
-              <Link href={`/tienda/${item.slug}`} className="hover:opacity-75 transition-opacity">
+              <Link href={`/tienda/${item.slug}`} className="hover:opacity-75 transition-opacity truncate sm:whitespace-normal">
                 {item.name}
               </Link>
             </h3>
-            <span className="text-sm font-sans font-medium text-[#0F0F0F]">
+            <span className="text-xs sm:text-sm font-sans font-medium text-[#0F0F0F]">
               {formatPrice(item.price, currency)}
             </span>
           </div>

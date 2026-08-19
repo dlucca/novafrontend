@@ -70,100 +70,103 @@ function Gallery({
   }, [active, media]);
 
   return (
-    <div 
-      style={{ aspectRatio: "1 / 1" }}
-      className="relative w-full max-w-[520px] max-h-[calc(100vh-150px)] mx-auto overflow-hidden rounded-2xl bg-white border border-[#E6E1D8] shadow-2xs group/gallery"
-    >
-      {/* Animated Image Stage with Slide Transition */}
-      <AnimatePresence mode="wait" custom={direction}>
-        <motion.div
-          key={active}
-          custom={direction}
-          variants={{
-            enter: (dir: number) => ({
-              x: dir > 0 ? 35 : -35,
-              opacity: 0,
-              scale: 0.98,
-            }),
-            center: {
-              x: 0,
-              opacity: 1,
-              scale: 1,
-            },
-            exit: (dir: number) => ({
-              x: dir > 0 ? -35 : 35,
-              opacity: 0,
-              scale: 0.98,
-            }),
-          }}
-          initial="enter"
-          animate="center"
-          exit="exit"
-          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          className="absolute inset-0 flex items-center justify-center"
-        >
-          {media[active].type === "image" ? (
-            <Image
-              src={media[active].src}
-              alt={`${title} — imagen ${active + 1}`}
-              fill
-              priority={active === 0}
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover p-0 select-none pointer-events-none"
-            />
-          ) : (
-            <div className="relative w-full h-full">
-              <video
-                ref={videoRef}
+    <div className="flex flex-col lg:flex-row-reverse gap-3.5 lg:gap-4 w-full max-w-[620px] mx-auto items-start">
+      {/* ── Main Stage (Right on Desktop, Top on Mobile) ── */}
+      <div 
+        style={{ aspectRatio: "1 / 1" }}
+        className="relative w-full flex-1 max-w-[520px] mx-auto overflow-hidden rounded-2xl bg-white border border-[#E6E1D8] shadow-2xs group/gallery"
+      >
+        {/* Animated Image Stage with Slide Transition */}
+        <AnimatePresence mode="wait" custom={direction}>
+          <motion.div
+            key={active}
+            custom={direction}
+            variants={{
+              enter: (dir: number) => ({
+                x: dir > 0 ? 35 : -35,
+                opacity: 0,
+                scale: 0.98,
+              }),
+              center: {
+                x: 0,
+                opacity: 1,
+                scale: 1,
+              },
+              exit: (dir: number) => ({
+                x: dir > 0 ? -35 : 35,
+                opacity: 0,
+                scale: 0.98,
+              }),
+            }}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute inset-0 flex items-center justify-center"
+          >
+            {media[active].type === "image" ? (
+              <Image
                 src={media[active].src}
-                loop
-                muted={isMuted}
-                playsInline
-                autoPlay
-                onClick={() => {
-                  if (videoRef.current) {
-                    if (videoRef.current.paused) {
-                      videoRef.current.play();
-                    } else {
-                      videoRef.current.pause();
-                    }
-                  }
-                }}
-                className="w-full h-full object-cover cursor-pointer"
+                alt={`${title} — imagen ${active + 1}`}
+                fill
+                priority={active === 0}
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover p-0 select-none pointer-events-none"
               />
-              
-              {/* Mute/unmute button */}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsMuted(!isMuted);
-                }}
-                className="absolute bottom-4 right-4 z-[2] flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 transition active:scale-95"
-              >
-                {isMuted ? (
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" style={{ width: "16px", height: "16px" }}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 9.75L19.5 12m0 0l2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6L4.5 9H1.5v6h3l4.5 3.75V5.25z" />
-                  </svg>
-                ) : (
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" style={{ width: "16px", height: "16px" }}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
-                  </svg>
-                )}
-              </button>
-              
-              {/* Visual indicator that it's a video */}
-              <div className="absolute top-4 left-4 z-[2] flex items-center gap-1.5 rounded-full bg-black/60 px-3 py-1 text-[11px] font-sans font-medium text-white uppercase tracking-wider backdrop-blur-sm">
-                <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                Video UGC
+            ) : (
+              <div className="relative w-full h-full">
+                <video
+                  ref={videoRef}
+                  src={media[active].src}
+                  loop
+                  muted={isMuted}
+                  playsInline
+                  autoPlay
+                  onClick={() => {
+                    if (videoRef.current) {
+                      if (videoRef.current.paused) {
+                        videoRef.current.play();
+                      } else {
+                        videoRef.current.pause();
+                      }
+                    }
+                  }}
+                  className="w-full h-full object-cover cursor-pointer"
+                />
+                
+                {/* Mute/unmute button */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsMuted(!isMuted);
+                  }}
+                  className="absolute bottom-4 right-4 z-[2] flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 transition active:scale-95"
+                >
+                  {isMuted ? (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" style={{ width: "16px", height: "16px" }}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 9.75L19.5 12m0 0l2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6L4.5 9H1.5v6h3l4.5 3.75V5.25z" />
+                    </svg>
+                  ) : (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" style={{ width: "16px", height: "16px" }}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
+                    </svg>
+                  )}
+                </button>
+                
+                {/* Visual indicator that it's a video */}
+                <div className="absolute top-4 left-4 z-[2] flex items-center gap-1.5 rounded-full bg-black/60 px-3 py-1 text-[11px] font-sans font-medium text-white uppercase tracking-wider backdrop-blur-sm">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                  Video UGC
+                </div>
               </div>
-            </div>
-          )}
-        </motion.div>
-      </AnimatePresence>
+            )}
+          </motion.div>
+        </AnimatePresence>
+      </div>
 
-      {/* Translucent Overlay Floating Thumbnails at Bottom-Left */}
+      {/* ── Thumbnails Strip (Left on Desktop, Below on Mobile) ── */}
       {media.length > 1 && (
-        <div className="absolute bottom-4 left-4 z-20 flex gap-2 p-1.5 rounded-2xl bg-white/40 backdrop-blur-md border border-white/60 shadow-md max-w-[calc(100%-2rem)] overflow-x-auto">
+        <div className="flex lg:flex-col gap-2 w-full lg:w-auto overflow-x-auto lg:overflow-y-auto max-h-[520px] scrollbar-none py-1 px-1 justify-center lg:justify-start shrink-0">
           {media.map((item, i) => (
             <button
               key={i}
@@ -171,10 +174,10 @@ function Gallery({
               onClick={() => setPage(i)}
               aria-label={`Ver media ${i + 1}`}
               aria-current={i === active}
-              className={`relative aspect-square h-12 w-12 overflow-hidden rounded-xl border transition-all duration-200 group/thumb flex-shrink-0 cursor-pointer ${
+              className={`relative aspect-square h-12 w-12 sm:h-14 sm:w-14 overflow-hidden rounded-xl border transition-all duration-200 group/thumb flex-shrink-0 cursor-pointer ${
                 i === active 
                   ? 'border-[#0F0F0F] bg-white scale-105 shadow-sm opacity-100 ring-2 ring-black/10' 
-                  : 'border-white/50 bg-white/70 opacity-70 hover:opacity-100 hover:scale-105 hover:bg-white hover:border-white'
+                  : 'border-[#E6E1D8] bg-[#FAF8F5] opacity-70 hover:opacity-100 hover:scale-105 hover:bg-white'
               }`}
             >
               <Image 
