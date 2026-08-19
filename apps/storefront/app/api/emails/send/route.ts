@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     let html = "";
     let subject = "";
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://novapatch.care";
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.novapatch.care";
 
     switch (template) {
       case "order":
@@ -31,8 +31,8 @@ export async function POST(req: Request) {
           customerName,
           customerEmail: targetEmail,
           items: [
-            { title: "Novapatch Energy", quantity: 1, price: 750, image: "https://novapatch.care/products/Energy_thumb.webp" },
-            { title: "Novapatch Sleep", quantity: 1, price: 750, image: "https://novapatch.care/products/Sleep_thumb.webp" },
+            { title: "Novapatch Energy", quantity: 1, price: 750, image: `${siteUrl}/products/Energy_thumb.jpg` },
+            { title: "Novapatch Sleep", quantity: 1, price: 750, image: `${siteUrl}/products/Sleep_thumb.jpg` },
           ],
           subtotal: 1500,
           bundleDiscount: 225,
@@ -55,8 +55,8 @@ export async function POST(req: Request) {
       case "cart":
         subject = "Tus parches te están esperando · Novapatch";
         html = renderCartRecoveryEmail(customerName, [
-          { title: "Novapatch Glow", quantity: 1, price: 750, image: "https://novapatch.care/products/Glow_thumb.webp" },
-          { title: "Novapatch Woman", quantity: 1, price: 750, image: "https://novapatch.care/products/Woman_thumb.webp" },
+          { title: "Novapatch Glow", quantity: 1, price: 750, image: `${siteUrl}/products/Glow_thumb.jpg` },
+          { title: "Novapatch Woman", quantity: 1, price: 750, image: `${siteUrl}/products/Woman_thumb.jpg` },
         ], 1275, siteUrl);
         break;
 

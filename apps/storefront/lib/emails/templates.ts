@@ -29,7 +29,7 @@ export type OrderEmailData = {
   };
 };
 
-const DEFAULT_SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://novapatch.care";
+const DEFAULT_SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.novapatch.care";
 
 const BASE_HEAD = `
   <meta charset="utf-8">
@@ -61,7 +61,7 @@ const BASE_HEAD = `
 
 function getHeroHeader(baseUrl?: string): string {
   const root = baseUrl ?? DEFAULT_SITE_URL;
-  const imageUrl = root ? `${root.replace(/\/$/, "")}/carousel/Banner_hero.webp` : "/carousel/Banner_hero.webp";
+  const imageUrl = root ? `${root.replace(/\/$/, "")}/carousel/Banner_hero.jpg` : "https://www.novapatch.care/carousel/Banner_hero.jpg";
   
   return `
     <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 28px; border-radius: 16px; overflow: hidden; background-color: #0F0F0F;">
