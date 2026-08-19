@@ -22,6 +22,7 @@ import {
   KeyRound,
   ChevronDown,
 } from "lucide-react";
+import { renderOrderConfirmationEmail } from "@/lib/emails/templates";
 
 type BackendTemplateKey =
   | "order_confirmation"
@@ -147,7 +148,7 @@ export default function EmailsPreviewPage() {
   useEffect(() => {
     setLoadingBackend(true);
     const backendUrl = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || "https://novabackend-production.up.railway.app";
-    fetch(`${backendUrl}/store/emails/preview?template=${activeKey}`)
+    fetch(`${backendUrl}/store/custom/emails/preview?template=${activeKey}`)
       .then((res) => (res.ok ? res.text() : null))
       .then((html) => {
         if (html) setBackendHtml(html);
@@ -155,6 +156,30 @@ export default function EmailsPreviewPage() {
       .catch(() => { /* silent fallback */ })
       .finally(() => setLoadingBackend(false));
   }, [activeKey]);
+
+  // Fallback HTML generator if backend preview is loading or unreachable
+  const getFallbackHtml = (key: BackendTemplateKey) => {
+    const origin = typeof window !== "undefined" ? window.location.origin : "";
+    return renderOrderConfirmationEmail({
+      orderNumber: "NV-84920",
+      customerName: "Esteban",
+      customerEmail: "esteban@ejemplo.com",
+      items: [
+        { title: "Novapatch Energy", quantity: 1, price: 750, image: "/products/Energy_thumb.webp" },
+        { title: "Novapatch Sleep", quantity: 1, price: 750, image: "/products/Sleep_thumb.webp" },
+      ],
+      subtotal: 1500,
+      bundleDiscount: 225,
+      bundleName: "Pack Día & Noche (15% OFF)",
+      total: 1275,
+      shippingAddress: {
+        address: "Av. Insurgentes Sur 1602, Piso 4",
+        city: "Ciudad de México",
+        state: "CDMX",
+        postalCode: "03940",
+      },
+    }, origin);
+  };
 
   const currentTemplate = BACKEND_TEMPLATES.find((t) => t.key === activeKey) || BACKEND_TEMPLATES[0];
 
@@ -317,7 +342,7 @@ export default function EmailsPreviewPage() {
               )}
               <iframe
                 title="Email Preview"
-                srcDoc={backendHtml || "<p style='padding:20px;text-align:center;'>Cargando plantilla del servidor backend...</p>"}
+                srcDoc={backendHtml || getFallbackHtml(activeKey)}
                 className="w-full flex-1 border-0 min-h-[650px] bg-[#FAF8F5]"
               />
             </div>
