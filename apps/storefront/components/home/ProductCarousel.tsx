@@ -136,24 +136,6 @@ function StarIcon() {
 
 function CleanProductCard({ item, locale, currency }: { item: ProductMeta; locale: string; currency: string }) {
   const [reviewsCount, setReviewsCount] = useState<number>(36);
-  const [isAdded, setIsAdded] = useState(false);
-
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    addToCart({
-      slug: item.slug,
-      title: item.name,
-      image: item.image,
-      price: item.price,
-      color: item.color,
-      bg: "#FAF8F5",
-      mode: "once",
-      freq: 30,
-    });
-    setIsAdded(true);
-    setTimeout(() => setIsAdded(false), 2000);
-  };
 
   useEffect(() => {
     let isMounted = true;
@@ -237,16 +219,6 @@ function CleanProductCard({ item, locale, currency }: { item: ProductMeta; local
         <p className="text-xs font-sans text-[#A8A29A] font-normal leading-normal mt-1">
           {item.ingredients}
         </p>
-
-        {/* Mobile CTA Button */}
-        <div className="mt-2.5 sm:hidden">
-          <button
-            onClick={handleAddToCart}
-            className="w-full py-2.5 px-3 rounded-full bg-[#0F0F0F] text-white border border-[#0F0F0F] font-sans font-medium text-[11px] uppercase tracking-[0.12em] text-center active:scale-95 transition-all shadow-2xs cursor-pointer z-20 relative"
-          >
-            {isAdded ? "¡Añadido!" : "Comprar ahora"}
-          </button>
-        </div>
       </div>
     </div>
   );

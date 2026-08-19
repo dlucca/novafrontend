@@ -213,7 +213,7 @@ function ProductCard({
           <div className="mt-2.5 sm:hidden">
             <button
               onClick={handleAddToCart}
-              className="w-full py-2.5 px-3 rounded-full bg-[#0F0F0F] text-white border border-[#0F0F0F] font-sans font-medium text-[11px] uppercase tracking-[0.12em] text-center active:scale-95 transition-all shadow-2xs cursor-pointer"
+              className="w-full py-2 px-3 rounded-full bg-white text-[#0F0F0F] border border-[#0F0F0F] font-sans font-medium text-[11px] uppercase tracking-[0.12em] text-center active:scale-95 active:bg-[#0F0F0F] active:text-white transition-all shadow-2xs cursor-pointer"
             >
               {added ? "¡Añadido!" : "Comprar ahora"}
             </button>

@@ -61,7 +61,7 @@ const BASE_HEAD = `
 
 function getHeroHeader(baseUrl?: string): string {
   const root = baseUrl ?? DEFAULT_SITE_URL;
-  const imageUrl = root ? `${root.replace(/\/$/, "")}/carousel/Banner_hero.jpg` : "https://www.novapatch.care/carousel/Banner_hero.jpg";
+  const imageUrl = root ? `${root.replace(/\/$/, "")}/carousel/Email_hero.jpg` : "https://www.novapatch.care/carousel/Email_hero.jpg";
   
   return `
     <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 28px; border-radius: 16px; overflow: hidden; background-color: #0F0F0F;">
@@ -73,7 +73,7 @@ function getHeroHeader(baseUrl?: string): string {
             width="508"
             style="width: 100%; height: 210px; object-fit: cover; display: block; border-radius: 16px;"
           />
-          <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.8) 100%); border-radius: 16px; padding: 24px 28px; display: flex; flex-direction: column; justify-content: flex-end; box-sizing: border-box; line-height: normal;">
+          <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 16px; padding: 24px 28px; display: flex; flex-direction: column; justify-content: flex-end; box-sizing: border-box; line-height: normal;">
             <div style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', Roboto, sans-serif; font-size: 26px; font-weight: 800; color: #FFFFFF; letter-spacing: -0.035em; margin: 0 0 2px;">
               novapatch<span style="color: rgba(255, 255, 255, 0.7); font-weight: 400;">.care</span>
             </div>
