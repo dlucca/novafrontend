@@ -22,19 +22,6 @@ import {
   KeyRound,
   ChevronDown,
 } from "lucide-react";
-import {
-  renderOrderConfirmationEmail,
-  renderOrderShippedEmail,
-  renderOrderDeliveredEmail,
-  renderOrderDeliveryFailedEmail,
-  renderSubscriptionWelcomeEmail,
-  renderSubscriptionUpcomingChargeEmail,
-  renderSubscriptionRenewedEmail,
-  renderSubscriptionPaymentFailedEmail,
-  renderCartRecoveryEmail,
-  renderInfluencerSamplesEmail,
-  renderAdminInviteEmail,
-} from "@/lib/emails/templates";
 
 type BackendTemplateKey =
   | "order_confirmation"
@@ -49,41 +36,43 @@ type BackendTemplateKey =
   | "influencer_samples"
   | "admin_invite";
 
-const BACKEND_TEMPLATES: {
+interface TemplateInfo {
   key: BackendTemplateKey;
   label: string;
   categoryGroup: string;
   badge: string;
   icon: React.ReactNode;
   subject: string;
-}[] = [
+}
+
+const BACKEND_TEMPLATES: TemplateInfo[] = [
   {
     key: "order_confirmation",
-    label: "Confirmación de Compra",
+    label: "Confirmación de Compra (OrderConfirmation.tsx)",
     categoryGroup: "📦 Pedidos & Logística",
-    badge: "COMPRA CONFIRMADA",
+    badge: "COMPRA NUEVA",
     icon: <PackageCheck size={16} />,
     subject: "Confirmación de pedido #NV-84920 · Novapatch",
   },
   {
     key: "order_shipped",
-    label: "Pedido Enviado (Guía de Rastreo)",
+    label: "Pedido Enviado con Guía (OrderShipped.tsx)",
     categoryGroup: "📦 Pedidos & Logística",
-    badge: "EN CAMINO",
+    badge: "ENVÍO EN CAMINO",
     icon: <Truck size={16} />,
     subject: "Tu pedido #NV-84920 está en camino · Novapatch",
   },
   {
     key: "order_delivered",
-    label: "Pedido Entregado",
+    label: "Pedido Entregado (OrderDelivered.tsx)",
     categoryGroup: "📦 Pedidos & Logística",
-    badge: "ENTREGADO",
+    badge: "ENTREGA OK",
     icon: <CheckCheck size={16} />,
-    subject: "¡Tu pedido #NV-84920 fue entregado con éxito! · Novapatch",
+    subject: "¡Tu pedido fue entregado! · Novapatch",
   },
   {
     key: "order_delivery_failed",
-    label: "Intento de Entrega Fallido",
+    label: "Intento de Entrega Fallido (OrderDeliveryFailed.tsx)",
     categoryGroup: "📦 Pedidos & Logística",
     badge: "PROBLEMA ENVÍO",
     icon: <AlertTriangle size={16} />,
@@ -91,7 +80,7 @@ const BACKEND_TEMPLATES: {
   },
   {
     key: "subscription_welcome",
-    label: "Bienvenida a Suscripción",
+    label: "Bienvenida a Suscripción (SubscriptionWelcome.tsx)",
     categoryGroup: "🔄 Suscripciones Recurrentes",
     badge: "BIENVENIDA PLAN",
     icon: <Sparkles size={16} />,
@@ -99,7 +88,7 @@ const BACKEND_TEMPLATES: {
   },
   {
     key: "subscription_upcoming_charge",
-    label: "Aviso de Próximo Cobro",
+    label: "Aviso de Próximo Cobro (SubscriptionUpcomingCharge.tsx)",
     categoryGroup: "🔄 Suscripciones Recurrentes",
     badge: "RECORDATORIO COBRO",
     icon: <RefreshCw size={16} />,
@@ -107,7 +96,7 @@ const BACKEND_TEMPLATES: {
   },
   {
     key: "subscription_renewed",
-    label: "Renovación Exitosa",
+    label: "Renovación Exitosa (SubscriptionRenewed.tsx)",
     categoryGroup: "🔄 Suscripciones Recurrentes",
     badge: "RENOVACIÓN OK",
     icon: <CheckCircle2 size={16} />,
@@ -115,7 +104,7 @@ const BACKEND_TEMPLATES: {
   },
   {
     key: "subscription_payment_failed",
-    label: "Pago Fallido de Suscripción",
+    label: "Pago Fallido de Suscripción (SubscriptionPaymentFailed.tsx)",
     categoryGroup: "🔄 Suscripciones Recurrentes",
     badge: "PAGO RECHAZADO",
     icon: <CreditCard size={16} />,
@@ -123,7 +112,7 @@ const BACKEND_TEMPLATES: {
   },
   {
     key: "cart_recovery",
-    label: "Recuperación de Carrito Abandonado",
+    label: "Recuperación de Carrito (CartRecovery.tsx)",
     categoryGroup: "🛒 Carrito & Marketing",
     badge: "CARRITO GUARDADO",
     icon: <ShoppingBag size={16} />,
@@ -131,7 +120,7 @@ const BACKEND_TEMPLATES: {
   },
   {
     key: "influencer_samples",
-    label: "Muestras a Influencers / PR",
+    label: "Muestras a Influencers / PR (InfluencerSamplesShipped.tsx)",
     categoryGroup: "🛒 Carrito & Marketing",
     badge: "ENVÍO ESPECIAL PR",
     icon: <Gift size={16} />,
@@ -139,7 +128,7 @@ const BACKEND_TEMPLATES: {
   },
   {
     key: "admin_invite",
-    label: "Invitación de Administrador",
+    label: "Invitación de Administrador (AdminInvite.tsx)",
     categoryGroup: "🔐 Administración Interna",
     badge: "INVITACIÓN PANEL",
     icon: <KeyRound size={16} />,
@@ -156,118 +145,28 @@ export default function EmailsPreviewPage() {
 
   const [backendHtml, setBackendHtml] = useState<string | null>(null);
   const [loadingBackend, setLoadingBackend] = useState<boolean>(true);
+  const [fetchError, setFetchError] = useState<boolean>(false);
 
   useEffect(() => {
     setLoadingBackend(true);
+    setFetchError(false);
+    setBackendHtml(null);
+
     const backendUrl = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || "https://novabackend-production.up.railway.app";
     fetch(`${backendUrl}/store/custom/emails/preview?template=${activeKey}`)
-      .then((res) => (res.ok ? res.text() : null))
-      .then((html) => {
-        if (html) setBackendHtml(html);
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
+        return res.text();
       })
-      .catch(() => { /* silent fallback */ })
+      .then((html) => {
+        setBackendHtml(html);
+      })
+      .catch((err) => {
+        setFetchError(true);
+        console.error("Error fetching live template from backend:", err);
+      })
       .finally(() => setLoadingBackend(false));
   }, [activeKey]);
-
-  // Fallback HTML generator if backend preview is loading or unreachable
-  const getFallbackHtml = (key: BackendTemplateKey) => {
-    const origin = typeof window !== "undefined" ? window.location.origin : "";
-    switch (key) {
-      case "order_shipped":
-        return renderOrderShippedEmail({
-          name: "Cristian",
-          displayId: "120",
-          trackingNumber: "ENVIA-98420194",
-          carrier: "Envía.com Express",
-          trackingUrl: "https://www.envia.com/tracking?id=ENVIA-98420194",
-        }, origin);
-
-      case "order_delivered":
-        return renderOrderDeliveredEmail({
-          name: "Cristian",
-          displayId: "120",
-          trackingNumber: "ENVIA-98420194",
-        }, origin);
-
-      case "order_delivery_failed":
-        return renderOrderDeliveryFailedEmail({
-          name: "Cristian",
-          displayId: "120",
-          trackingNumber: "ENVIA-98420194",
-          reason: "Dirección incompleta o sin respuesta en domicilio",
-        }, origin);
-
-      case "subscription_welcome":
-        return renderSubscriptionWelcomeEmail({
-          name: "Cristian",
-          planName: "Suscripción Pack Día & Noche",
-        }, origin);
-
-      case "subscription_upcoming_charge":
-        return renderSubscriptionUpcomingChargeEmail({
-          name: "Cristian",
-          planName: "Suscripción Pack Día & Noche",
-          chargeDate: "25 de Agosto, 2026",
-          amount: "$1,275.00 MXN",
-        }, origin);
-
-      case "subscription_renewed":
-        return renderSubscriptionRenewedEmail({
-          name: "Cristian",
-          planName: "Suscripción Pack Día & Noche",
-          amount: "$1,275.00 MXN",
-        }, origin);
-
-      case "subscription_payment_failed":
-        return renderSubscriptionPaymentFailedEmail({
-          name: "Cristian",
-          planName: "Suscripción Pack Día & Noche",
-          updateUrl: "https://www.novapatch.care/mx/cuenta",
-        }, origin);
-
-      case "cart_recovery":
-        return renderCartRecoveryEmail("Cristian", [
-          { title: "Novapatch Glow", quantity: 1, price: 750 },
-        ], 750, origin);
-
-      case "influencer_samples":
-        return renderInfluencerSamplesEmail({
-          name: "Valeria",
-          trackingNumber: "ENVIA-PR-39201",
-          carrier: "Envía.com Express",
-          trackingUrl: "https://www.envia.com/tracking?id=ENVIA-PR-39201",
-        }, origin);
-
-      case "admin_invite":
-        return renderAdminInviteEmail({
-          email: "nuevoadmin@novapatch.care",
-          inviteUrl: "https://admin.novapatch.care/invite?token=xyz",
-        }, origin);
-
-      case "order_confirmation":
-      default:
-        return renderOrderConfirmationEmail({
-          orderNumber: "NV-84920",
-          customerName: "Cristian",
-          customerEmail: "cristian@ejemplo.com",
-          items: [
-            { title: "Novapatch Sleep", quantity: 1, price: 750 },
-            { title: "Novapatch Energy", quantity: 1, price: 750 },
-          ],
-          subtotal: 1500,
-          bundleDiscount: 225,
-          bundleName: "Pack Día & Noche (15% OFF)",
-          total: 1275,
-          shippingAddress: {
-            name: "Cristian Dlucca",
-            address: "Laguna de Mayran 166 Int C704",
-            city: "Ciudad de México",
-            state: "Ciudad de México",
-            postalCode: "11320",
-          },
-        }, origin);
-    }
-  };
 
   const currentTemplate = BACKEND_TEMPLATES.find((t) => t.key === activeKey) || BACKEND_TEMPLATES[0];
 
@@ -285,7 +184,7 @@ export default function EmailsPreviewPage() {
         body: JSON.stringify({
           template: activeKey,
           targetEmail: testEmail.trim(),
-          customerName: "Esteban",
+          customerName: "Cristian",
         }),
       });
 
@@ -294,12 +193,12 @@ export default function EmailsPreviewPage() {
 
       setStatusMessage({
         type: "success",
-        text: data.mode === "resend" ? `¡Email enviado exitosamente a ${testEmail} vía Resend!` : `Email simulado correctamente para ${testEmail}`,
+        text: `¡Email de prueba enviado exitosamente a ${testEmail.trim()}!`,
       });
     } catch (err) {
       setStatusMessage({
         type: "error",
-        text: err instanceof Error ? err.message : "Error al enviar el email",
+        text: err instanceof Error ? err.message : "No se pudo enviar el correo de prueba.",
       });
     } finally {
       setSending(false);
@@ -307,88 +206,72 @@ export default function EmailsPreviewPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] pt-24 pb-16 px-4 sm:px-6">
-      <div className="max-w-6xl mx-auto space-y-6">
+    <div className="min-h-screen bg-[#FAF8F5] py-8 px-4 sm:px-6 lg:px-8 font-sans antialiased text-[#0F0F0F]">
+      <div className="max-w-4xl mx-auto space-y-6">
         
-        {/* Header */}
-        <div className="bg-white border border-[#E6E1D8] rounded-2xl p-6 shadow-2xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#0F0F0F] text-white">
-                MEDUSA V2 BACKEND EMAILS
-              </span>
+        {/* Main Header Card */}
+        <div className="bg-white border border-[#E6E1D8] rounded-2xl p-6 sm:p-8 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-1.5">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0F0F0F] text-white text-[10px] font-mono font-bold tracking-widest uppercase">
+              Medusa V2 Backend Emails
             </div>
-            <h1 className="text-2xl font-display font-semibold text-[#0F0F0F] tracking-[-0.035em] lowercase">
+            <h1 className="text-2xl sm:text-3xl font-sans font-extrabold text-[#0F0F0F] tracking-tight">
               hub de correos novapatch
             </h1>
-            <p className="text-xs font-sans text-[#A8A29A] mt-0.5">
+            <p className="text-xs sm:text-sm font-sans text-[#3A3A37] max-w-xl">
               Visualizador oficial de las 11 plantillas cargadas directamente desde el servidor Backend Medusa.
             </p>
           </div>
 
           {/* Viewport Switcher */}
-          <div className="flex items-center gap-1 bg-[#FAF8F5] p-1 border border-[#E6E1D8] rounded-full shrink-0">
+          <div className="flex items-center gap-1.5 bg-[#FAF8F5] border border-[#E6E1D8] p-1.5 rounded-xl self-start md:self-auto">
             <button
               onClick={() => setDevice("desktop")}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-sans font-medium transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-sans font-semibold transition-all ${
                 device === "desktop"
-                  ? "bg-[#0F0F0F] text-white shadow-2xs"
-                  : "text-[#3A3A37] hover:text-[#0F0F0F]"
+                  ? "bg-[#0F0F0F] text-white shadow-xs"
+                  : "text-[#3A3A37] hover:text-[#0F0F0F] hover:bg-white"
               }`}
             >
               <Monitor size={14} />
-              Escritorio
+              <span>Escritorio</span>
             </button>
             <button
               onClick={() => setDevice("mobile")}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-sans font-medium transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-sans font-semibold transition-all ${
                 device === "mobile"
-                  ? "bg-[#0F0F0F] text-white shadow-2xs"
-                  : "text-[#3A3A37] hover:text-[#0F0F0F]"
+                  ? "bg-[#0F0F0F] text-white shadow-xs"
+                  : "text-[#3A3A37] hover:text-[#0F0F0F] hover:bg-white"
               }`}
             >
               <Smartphone size={14} />
-              Móvil
+              <span>Móvil</span>
             </button>
           </div>
         </div>
 
-        {/* Dropdown Selector for 11 Templates */}
-        <div className="bg-white border border-[#E6E1D8] rounded-2xl p-5 shadow-2xs space-y-3">
-          <label className="block text-xs font-sans font-bold uppercase tracking-[0.1em] text-[#3A3A37]">
-            Seleccionar Plantilla del Backend (11 Disponibles):
+        {/* Template Selector Card */}
+        <div className="bg-white border border-[#E6E1D8] rounded-2xl p-6 shadow-2xs space-y-4">
+          <label className="block text-[11px] font-mono uppercase font-bold tracking-widest text-[#3A3A37]">
+            SELECCIONAR PLANTILLA DEL BACKEND (11 DISPONIBLES):
           </label>
           <div className="relative">
             <select
               value={activeKey}
               onChange={(e) => setActiveKey(e.target.value as BackendTemplateKey)}
-              className="w-full appearance-none bg-[#FAF8F5] border border-[#E6E1D8] rounded-xl px-4 py-3.5 pr-10 text-sm font-sans font-semibold text-[#0F0F0F] focus:border-[#0F0F0F] focus:outline-none cursor-pointer transition-colors"
+              className="w-full appearance-none bg-[#FAF8F5] border border-[#E6E1D8] text-[#0F0F0F] text-sm font-sans font-semibold rounded-xl px-4 py-3.5 pr-10 focus:outline-none focus:border-[#0F0F0F] transition-colors cursor-pointer"
             >
-              <optgroup label="📦 Pedidos & Logística">
-                <option value="order_confirmation">Confirmación de Compra (OrderConfirmation.tsx)</option>
-                <option value="order_shipped">Pedido Enviado - Guía de Rastreo (OrderShipped.tsx)</option>
-                <option value="order_delivered">Pedido Entregado (OrderDelivered.tsx)</option>
-                <option value="order_delivery_failed">Intento de Entrega Fallido (OrderDeliveryFailed.tsx)</option>
-              </optgroup>
-              <optgroup label="🔄 Suscripciones Recurrentes">
-                <option value="subscription_welcome">Bienvenida a Suscripción (SubscriptionWelcome.tsx)</option>
-                <option value="subscription_upcoming_charge">Aviso de Próximo Cobro (SubscriptionUpcomingCharge.tsx)</option>
-                <option value="subscription_renewed">Renovación Exitosa (SubscriptionRenewed.tsx)</option>
-                <option value="subscription_payment_failed">Pago Fallido de Suscripción (SubscriptionPaymentFailed.tsx)</option>
-              </optgroup>
-              <optgroup label="🛒 Carrito & PR Marketing">
-                <option value="cart_recovery">Recuperación de Carrito Abandonado (CartRecovery.tsx)</option>
-                <option value="influencer_samples">Envío de Muestras a Influencers / PR (InfluencerSamplesShipped.tsx)</option>
-              </optgroup>
-              <optgroup label="🔐 Administración Interna">
-                <option value="admin_invite">Invitación de Administrador (AdminInvite.tsx)</option>
-              </optgroup>
+              {BACKEND_TEMPLATES.map((tmpl) => (
+                <option key={tmpl.key} value={tmpl.key}>
+                  {tmpl.label}
+                </option>
+              ))}
             </select>
-            <ChevronDown size={18} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#0F0F0F] pointer-events-none" />
+            <ChevronDown size={18} className="absolute right-4 top-1/2 -translate-y-1/2 text-[#3A3A37] pointer-events-none" />
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-xs font-sans text-[#A8A29A]">
-            <span className="flex items-center gap-1.5 font-medium text-[#0F0F0F]">
+          <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-xs font-sans text-[#3A3A37]">
+            <span className="flex items-center gap-1.5 font-semibold text-[#0F0F0F]">
               {currentTemplate.icon}
               {currentTemplate.label}
             </span>
@@ -403,11 +286,11 @@ export default function EmailsPreviewPage() {
           <div className="flex items-center gap-3 min-w-0">
             <Mail size={16} className="text-[#0F0F0F] shrink-0" />
             <div className="min-w-0">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-[#A8A29A]">Asunto del Backend:</span>
+              <span className="text-[10px] font-mono uppercase tracking-wider text-[#3A3A37]">Asunto del Backend:</span>
               <p className="text-xs font-sans font-semibold text-[#0F0F0F] truncate">{currentTemplate.subject}</p>
             </div>
           </div>
-          <span className="text-[10px] font-mono text-[#A8A29A] shrink-0 hidden sm:inline-block">
+          <span className="text-[10px] font-mono text-[#3A3A37] shrink-0 hidden sm:inline-block">
             De: hola@novapatch.care
           </span>
         </div>
@@ -421,18 +304,33 @@ export default function EmailsPreviewPage() {
           >
             <div className="bg-white border border-[#E6E1D8] rounded-2xl shadow-lg overflow-hidden min-h-[600px] flex flex-col relative">
               {loadingBackend && (
-                <div className="absolute inset-0 bg-white/80 backdrop-blur-xs flex items-center justify-center z-10">
+                <div className="absolute inset-0 bg-white/90 backdrop-blur-xs flex items-center justify-center z-10">
                   <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#0F0F0F] text-white text-xs font-sans font-medium">
                     <Loader2 size={14} className="animate-spin" />
-                    Cargando plantilla del Backend...
+                    Consultando plantilla real desde el servidor Medusa backend...
                   </div>
                 </div>
               )}
-              <iframe
-                title="Email Preview"
-                srcDoc={backendHtml || getFallbackHtml(activeKey)}
-                className="w-full flex-1 border-0 min-h-[650px] bg-[#FAF8F5]"
-              />
+
+              {fetchError ? (
+                <div className="p-8 text-center my-auto space-y-3">
+                  <div className="inline-flex p-3 rounded-full bg-red-50 text-red-600">
+                    <AlertCircle size={24} />
+                  </div>
+                  <h3 className="text-base font-sans font-bold text-[#0F0F0F]">
+                    No se pudo cargar la plantilla desde el backend
+                  </h3>
+                  <p className="text-xs font-sans text-[#3A3A37] max-w-md mx-auto">
+                    Asegúrate de que el backend en Railway tenga desplegada la última versión con la ruta <code className="font-mono bg-stone-100 px-1 py-0.5 rounded">/store/custom/emails/preview</code>.
+                  </p>
+                </div>
+              ) : (
+                <iframe
+                  title="Email Preview"
+                  srcDoc={backendHtml || ""}
+                  className="w-full flex-1 border-0 min-h-[650px] bg-[#FAF8F5]"
+                />
+              )}
             </div>
           </div>
         </div>
@@ -441,54 +339,48 @@ export default function EmailsPreviewPage() {
         <div className="bg-white border border-[#E6E1D8] rounded-2xl p-6 shadow-2xs">
           <form onSubmit={handleSendTest} className="flex flex-col sm:flex-row items-center gap-3">
             <div className="relative flex-1 w-full">
-              <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#A8A29A]" />
+              <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#3A3A37]" />
               <input
                 type="email"
                 value={testEmail}
                 onChange={(e) => setTestEmail(e.target.value)}
                 placeholder="Ingresa tu correo para recibir una prueba real..."
                 className="w-full pl-10 pr-4 py-3 text-xs font-sans font-medium text-[#0F0F0F] bg-[#FAF8F5] border border-[#E6E1D8] rounded-xl focus:border-[#0F0F0F] focus:outline-none transition-colors"
-                required
               />
             </div>
             <button
               type="submit"
               disabled={sending || !testEmail.trim()}
-              className="w-full sm:w-auto shrink-0 flex items-center justify-center gap-2 px-6 py-3 bg-[#0F0F0F] text-white border border-[#0F0F0F] hover:bg-white hover:text-[#0F0F0F] disabled:opacity-50 text-xs font-sans font-medium uppercase tracking-[0.12em] rounded-full transition-all duration-200 cursor-pointer shadow-2xs"
+              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#0F0F0F] text-white text-xs font-sans font-semibold flex items-center justify-center gap-2 hover:bg-[#252525] disabled:opacity-50 disabled:cursor-not-allowed transition-all shrink-0"
             >
               {sending ? (
                 <>
                   <Loader2 size={14} className="animate-spin" />
-                  Enviando...
+                  <span>Enviando...</span>
                 </>
               ) : (
                 <>
                   <Send size={14} />
-                  Enviar prueba
+                  <span>Enviar prueba</span>
                 </>
               )}
             </button>
           </form>
 
-          {/* Status feedback */}
           <AnimatePresence>
             {statusMessage && (
               <motion.div
-                initial={{ opacity: 0, y: 6 }}
+                initial={{ opacity: 0, y: 5 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className={`mt-3 p-3 rounded-xl border flex items-center gap-2 text-xs font-sans font-medium ${
+                exit={{ opacity: 0, y: -5 }}
+                className={`mt-4 p-3.5 rounded-xl text-xs font-sans font-semibold flex items-center gap-2 ${
                   statusMessage.type === "success"
-                    ? "bg-green-50 border-green-200 text-green-700"
-                    : "bg-red-50 border-red-200 text-red-700"
+                    ? "bg-[#F0FDF4] text-[#15803D] border border-[#DCFCE7]"
+                    : "bg-[#FEF2F2] text-[#DC2626] border border-[#FECACA]"
                 }`}
               >
-                {statusMessage.type === "success" ? (
-                  <CheckCircle2 size={15} className="shrink-0 text-green-600" />
-                ) : (
-                  <AlertCircle size={15} className="shrink-0 text-red-600" />
-                )}
-                {statusMessage.text}
+                {statusMessage.type === "success" ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
+                <span>{statusMessage.text}</span>
               </motion.div>
             )}
           </AnimatePresence>
@@ -498,4 +390,3 @@ export default function EmailsPreviewPage() {
     </div>
   );
 }
-
