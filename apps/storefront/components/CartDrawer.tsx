@@ -590,11 +590,12 @@ export default function CartDrawer() {
 
                     {/* Trust badges */}
                     <div className="flex items-center justify-center gap-2 flex-wrap">
-                      {["🔒 Pago seguro", "Visa", "Mastercard", "AMEX", "BBVA"].map((b) => (
+                      {["🔒 Pago seguro", "Visa", "Mastercard", "AMEX"].map((b) => (
                         <span key={b} className="text-[10px] text-[#3A3A37] font-sans font-medium bg-white border border-[#E6E1D8] px-2.5 py-0.5 rounded-full">
                           {b}
                         </span>
                       ))}
+                      <img src="/logos/bbva_logo.png" alt="BBVA" className="h-3.5 w-auto object-contain inline-block" />
                     </div>
                   </motion.div>
                 )}

@@ -83,13 +83,14 @@ export default function Footer() {
 
           {/* Newsletter Subscription Block */}
           <div className="col-span-2 md:col-span-2 space-y-3 pt-4 border-t border-[#E6E1D8] md:border-t-0 md:pt-0">
-            <h4 className="text-[10.5px] font-sans font-medium uppercase tracking-[0.14em] text-[#A8A29A]">boletín</h4>
+            <h4 className="text-[10.5px] font-sans font-medium uppercase tracking-[0.14em] text-[#A8A29A]">boletín · 10% off</h4>
             <p className="text-xs font-sans text-[#3A3A37] leading-relaxed">
-              Un solo correo cuando haya novedades o lanzamientos. Sin spam.
+              Obtén 10% OFF en tu primera compra al suscribirte. Sin spam.
             </p>
             {sent ? (
-              <div className="p-3 rounded-full bg-[#FAF8F5] border border-[#E6E1D8] text-xs font-sans text-[#0F0F0F] text-center font-medium">
-                ✓ Te has suscrito correctamente.
+              <div className="p-3.5 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] text-xs font-sans text-[#15803D] font-semibold space-y-1">
+                <p>✓ ¡Te has suscrito con éxito!</p>
+                <p className="font-mono text-[11px] text-[#0F0F0F]">Usa el cupón: <strong className="text-black underline">BIENVENIDO10</strong></p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="flex gap-2">

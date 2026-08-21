@@ -6,6 +6,7 @@ import Script from 'next/script'
 import { ClerkProvider } from '@clerk/nextjs'
 import { CartProvider } from '@/contexts/CartContext'
 import CartDrawer from '@/components/CartDrawer'
+import DiscountPopup from '@/components/DiscountPopup'
 import { SentryIdentity } from '@/components/SentryIdentity'
 import { MetaPixelIdentity } from '@/components/MetaPixelIdentity'
 import { PostHogProvider } from '@/components/PostHogProvider'
@@ -49,6 +50,7 @@ export default async function LocaleLayout({
         <CartProvider>
           {children}
           <CartDrawer />
+          <DiscountPopup />
         </CartProvider>
 
         {market.paymentProvider === 'openpay' && (

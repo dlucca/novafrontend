@@ -1607,7 +1607,7 @@ export default function CheckoutPage() {
 
                   {/* card brand logos */}
                   <div className="flex items-center gap-2 mb-5 flex-wrap">
-                    {["VISA", "MASTERCARD", "AMEX", "BBVA"].map((b) => (
+                    {["VISA", "MASTERCARD", "AMEX"].map((b) => (
                       <span
                         key={b}
                         className="px-2.5 py-1 rounded-md border border-[#E6E1D8] text-[10px] font-mono font-bold text-[#3A3A37] bg-[#FAF8F5]"
@@ -1615,6 +1615,7 @@ export default function CheckoutPage() {
                         {b}
                       </span>
                     ))}
+                    <img src="/logos/bbva_logo.png" alt="BBVA" className="h-4 w-auto object-contain inline-block ml-1" />
                     <span className="text-xs font-sans text-[#A8A29A] ml-1">
                       {cartRegion === "ars" ? "Vía MercadoPago" : "Vía Openpay"}
                     </span>
