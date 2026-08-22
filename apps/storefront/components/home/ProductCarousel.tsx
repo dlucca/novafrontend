@@ -185,6 +185,9 @@ function CleanProductCard({ item, locale, currency }: { item: ProductMeta; local
             className="object-cover w-full h-full"
           />
         </div>
+
+        {/* Gradient Overlay on Hover */}
+        <div className="absolute inset-0 z-[6] opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-t from-black/50 via-black/10 to-transparent pointer-events-none" />
       </div>
 
       <div className="p-3.5 sm:p-5 border-t border-[#E6E1D8] bg-white flex flex-col justify-between flex-1">

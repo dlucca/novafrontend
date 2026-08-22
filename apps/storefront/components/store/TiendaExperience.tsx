@@ -160,6 +160,9 @@ function ProductCard({
           />
         )}
 
+        {/* Gradient Overlay on Hover */}
+        <div className="absolute inset-0 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-t from-black/50 via-black/10 to-transparent pointer-events-none" />
+
         {/* Direct Link Overlay */}
         <span className="sr-only">Ver {product.title}</span>
       </Link>

@@ -89,3 +89,8 @@ The `app/layout.tsx` sets `lang="es"` (Mexico-first). Brazilian localization req
 | Temporal.io | Subscription recurring billing workflows |
 | Railway | Backend hosting / disaster recovery |
 | Vercel | Frontend + API routes hosting |
+
+## Important Backend Rules & Lessons
+
+- **Medusa V2 Promotions**: When creating or seeding promotions in Medusa V2 via `createPromotionsWorkflow` or DTOs, ALWAYS explicitly include `status: PromotionStatus.ACTIVE` (imported from `@medusajs/framework/utils`). Omitting `status` breaks TypeScript compilation in production builds with error `TS2741`.
+
