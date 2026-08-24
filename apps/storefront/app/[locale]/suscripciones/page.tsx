@@ -198,14 +198,6 @@ export default async function SuscripcionesPage({
 
                         {/* Feature Bullet List */}
                         <ul className="space-y-2.5 text-xs font-sans">
-                          {isHero && (
-                            <li className="flex items-center gap-2">
-                              <span className="text-xs text-white">✓</span>
-                              <span className="text-white font-semibold">
-                                Regalo sorpresa exclusivo en cada entrega
-                              </span>
-                            </li>
-                          )}
                           <li className="flex items-center gap-2">
                             <span className={`text-xs ${isHero ? "text-white" : "text-[#0F0F0F]"}`}>✓</span>
                             <span className={isHero ? "text-stone-200" : "text-[#3A3A37]"}>Envío automático prioritario</span>
