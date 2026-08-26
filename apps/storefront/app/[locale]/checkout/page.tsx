@@ -520,6 +520,21 @@ export default function CheckoutPage() {
     );
   }, [isLoaded, items, finalTotal, market.currency, user]);
 
+  // When cart items change (e.g. edited via CartDrawer while on checkout page),
+  // reset preloaded cart state so preload re-runs automatically with updated items.
+  const prevItemsKey = useRef(JSON.stringify(items.map((i) => ({ id: i.slug, qty: i.quantity, mode: i.mode, freq: i.freq }))));
+  useEffect(() => {
+    const currentKey = JSON.stringify(items.map((i) => ({ id: i.slug, qty: i.quantity, mode: i.mode, freq: i.freq })));
+    if (prevItemsKey.current !== currentKey) {
+      prevItemsKey.current = currentKey;
+      preloadStarted.current = false;
+      itemsPreloaded.current = false;
+      couponAppliedInPreload.current = false;
+      setPreloadedCartId(null);
+      setMedusaSubtotal(null);
+    }
+  }, [items]);
+
   // ── Pre-carga: ejecutar en paralelo al montar la página ──────
   useEffect(() => {
     if (!isLoaded || items.length === 0 || preloadStarted.current) return;
@@ -609,7 +624,7 @@ export default function CheckoutPage() {
               allApplied = false;
             }
           }
-          if (latestCart) setMedusaSubtotal(latestCart.total);
+          if (latestCart && typeof latestCart.subtotal === "number") setMedusaSubtotal(latestCart.subtotal);
           // Mark preload as done if all eager coupons succeeded. Deferred
           // coupons are handled separately after shipping is applied.
           couponAppliedInPreload.current = allApplied;
