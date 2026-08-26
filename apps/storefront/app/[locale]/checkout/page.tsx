@@ -1,3 +1,5 @@
+"use client";
+
 
 const BUNDLE_CONSTITUENTS: Record<string, string[]> = {
   "pack-trio-vitalidad": ["energy", "sleep", "zen"],
@@ -23,8 +25,6 @@ function getExpandedCartItems(cartItems: any[]) {
   }
   return result;
 }
-
-"use client";
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -323,11 +323,9 @@ export default function CheckoutPage() {
   const shippingCoupon = coupons.find((c) => c.kind === "shipping") ?? null;
   const totalOrderPct = orderCoupons.reduce((sum, c) => sum + c.discountPct, 0);
   const couponDiscount = Math.round(totals.total * (Math.min(totalOrderPct, 100) / 100));
-  // effectiveCouponDiscount: Medusa-confirmed discount once preload resolves; falls back to frontend estimate
-  const effectiveCouponDiscount =
-    medusaCartTotal !== null ? Math.max(0, totals.total - medusaCartTotal) : couponDiscount;
+  const effectiveCouponDiscount = couponDiscount;
   const effectiveMedusaCartTotal = medusaCartTotal !== null ? Math.max(0, medusaCartTotal - totals.bundleDiscount) : null;
-  const finalTotal = effectiveMedusaCartTotal ?? (totals.total - couponDiscount);
+  const finalTotal = Math.max(0, (effectiveMedusaCartTotal ?? totals.total) - couponDiscount);
 
   // ── form state ──────────────────────────────────────────────
   const [contact, setContact] = useState({ name: "", email: "", phone: "" });
@@ -896,7 +894,7 @@ export default function CheckoutPage() {
             }
           }
 
-          chargedTotal = Math.max(0, workingCart.total - totals.bundleDiscount);
+          chargedTotal = Math.max(0, workingCart.total - totals.bundleDiscount - couponDiscount);
           setConfirmedTotal(chargedTotal);
 
           // ── Verify eager coupons (applied during preload) are still on cart ──
@@ -934,7 +932,7 @@ export default function CheckoutPage() {
               return;
             }
             // Capture latest cart total as the authoritative amount
-            chargedTotal = Math.max(0, updatedCart.total - totals.bundleDiscount);
+            chargedTotal = Math.max(0, updatedCart.total - totals.bundleDiscount - couponDiscount);
             setConfirmedTotal(chargedTotal);
           }
         }
