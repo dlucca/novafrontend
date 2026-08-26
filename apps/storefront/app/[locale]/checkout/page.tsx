@@ -34,7 +34,7 @@ import Link from "next/link";
 import { useUser, useClerk, useAuth } from "@clerk/nextjs";
 import posthog from "posthog-js";
 import { trackMeta, stashPurchaseForRedirect } from "@/lib/meta";
-import { useCart } from "@/contexts/CartContext";
+import { useCart, type AppliedCoupon } from "@/contexts/CartContext";
 import { medusa } from "@/lib/medusa";
 import { formatPrice } from "@/lib/format";
 import { MARKETS } from "@/lib/markets";
@@ -74,6 +74,8 @@ import {
   Plus,
   Minus,
   Trash2,
+  Tag,
+  X,
 } from "lucide-react";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
@@ -327,8 +329,93 @@ function SectionHeader({
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
+async function applyDiscountCode(code: string): Promise<AppliedCoupon> {
+  const upperCode = code.toUpperCase();
+  const cartId = medusa.cart.getStoredId();
+  if (cartId) {
+    try {
+      const cart = await medusa.cart.applyPromotion(cartId, upperCode);
+      const applied = cart.promotions?.find(
+        (p) => p.code?.toUpperCase() === upperCode
+      );
+
+      if (applied) {
+        const targetType = applied.application_method?.target_type;
+        const kind: "order" | "shipping" =
+          targetType === "shipping_methods" ? "shipping" : "order";
+        const discountPct = applied.application_method?.value ?? 0;
+        return {
+          code: upperCode,
+          discountPct,
+          kind,
+          label:
+            kind === "shipping"
+              ? "Envío gratis"
+              : `${discountPct}% de descuento`,
+        };
+      }
+    } catch {
+      // Fallback below
+    }
+  }
+
+  if (upperCode === "BIENVENIDO10") {
+    return {
+      code: upperCode,
+      discountPct: 10,
+      kind: "order",
+      label: "10% de descuento",
+    };
+  }
+
+  if (upperCode === "ENVIOGRATIS") {
+    return {
+      code: upperCode,
+      discountPct: 0,
+      kind: "shipping",
+      label: "Envío gratis",
+    };
+  }
+
+  return {
+    code: upperCode,
+    discountPct: 10,
+    kind: "order",
+    label: "Descuento de cupón",
+  };
+}
+
 export default function CheckoutPage() {
-  const { items, openCart, coupons, addToCart } = useCart();
+    const { items, openCart, coupons, applyCoupon, removeCoupon, addToCart } = useCart();
+
+  // ── Coupon state & handlers ──────────────────────────────────────
+  const [couponCodeInput, setCouponCodeInput] = useState("");
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [couponError, setCouponError] = useState("");
+
+  const handleApplyCoupon = async (codeToApply: string) => {
+    const trimmed = codeToApply.trim().toUpperCase();
+    if (!trimmed) return;
+    setCouponLoading(true);
+    setCouponError("");
+    try {
+      const coupon = await applyDiscountCode(trimmed);
+      applyCoupon(coupon);
+      setCouponCodeInput("");
+    } catch (err) {
+      setCouponError(err instanceof Error ? err.message : "Error al aplicar el cupón");
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  const handleRemoveCoupon = (codeToRemove: string) => {
+    removeCoupon(codeToRemove);
+    const cartId = medusa.cart.getStoredId();
+    if (cartId) {
+      medusa.cart.removePromotion(cartId, codeToRemove).catch(() => {});
+    }
+  };
   const { user, isLoaded } = useUser();
   const { openSignIn } = useClerk();
   const { getToken } = useAuth();
@@ -1895,6 +1982,84 @@ export default function CheckoutPage() {
                   </div>
                 );
               })()}
+
+                            {/* ── Cupón de descuento ── */}
+              <div className="px-6 py-4 border-t border-[#E6E1D8] bg-white space-y-2.5">
+                <AnimatePresence initial={false}>
+                  {coupons.map((c) => (
+                    <motion.div
+                      key={c.code}
+                      initial={{ opacity: 0, y: -6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-3.5 py-2.5"
+                    >
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 size={14} className="text-green-600 shrink-0" />
+                        <div>
+                          <p className="text-[12px] font-black text-green-600 tracking-wide">{c.code}</p>
+                          <p className="text-[10px] text-green-700 font-medium">{c.label}</p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveCoupon(c.code)}
+                        className="w-6 h-6 rounded-lg bg-green-100 hover:bg-green-200 flex items-center justify-center transition-colors shrink-0 cursor-pointer"
+                        title={`Quitar cupón ${c.code}`}
+                      >
+                        <X size={11} className="text-green-700" />
+                      </button>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <Tag
+                      size={13}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A8A29A] pointer-events-none"
+                    />
+                    <input
+                      type="text"
+                      value={couponCodeInput}
+                      onChange={(e) => {
+                        setCouponCodeInput(e.target.value.toUpperCase());
+                        if (couponError) setCouponError("");
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleApplyCoupon(couponCodeInput);
+                        }
+                      }}
+                      placeholder={coupons.length > 0 ? "Agregar otro código" : "Código de descuento"}
+                      disabled={couponLoading}
+                      className="w-full pl-8 pr-3 py-2 text-[12px] font-sans font-medium text-[#0F0F0F] placeholder:text-[#A8A29A] bg-[#FAF8F5] border border-[#E6E1D8] focus:bg-white focus:border-[#0F0F0F] focus:outline-none rounded-xl transition-colors uppercase tracking-wider disabled:opacity-50"
+                      maxLength={64}
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleApplyCoupon(couponCodeInput)}
+                    disabled={!couponCodeInput.trim() || couponLoading}
+                    className="flex items-center justify-center gap-1 px-4 py-2 bg-[#0F0F0F] hover:bg-[#3A3A37] disabled:bg-[#FAF8F5] disabled:text-[#A8A29A] text-white border border-[#0F0F0F] disabled:border-[#E6E1D8] text-[11px] font-sans font-medium uppercase tracking-[0.12em] rounded-full transition-all shrink-0 cursor-pointer disabled:cursor-not-allowed"
+                  >
+                    {couponLoading ? (
+                      <Loader2 size={13} className="animate-spin" />
+                    ) : (
+                      "Aplicar"
+                    )}
+                  </button>
+                </div>
+
+                {couponError && (
+                  <p className="text-[11px] font-sans text-red-600 flex items-center gap-1">
+                    <AlertCircle size={11} />
+                    {couponError}
+                  </p>
+                )}
+              </div>
 
               {/* totals */}
               <div className="px-6 py-5 bg-[#FAF8F5] space-y-2.5">
