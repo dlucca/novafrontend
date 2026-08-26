@@ -24,15 +24,20 @@ jobs:
           ATTEMPTS=0
           MAX_ATTEMPTS=20
 
+          TEAM_PARAM=""
+          if [ -n "$VERCEL_TEAM_ID" ]; then
+            TEAM_PARAM="teamId=$VERCEL_TEAM_ID&"
+          fi
+
           while [ $ATTEMPTS -lt $MAX_ATTEMPTS ]; do
             RESPONSE=$(curl -s \
               -H "Authorization: Bearer $VERCEL_TOKEN" \
-              "https://api.vercel.com/v6/deployments?teamId=$VERCEL_TEAM_ID&meta-githubCommitSha=$COMMIT_SHA&limit=1")
+              "https://api.vercel.com/v6/deployments?${TEAM_PARAM}meta-githubCommitSha=$COMMIT_SHA&limit=1")
 
-            STATE=$(echo "$RESPONSE" | jq -r '.deployments[0].state // "NOT_FOUND"')
+            STATE=$(echo "$RESPONSE" | jq -r '.deployments[0].state // .deployments[0].status // "NOT_FOUND"')
             URL=$(echo "$RESPONSE" | jq -r '.deployments[0].url // ""')
 
-            echo "State: $STATE"
+            echo "Attempt $((ATTEMPTS + 1)): State = $STATE"
 
             if [ "$STATE" = "READY" ]; then
               echo "state=success" >> "$GITHUB_OUTPUT"
