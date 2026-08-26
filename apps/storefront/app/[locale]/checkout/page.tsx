@@ -1,3 +1,29 @@
+
+const BUNDLE_CONSTITUENTS: Record<string, string[]> = {
+  "pack-trio-vitalidad": ["energy", "sleep", "zen"],
+  "pack-dia-noche": ["energy", "sleep"],
+  "pack-calma-sueno": ["zen", "sleep"],
+  "pack-glow-balance": ["glow", "woman"],
+};
+
+function getExpandedCartItems(cartItems: any[]) {
+  const result: any[] = [];
+  for (const item of cartItems) {
+    const constituents = BUNDLE_CONSTITUENTS[item.slug];
+    if (constituents) {
+      for (const subSlug of constituents) {
+        result.push({
+          ...item,
+          slug: subSlug,
+        });
+      }
+    } else {
+      result.push(item);
+    }
+  }
+  return result;
+}
+
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -300,7 +326,8 @@ export default function CheckoutPage() {
   // effectiveCouponDiscount: Medusa-confirmed discount once preload resolves; falls back to frontend estimate
   const effectiveCouponDiscount =
     medusaCartTotal !== null ? Math.max(0, totals.total - medusaCartTotal) : couponDiscount;
-  const finalTotal = medusaCartTotal ?? (totals.total - couponDiscount);
+  const effectiveMedusaCartTotal = medusaCartTotal !== null ? Math.max(0, medusaCartTotal - totals.bundleDiscount) : null;
+  const finalTotal = effectiveMedusaCartTotal ?? (totals.total - couponDiscount);
 
   // ── form state ──────────────────────────────────────────────
   const [contact, setContact] = useState({ name: "", email: "", phone: "" });
@@ -552,7 +579,7 @@ export default function CheckoutPage() {
         setCartRegion(region);
 
         // 4. Pre-agregar items al carrito mientras el usuario llena el formulario
-        for (const item of items) {
+        for (const item of getExpandedCartItems(items)) {
           const mapKey = item.mode === "sub" ? `${item.slug}-${item.freq}` : `${item.slug}-once`;
           const variantId = item.variantId ?? vMap[mapKey];
           if (!variantId) continue;
@@ -813,6 +840,7 @@ export default function CheckoutPage() {
               colonia: address.colonia.trim() || null,
               numero_interior: address.interior.trim() || null,
               indicaciones_entrega: address.instructions.trim() || null,
+              bundle_discount: totals.bundleDiscount > 0 ? totals.bundleDiscount : null,
             },
           };
         }
@@ -868,8 +896,8 @@ export default function CheckoutPage() {
             }
           }
 
-          chargedTotal = workingCart.total;
-          setConfirmedTotal(workingCart.total);
+          chargedTotal = Math.max(0, workingCart.total - totals.bundleDiscount);
+          setConfirmedTotal(chargedTotal);
 
           // ── Verify eager coupons (applied during preload) are still on cart ──
           if (couponAppliedInPreload.current) {
@@ -906,8 +934,8 @@ export default function CheckoutPage() {
               return;
             }
             // Capture latest cart total as the authoritative amount
-            chargedTotal = updatedCart.total;
-            setConfirmedTotal(updatedCart.total);
+            chargedTotal = Math.max(0, updatedCart.total - totals.bundleDiscount);
+            setConfirmedTotal(chargedTotal);
           }
         }
 
