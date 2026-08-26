@@ -314,18 +314,17 @@ export default function CheckoutPage() {
   const needsAuth = hasSubscriptions && !isSignedIn;
 
   // ── Preload state (must be declared before totals calculations) ───
-  const [medusaCartTotal, setMedusaCartTotal] = useState<number | null>(null);
+  const [medusaSubtotal, setMedusaSubtotal] = useState<number | null>(null);
 
   const totals = cartTotals(items);
-  // Only order-kind coupons reduce the subtotal in the visible estimate.
-  // Shipping coupons are reflected in medusaCartTotal once Medusa applies them.
   const orderCoupons = coupons.filter((c) => c.kind === "order");
   const shippingCoupon = coupons.find((c) => c.kind === "shipping") ?? null;
   const totalOrderPct = orderCoupons.reduce((sum, c) => sum + c.discountPct, 0);
-  const couponDiscount = Math.round(totals.total * (Math.min(totalOrderPct, 100) / 100));
+
+  const basePrice = medusaSubtotal !== null ? Math.max(0, medusaSubtotal - totals.bundleDiscount) : totals.total;
+  const couponDiscount = Math.round(basePrice * (Math.min(totalOrderPct, 100) / 100));
   const effectiveCouponDiscount = couponDiscount;
-  const effectiveMedusaCartTotal = medusaCartTotal !== null ? Math.max(0, medusaCartTotal - totals.bundleDiscount) : null;
-  const finalTotal = Math.max(0, (effectiveMedusaCartTotal ?? totals.total) - couponDiscount);
+  const finalTotal = Math.max(0, basePrice - couponDiscount);
 
   // ── form state ──────────────────────────────────────────────
   const [contact, setContact] = useState({ name: "", email: "", phone: "" });
@@ -610,7 +609,7 @@ export default function CheckoutPage() {
               allApplied = false;
             }
           }
-          if (latestCart) setMedusaCartTotal(latestCart.total);
+          if (latestCart) setMedusaSubtotal(latestCart.total);
           // Mark preload as done if all eager coupons succeeded. Deferred
           // coupons are handled separately after shipping is applied.
           couponAppliedInPreload.current = allApplied;
@@ -894,7 +893,8 @@ export default function CheckoutPage() {
             }
           }
 
-          chargedTotal = Math.max(0, workingCart.total - totals.bundleDiscount - couponDiscount);
+          const cartSubtotal1 = workingCart.subtotal ?? workingCart.total;
+          chargedTotal = Math.max(0, (cartSubtotal1 - totals.bundleDiscount) - couponDiscount);
           setConfirmedTotal(chargedTotal);
 
           // ── Verify eager coupons (applied during preload) are still on cart ──
@@ -932,7 +932,8 @@ export default function CheckoutPage() {
               return;
             }
             // Capture latest cart total as the authoritative amount
-            chargedTotal = Math.max(0, updatedCart.total - totals.bundleDiscount - couponDiscount);
+            const cartSubtotal2 = updatedCart.subtotal ?? updatedCart.total;
+            chargedTotal = Math.max(0, (cartSubtotal2 - totals.bundleDiscount) - couponDiscount);
             setConfirmedTotal(chargedTotal);
           }
         }
