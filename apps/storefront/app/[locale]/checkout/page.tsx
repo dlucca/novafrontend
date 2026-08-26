@@ -53,6 +53,8 @@ import {
   cartTotals,
   getSmartUpsell,
   clearCart,
+  updateQuantity,
+  removeFromCart,
 } from "@/lib/cart";
 import {
   ChevronLeft,
@@ -69,6 +71,9 @@ import {
   Loader2,
   ChevronDown,
   XCircle,
+  Plus,
+  Minus,
+  Trash2,
 } from "lucide-react";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
@@ -86,11 +91,11 @@ function OrderItem({ item, region }: { item: CartItem; region: string }) {
   const isSub = item.mode === "sub";
 
   return (
-    <div className="flex items-center gap-3 py-3">
+    <div className="flex items-start gap-3 py-3.5">
       {/* image chip */}
       <Link
         href={`/tienda/${item.slug}`}
-        className="relative shrink-0 w-14 h-14 block group/item"
+        className="relative shrink-0 w-14 h-14 block group/item mt-0.5"
       >
         <div
           className="relative w-full h-full rounded-xl overflow-hidden flex items-center justify-center border border-[#E6E1D8] bg-white group-hover/item:border-[#0F0F0F] transition-colors"
@@ -102,24 +107,30 @@ function OrderItem({ item, region }: { item: CartItem; region: string }) {
             className="object-cover group-hover/item:scale-105 transition-transform"
           />
         </div>
-        <span
-          className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-mono font-bold text-white bg-[#0F0F0F] shadow-2xs"
-        >
-          {item.quantity}
-        </span>
       </Link>
 
       {/* info */}
       <div className="flex-1 min-w-0">
-        <Link
-          href={`/tienda/${item.slug}`}
-          className="text-[14px] font-sans font-semibold text-[#0F0F0F] leading-tight truncate hover:underline block"
-        >
-          {item.title}
-        </Link>
+        <div className="flex items-start justify-between gap-1">
+          <Link
+            href={`/tienda/${item.slug}`}
+            className="text-[14px] font-sans font-semibold text-[#0F0F0F] leading-tight truncate hover:underline block"
+          >
+            {item.title}
+          </Link>
+          <button
+            type="button"
+            onClick={() => removeFromCart(item.slug, item.mode, item.freq)}
+            className="text-[#A8A29A] hover:text-[#0F0F0F] p-1 transition-colors cursor-pointer shrink-0"
+            title="Eliminar del carrito"
+          >
+            <Trash2 size={13} />
+          </button>
+        </div>
+
         {isSub ? (
           <span
-            className="inline-flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full mt-1 bg-[#0F0F0F] text-white"
+            className="inline-flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full mt-0.5 bg-[#0F0F0F] text-white"
           >
             <Repeat size={9} />
             {FREQ_LABELS[item.freq]}
@@ -127,13 +138,35 @@ function OrderItem({ item, region }: { item: CartItem; region: string }) {
         ) : (
           <span className="block text-[11px] font-sans text-[#A8A29A] mt-0.5">Compra única</span>
         )}
-      </div>
 
-      {/* price */}
-      <div className="text-right shrink-0">
-        <p className="text-[14px] font-mono font-bold text-[#0F0F0F]">
-          {fmt(item.price * item.quantity, region)}
-        </p>
+        {/* quantity controls + price row */}
+        <div className="flex items-center justify-between mt-2">
+          <div className="flex items-center gap-1 bg-[#FAF8F5] border border-[#E6E1D8] rounded-full p-0.5">
+            <button
+              type="button"
+              onClick={() => updateQuantity(item.slug, item.mode, item.freq, -1)}
+              className="w-6 h-6 rounded-full flex items-center justify-center text-[#0F0F0F] hover:bg-white transition-all duration-150 cursor-pointer"
+              title="Disminuir cantidad"
+            >
+              <Minus size={12} />
+            </button>
+            <span className="w-7 text-center font-mono text-xs font-bold text-[#0F0F0F]">
+              {item.quantity}
+            </span>
+            <button
+              type="button"
+              onClick={() => updateQuantity(item.slug, item.mode, item.freq, 1)}
+              className="w-6 h-6 rounded-full flex items-center justify-center text-[#0F0F0F] hover:bg-white transition-all duration-150 cursor-pointer"
+              title="Aumentar cantidad"
+            >
+              <Plus size={12} />
+            </button>
+          </div>
+
+          <p className="text-[14px] font-mono font-bold text-[#0F0F0F]">
+            {fmt(price * item.quantity, region)}
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -1140,13 +1173,13 @@ export default function CheckoutPage() {
       {/* ── Minimal Header ── */}
       <header className="sticky top-0 z-40 bg-[#FAF8F5]/95 backdrop-blur-xl border-b border-[#E6E1D8]">
         <div className="max-w-[1240px] mx-auto px-6 sm:px-10 h-[64px] flex items-center justify-between">
-          <button
-            onClick={openCart}
+          <Link
+            href="/tienda"
             className="flex items-center gap-1.5 text-xs font-sans font-medium uppercase tracking-[0.12em] text-[#0F0F0F] hover:text-[#3A3A37] transition-colors cursor-pointer"
           >
             <ChevronLeft size={16} />
-            Editar carrito
-          </button>
+            Volver a la tienda
+          </Link>
 
           <Link
             href="/"
