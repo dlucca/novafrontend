@@ -1,3 +1,62 @@
+
+export const BUNDLE_CONSTITUENTS_MAP: Record<string, Array<{ slug: string; title: string; image: string; price: number; color: string; bg: string }>> = {
+  "pack-trio-vitalidad": [
+    { slug: "energy", title: "Energy", image: "/products/Energy_thumb.webp", price: 750, color: "#2B7CC1", bg: "#EBF4FB" },
+    { slug: "sleep", title: "Sleep", image: "/products/Sleep_thumb.webp", price: 750, color: "#138A75", bg: "#EBF7F5" },
+    { slug: "zen", title: "Zen", image: "/products/Zen_thumb.webp", price: 750, color: "#3A6FA8", bg: "#EBF0F9" },
+  ],
+  "pack-dia-noche": [
+    { slug: "energy", title: "Energy", image: "/products/Energy_thumb.webp", price: 750, color: "#2B7CC1", bg: "#EBF4FB" },
+    { slug: "sleep", title: "Sleep", image: "/products/Sleep_thumb.webp", price: 750, color: "#138A75", bg: "#EBF7F5" },
+  ],
+  "pack-calma-sueno": [
+    { slug: "zen", title: "Zen", image: "/products/Zen_thumb.webp", price: 750, color: "#3A6FA8", bg: "#EBF0F9" },
+    { slug: "sleep", title: "Sleep", image: "/products/Sleep_thumb.webp", price: 750, color: "#138A75", bg: "#EBF7F5" },
+  ],
+  "pack-glow-balance": [
+    { slug: "glow", title: "Glow", image: "/products/Glow_thumb.webp", price: 750, color: "#C94030", bg: "#FAF0EE" },
+    { slug: "woman", title: "Woman", image: "/products/Woman_thumb.webp", price: 750, color: "#8A3EBE", bg: "#F3EBF9" },
+  ],
+};
+
+export function normalizeCartItems(rawItems: CartItem[]): CartItem[] {
+  const result: CartItem[] = [];
+  for (const item of rawItems) {
+    const constituents = BUNDLE_CONSTITUENTS_MAP[item.slug];
+    if (constituents) {
+      const qtyToAdd = item.quantity || 1;
+      for (const sub of constituents) {
+        const key = cartKey({ slug: sub.slug, mode: item.mode, freq: item.freq });
+        const existingIdx = result.findIndex((r) => cartKey(r) === key);
+        if (existingIdx >= 0) {
+          result[existingIdx].quantity += qtyToAdd;
+        } else {
+          result.push({
+            slug: sub.slug,
+            title: sub.title,
+            image: sub.image,
+            price: sub.price,
+            color: sub.color,
+            bg: sub.bg,
+            mode: item.mode,
+            freq: item.freq,
+            quantity: qtyToAdd,
+          });
+        }
+      }
+    } else {
+      const key = cartKey(item);
+      const existingIdx = result.findIndex((r) => cartKey(r) === key);
+      if (existingIdx >= 0) {
+        result[existingIdx].quantity += item.quantity;
+      } else {
+        result.push({ ...item });
+      }
+    }
+  }
+  return result;
+}
+
 export const CART_STORAGE_KEY = "novapatch_cart";
 export const CART_UPDATED_EVENT = "cart:updated";
 
@@ -25,7 +84,8 @@ export function cartKey(item: Pick<CartItem, "slug" | "mode" | "freq">): string 
 export function getCart(): CartItem[] {
   if (typeof window === "undefined") return [];
   try {
-    return JSON.parse(localStorage.getItem(CART_STORAGE_KEY) || "[]");
+    const parsed = JSON.parse(localStorage.getItem(CART_STORAGE_KEY) || "[]");
+    return normalizeCartItems(parsed);
   } catch {
     return [];
   }
@@ -37,15 +97,41 @@ function saveCart(items: CartItem[]): void {
 }
 
 export function addToCart(incoming: Omit<CartItem, "quantity"> & { quantity?: number }): void {
-  const items = getCart();
-  const key = cartKey(incoming);
-  const idx = items.findIndex((i) => cartKey(i) === key);
-  if (idx >= 0) {
-    items[idx].quantity += incoming.quantity ?? 1;
+  const rawItems = getCart();
+  const constituents = BUNDLE_CONSTITUENTS_MAP[incoming.slug];
+  const qty = incoming.quantity ?? 1;
+
+  if (constituents) {
+    for (const sub of constituents) {
+      const itemToInsert = {
+        slug: sub.slug,
+        title: sub.title,
+        image: sub.image,
+        price: sub.price,
+        color: sub.color,
+        bg: sub.bg,
+        mode: incoming.mode,
+        freq: incoming.freq,
+        quantity: qty,
+      };
+      const key = cartKey(itemToInsert);
+      const idx = rawItems.findIndex((i) => cartKey(i) === key);
+      if (idx >= 0) {
+        rawItems[idx].quantity += qty;
+      } else {
+        rawItems.push(itemToInsert);
+      }
+    }
   } else {
-    items.push({ ...incoming, quantity: incoming.quantity ?? 1 });
+    const key = cartKey(incoming);
+    const idx = rawItems.findIndex((i) => cartKey(i) === key);
+    if (idx >= 0) {
+      rawItems[idx].quantity += qty;
+    } else {
+      rawItems.push({ ...incoming, quantity: qty });
+    }
   }
-  saveCart(items);
+  saveCart(normalizeCartItems(rawItems));
 }
 
 export function updateQuantity(
