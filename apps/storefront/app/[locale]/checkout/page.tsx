@@ -1,30 +1,9 @@
 "use client";
 
 
-const BUNDLE_CONSTITUENTS: Record<string, string[]> = {
-  "pack-trio-vitalidad": ["energy", "sleep", "zen"],
-  "pack-dia-noche": ["energy", "sleep"],
-  "pack-calma-sueno": ["zen", "sleep"],
-  "pack-glow-balance": ["glow", "woman"],
-};
-
-function getExpandedCartItems(cartItems: any[]) {
-  const result: any[] = [];
-  for (const item of cartItems) {
-    const constituents = BUNDLE_CONSTITUENTS[item.slug];
-    if (constituents) {
-      for (const subSlug of constituents) {
-        result.push({
-          ...item,
-          slug: subSlug,
-        });
-      }
-    } else {
-      result.push(item);
-    }
-  }
-  return result;
-}
+// NOTE: Bundle items are already fully normalized into individual product items
+// (energy, sleep, zen, glow, woman) by normalizeCartItems() in lib/cart.ts before
+// they reach this component. No expansion is needed here.
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -83,8 +62,6 @@ import {
 function fmt(n: number, region: string = "mxn") {
   return formatPrice(n, region.toUpperCase());
 }
-
-// ─── Sub-components ──────────────────────────────────────────────────────────
 
 // ─── Sub-components ──────────────────────────────────────────────────────────
 
@@ -354,35 +331,17 @@ async function applyDiscountCode(code: string): Promise<AppliedCoupon> {
               : `${discountPct}% de descuento`,
         };
       }
-    } catch {
-      // Fallback below
+    } catch (apiErr) {
+      // If Medusa call failed (network error, etc.) fall through to throw below
+      console.warn("[Checkout] applyDiscountCode Medusa error:", apiErr);
     }
   }
 
-  if (upperCode === "BIENVENIDO10") {
-    return {
-      code: upperCode,
-      discountPct: 10,
-      kind: "order",
-      label: "10% de descuento",
-    };
-  }
-
-  if (upperCode === "ENVIOGRATIS") {
-    return {
-      code: upperCode,
-      discountPct: 0,
-      kind: "shipping",
-      label: "Envío gratis",
-    };
-  }
-
-  return {
-    code: upperCode,
-    discountPct: 10,
-    kind: "order",
-    label: "Descuento de cupón",
-  };
+  // If we reach here it means either:
+  // a) There is no cart yet (cartId is null), or
+  // b) The Medusa API call succeeded but the promotion was not found on the cart
+  // Either way the code is not valid — never silently grant a discount.
+  throw new Error("El código de descuento no es válido o ha expirado");
 }
 
 export default function CheckoutPage() {
@@ -489,6 +448,8 @@ export default function CheckoutPage() {
   const preloadStarted = useRef(false);
   const itemsPreloaded = useRef(false);
   const couponAppliedInPreload = useRef(false);
+  // Incrementing this triggers a fresh preload whenever items or coupons change.
+  const [preloadVersion, setPreloadVersion] = useState(0);
 
   // ── Dirección Argentina ────────────────────────────────────
   const [addressAR, setAddressAR] = useState({
@@ -640,20 +601,31 @@ export default function CheckoutPage() {
     );
   }, [isLoaded, items, finalTotal, market.currency, user]);
 
-  // When cart items change (e.g. edited via CartDrawer while on checkout page),
-  // reset preloaded cart state so preload re-runs automatically with updated items.
-  const prevItemsKey = useRef(JSON.stringify(items.map((i) => ({ id: i.slug, qty: i.quantity, mode: i.mode, freq: i.freq }))));
+  // When cart items OR coupons change (e.g. edited via CartDrawer or checkout coupon input),
+  // discard the pre-loaded Medusa cart and schedule a fresh preload.
+  const prevCartStateKey = useRef(
+    JSON.stringify({
+      items: items.map((i) => ({ id: i.slug, qty: i.quantity, mode: i.mode, freq: i.freq })),
+      coupons: coupons.map((c) => c.code),
+    })
+  );
   useEffect(() => {
-    const currentKey = JSON.stringify(items.map((i) => ({ id: i.slug, qty: i.quantity, mode: i.mode, freq: i.freq })));
-    if (prevItemsKey.current !== currentKey) {
-      prevItemsKey.current = currentKey;
+    const currentKey = JSON.stringify({
+      items: items.map((i) => ({ id: i.slug, qty: i.quantity, mode: i.mode, freq: i.freq })),
+      coupons: coupons.map((c) => c.code),
+    });
+    if (prevCartStateKey.current !== currentKey) {
+      prevCartStateKey.current = currentKey;
+      // Reset all preload refs first
       preloadStarted.current = false;
       itemsPreloaded.current = false;
       couponAppliedInPreload.current = false;
       setPreloadedCartId(null);
       setMedusaSubtotal(null);
+      // Increment version to re-trigger the preload effect
+      setPreloadVersion((v) => v + 1);
     }
-  }, [items]);
+  }, [items, coupons]);
 
   // ── Pre-carga: ejecutar en paralelo al montar la página ──────
   useEffect(() => {
@@ -711,7 +683,8 @@ export default function CheckoutPage() {
         setCartRegion(region);
 
         // 4. Pre-agregar items al carrito mientras el usuario llena el formulario
-        for (const item of getExpandedCartItems(items)) {
+        // items is already normalized into individual products by lib/cart.ts normalizeCartItems()
+        for (const item of items) {
           const mapKey = item.mode === "sub" ? `${item.slug}-${item.freq}` : `${item.slug}-once`;
           const variantId = item.variantId ?? vMap[mapKey];
           if (!variantId) continue;
@@ -755,7 +728,9 @@ export default function CheckoutPage() {
     };
 
     preload();
-  }, [isLoaded, items.length, user]);
+  // preloadVersion changes whenever items or coupons change; isLoaded and user
+  // gate the very first run and re-run if auth state changes.
+  }, [isLoaded, preloadVersion, user]);
 
   if (!isLoaded) {
     return (
@@ -1029,7 +1004,13 @@ export default function CheckoutPage() {
           }
 
           const cartSubtotal1 = workingCart.subtotal ?? workingCart.total;
-          chargedTotal = Math.max(0, (cartSubtotal1 - totals.bundleDiscount) - couponDiscount);
+          // Prefer bundle_discount from Medusa cart metadata (authoritative) over local state.
+          // The metadata is written in the cart.update() call above (bundle_discount field).
+          const authorBundleDiscount =
+            typeof (workingCart as any).metadata?.bundle_discount === "number"
+              ? (workingCart as any).metadata.bundle_discount
+              : totals.bundleDiscount;
+          chargedTotal = Math.max(0, (cartSubtotal1 - authorBundleDiscount) - couponDiscount);
           setConfirmedTotal(chargedTotal);
 
           // ── Verify eager coupons (applied during preload) are still on cart ──
@@ -1068,7 +1049,11 @@ export default function CheckoutPage() {
             }
             // Capture latest cart total as the authoritative amount
             const cartSubtotal2 = updatedCart.subtotal ?? updatedCart.total;
-            chargedTotal = Math.max(0, (cartSubtotal2 - totals.bundleDiscount) - couponDiscount);
+            const authorBundleDiscount2 =
+              typeof (updatedCart as any).metadata?.bundle_discount === "number"
+                ? (updatedCart as any).metadata.bundle_discount
+                : totals.bundleDiscount;
+            chargedTotal = Math.max(0, (cartSubtotal2 - authorBundleDiscount2) - couponDiscount);
             setConfirmedTotal(chargedTotal);
           }
         }
