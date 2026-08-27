@@ -184,6 +184,13 @@ const TIER_DEFS: { tier: PurchaseTier; label: string; freq: 30 | 60 | 90 | null;
   { tier: "quarterly", label: "Trimestral", freq: 90, discountPct: 10 },
 ];
 
+const BUNDLE_CONSTITUENT_COUNT: Record<string, number> = {
+  "pack-dia-noche": 2,
+  "pack-calma-sueno": 2,
+  "pack-glow-balance": 2,
+  "pack-trio-vitalidad": 3,
+};
+
 function fallbackDetail(slug: string): ProductDetail | null {
   const meta = PRODUCT_META[slug];
   if (!meta) return null;
@@ -193,6 +200,34 @@ function fallbackDetail(slug: string): ProductDetail | null {
     `/products/${nameCap}_1_1.webp`,
   ];
 
+  const constituentCount = BUNDLE_CONSTITUENT_COUNT[slug] ?? 0;
+  const isBundle = constituentCount > 0;
+
+  const options: PurchaseOption[] = TIER_DEFS.map((t) => {
+    let price: number;
+    if (isBundle) {
+      if (t.freq === null) {
+        // Compra única: bundle discount price
+        price = BUNDLE_PRICES[slug] ?? constituentCount * 750;
+      } else {
+        // Suscripción: cada ítem constituyente recibe su descuento por frecuencia sobre el precio regular ($750)
+        const singleSubPrice = 750 * (1 - t.discountPct / 100);
+        price = Math.round(constituentCount * singleSubPrice);
+      }
+    } else {
+      price = Math.round(basePrice * (1 - t.discountPct / 100));
+    }
+
+    return {
+      tier: t.tier,
+      label: t.label,
+      freq: t.freq,
+      price,
+      discountPct: t.discountPct,
+      variantId: undefined,
+    };
+  });
+
   return {
     id: slug,
     slug,
@@ -200,14 +235,7 @@ function fallbackDetail(slug: string): ProductDetail | null {
     description: meta.description,
     basePrice,
     images,
-    options: TIER_DEFS.map((t) => ({
-      tier: t.tier,
-      label: t.label,
-      freq: t.freq,
-      price: Math.round(basePrice * (1 - t.discountPct / 100)),
-      discountPct: t.discountPct,
-      variantId: undefined,
-    })),
+    options,
   };
 }
 
@@ -243,22 +271,37 @@ export async function getProductDetail(
     const onceVariant = p.variants?.find((v) => v.metadata?.is_subscription === false);
     const basePrice = variantPrice(onceVariant) ?? 750;
 
+    const constituentCount = BUNDLE_CONSTITUENT_COUNT[handle] ?? 0;
+    const isBundle = constituentCount > 0 || handle.startsWith("pack-");
+
     const options: PurchaseOption[] = TIER_DEFS.map((t) => {
       const variant =
         t.freq === null
           ? onceVariant
           : p.variants?.find((v) => v.metadata?.interval_days === t.freq);
+
+      let price: number;
+      if (constituentCount > 0) {
+        if (t.freq === null) {
+          price = BUNDLE_PRICES[handle] ?? constituentCount * 750;
+        } else {
+          const singleSubPrice = 750 * (1 - t.discountPct / 100);
+          price = Math.round(constituentCount * singleSubPrice);
+        }
+      } else {
+        price = variantPrice(variant) ?? Math.round(basePrice * (1 - t.discountPct / 100));
+      }
+
       return {
         tier: t.tier,
         label: t.label,
         freq: t.freq,
-        price: variantPrice(variant) ?? Math.round(basePrice * (1 - t.discountPct / 100)),
+        price,
         discountPct: t.discountPct,
         variantId: variant?.id,
       };
     });
 
-    const isBundle = handle.startsWith("pack-");
     const bundleImages = BUNDLE_IMAGES[handle];
     const medusaImages = (p.images ?? []).map((i) => i.url).filter(Boolean);
     const nameCap = handle.charAt(0).toUpperCase() + handle.slice(1);
