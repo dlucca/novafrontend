@@ -1250,7 +1250,8 @@ export default function CheckoutPage() {
             className="flex items-center gap-1.5 text-xs font-sans font-medium uppercase tracking-[0.12em] text-[#0F0F0F] hover:text-[#3A3A37] transition-colors cursor-pointer"
           >
             <ChevronLeft size={16} />
-            Volver a la tienda
+            <span className="sm:hidden">Tienda</span>
+            <span className="hidden sm:inline">Volver a la tienda</span>
           </Link>
 
           <Link
@@ -2047,57 +2048,50 @@ export default function CheckoutPage() {
               </div>
 
               {/* totals */}
-              <div className="px-6 py-5 bg-[#FAF8F5] space-y-2.5">
-                <div className="flex justify-between text-xs font-sans text-[#3A3A37]">
-                  <span>Subtotal</span>
+              <div className="px-6 py-5 bg-[#FAF8F5] space-y-2">
+
+                {/* Subtotal bruto */}
+                <div className="flex justify-between text-xs font-sans">
+                  <span className="text-[#3A3A37]">Subtotal</span>
                   <span className="font-mono font-semibold text-[#0F0F0F]">{fmt(totals.subtotal, cartRegion)}</span>
                 </div>
 
-                {totals.bundleDiscount > 0 && totals.bundleName && (
-                  <div className="flex justify-between text-xs font-sans text-[#3A3A37]">
-                    <span className="flex items-center gap-1.5 min-w-0">
-                      <span
-                        className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full text-white bg-[#0F0F0F] shrink-0"
-                      >
-                        BUNDLE
-                      </span>
-                      <span className="truncate">{totals.bundleName}</span>
-                    </span>
-                    <span className="font-mono font-bold text-[#0F0F0F] shrink-0">
-                      −{fmt(totals.bundleDiscount, cartRegion)}
-                    </span>
-                  </div>
-                )}
-
+                {/* Descuento suscripción */}
                 {totals.savings > 0 && (
-                  <div className="flex justify-between text-xs font-sans text-[#3A3A37]">
-                    <span className="flex items-center gap-1.5">
-                      <span
-                        className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full text-white bg-[#0F0F0F]"
-                      >
-                        AHORRO
+                  <div className="flex justify-between text-xs font-sans">
+                    <span className="text-[#3A3A37] flex items-center gap-1.5">
+                      <span className="inline-flex text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-[#E6E1D8] text-[#3A3A37]">
+                        SUB
                       </span>
                       Descuento suscripción
                     </span>
-                    <span className="font-mono font-bold text-[#0F0F0F]">
-                      −{fmt(totals.savings, cartRegion)}
-                    </span>
+                    <span className="font-mono font-bold text-[#0F0F0F]">−{fmt(totals.savings, cartRegion)}</span>
                   </div>
                 )}
 
+                {/* Descuento bundle */}
+                {totals.bundleDiscount > 0 && totals.bundleName && (
+                  <div className="flex justify-between text-xs font-sans">
+                    <span className="text-[#3A3A37] flex items-center gap-1.5">
+                      <span className="inline-flex text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-[#0F0F0F] text-white">
+                        BUNDLE
+                      </span>
+                      {totals.bundleName}
+                    </span>
+                    <span className="font-mono font-bold text-[#0F0F0F]">−{fmt(totals.bundleDiscount, cartRegion)}</span>
+                  </div>
+                )}
+
+                {/* Cupón(es) */}
                 {coupons.length > 0 && effectiveCouponDiscount > 0 && (
-                  <div className="flex justify-between text-xs font-sans text-[#3A3A37]">
-                    <span className="flex items-center gap-1.5 flex-wrap">
-                      <span
-                        className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full text-white bg-[#0F0F0F]"
-                      >
+                  <div className="flex justify-between text-xs font-sans">
+                    <span className="text-[#3A3A37] flex items-center gap-1.5 flex-wrap">
+                      <span className="inline-flex text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-[#0F0F0F] text-white">
                         {coupons.length > 1 ? "CUPONES" : "CUPÓN"}
                       </span>
                       {coupons.map((c) => c.code).join(" · ")}
                     </span>
-                    <span className="font-mono font-bold text-[#0F0F0F]">
-                      −{fmt(effectiveCouponDiscount, cartRegion)}
-                    </span>
+                    <span className="font-mono font-bold text-[#0F0F0F]">−{fmt(effectiveCouponDiscount, cartRegion)}</span>
                   </div>
                 )}
                 {shippingCoupon && (
@@ -2107,37 +2101,21 @@ export default function CheckoutPage() {
                   </div>
                 )}
 
-                {FREE_SHIPPING ? (
-                  <div className="flex justify-between text-xs font-sans text-[#3A3A37]">
-                    <span>Envío</span>
-                    <span className="flex items-center gap-1.5">
-                      {shippingPreview > 0 && (
-                        <span className="text-[#A8A29A] line-through font-mono">{fmt(shippingPreview, cartRegion)}</span>
-                      )}
-                      <span className="font-mono font-bold text-[#0F0F0F]">GRATIS</span>
-                    </span>
-                  </div>
-                ) : (
-                  displayShippingCost > 0 && (
-                    <div className="flex justify-between text-xs font-sans text-[#3A3A37]">
-                      <span>Envío{shippingCost === 0 && <span className="text-[11px] text-[#A8A29A] ml-1">(estimado)</span>}</span>
-                      <span className="font-mono font-bold text-[#0F0F0F]">{fmt(displayShippingCost, cartRegion)}</span>
-                    </div>
-                  )
-                )}
+                {/* Envío */}
+                <div className="flex justify-between text-xs font-sans">
+                  <span className="text-[#3A3A37]">Envío</span>
+                  <span className={FREE_SHIPPING || shippingCoupon ? "font-mono font-bold text-[#0F0F0F]" : "text-[#A8A29A]"}>
+                    {FREE_SHIPPING ? "GRATIS" : shippingCoupon ? "GRATIS" : "Calculado al pagar"}
+                  </span>
+                </div>
 
+                {/* Total */}
                 <div className="pt-3 border-t border-[#E6E1D8] flex justify-between items-baseline">
                   <span className="text-base font-display font-semibold text-[#0F0F0F] lowercase">total</span>
-                  <div className="text-right">
-                    <p className="text-xl font-mono font-bold text-[#0F0F0F]">{fmt(confirmedTotal ?? (finalTotal + displayShippingCost), cartRegion)}</p>
-                    {(totals.savings > 0 || totals.bundleDiscount > 0 || effectiveCouponDiscount > 0) && (
-                      <p className="text-[11px] font-mono text-[#A8A29A]">
-                        antes {fmt(totals.subtotal + displayShippingCost, cartRegion)}
-                      </p>
-                    )}
-                  </div>
+                  <p className="text-xl font-mono font-bold text-[#0F0F0F]">{fmt(confirmedTotal ?? finalTotal, cartRegion)}</p>
                 </div>
               </div>
+
 
               {/* trust badges */}
               <div className="px-6 py-4 border-t border-[#E6E1D8]">

@@ -147,6 +147,70 @@ function CouponInput({ onApply, onRemove, status, applied }: CouponInputProps) {
   );
 }
 
+// ─── Coupon Section (colapsable) ─────────────────────────────────────────────
+
+function CouponSection({ onApply, onRemove, status, applied }: CouponInputProps) {
+  const [open, setOpen] = useState(applied.length > 0);
+
+  // Auto-expand when a coupon is applied externally
+  useEffect(() => {
+    if (applied.length > 0) setOpen(true);
+  }, [applied.length]);
+
+  return (
+    <div className="flex flex-col gap-2">
+      {/* Toggle trigger */}
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="flex items-center gap-1.5 text-[11px] font-sans font-medium text-[#3A3A37] hover:text-[#0F0F0F] transition-colors w-fit cursor-pointer"
+      >
+        <Tag size={11} className="shrink-0" />
+        {applied.length > 0 ? (
+          <span>
+            {applied.length} código{applied.length > 1 ? "s" : ""} aplicado{applied.length > 1 ? "s" : ""}
+            <span className="ml-1 text-[#A8A29A]">· {open ? "ocultar" : "ver"}</span>
+          </span>
+        ) : (
+          <span>¿Tienes un código de descuento?</span>
+        )}
+        <svg
+          width="10"
+          height="10"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+        >
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </button>
+
+      {/* Expandable input */}
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            key="coupon-input"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+            className="overflow-hidden"
+          >
+            <CouponInput
+              onApply={onApply}
+              onRemove={onRemove}
+              status={status}
+              applied={applied}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 // ─── Item de carrito ──────────────────────────────────────────────────────────
 
 function CartItemRow({ item }: { item: CartItem }) {
@@ -488,48 +552,38 @@ export default function CartDrawer() {
                     exit={{ opacity: 0, y: 16 }}
                     className="border-t border-[#E6E1D8] px-6 py-5 flex flex-col gap-3.5 bg-[#FAF8F5]"
                   >
-                    {/* Descuento por Bundle Automático */}
-                    {bundleDiscount > 0 && bundleName && (
-                      <div className="flex items-center justify-between bg-white border border-[#E6E1D8] rounded-xl px-4 py-2.5">
-                        <div className="flex items-center gap-2 min-w-0">
-                          <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full text-white bg-[#0F0F0F] shrink-0">
-                            BUNDLE
-                          </span>
-                          <p className="text-[12px] font-sans font-medium text-[#0F0F0F] truncate">
-                            {bundleName}
-                          </p>
-                        </div>
-                        <p className="text-[13px] font-mono font-bold text-[#0F0F0F] shrink-0">−{formatPrice(bundleDiscount, market.currency)}</p>
-                      </div>
-                    )}
-                    {/* Ahorro suscripción */}
-                    {hasSubs && savings > 0 && (
-                      <div className="flex items-center justify-between bg-white border border-[#E6E1D8] rounded-xl px-4 py-2.5">
-                        <p className="text-[12px] font-sans font-medium text-[#0F0F0F]">
-                          Ahorro con suscripción
-                        </p>
-                        <p className="text-[13px] font-mono font-bold text-[#0F0F0F]">−{formatPrice(savings, market.currency)}</p>
-                      </div>
-                    )}
+                    {/* ── Cupón (colapsable) ── */}
+                    <CouponSection
+                      onApply={handleApply}
+                      onRemove={handleRemove}
+                      status={couponStatus}
+                      applied={coupons}
+                    />
 
-                    {/* ── Cupón ── */}
-                    <div className="flex flex-col gap-2">
-                      <CouponInput
-                        onApply={handleApply}
-                        onRemove={handleRemove}
-                        status={couponStatus}
-                        applied={coupons}
-                      />
-                    </div>
+                    {/* ── Totales compactos ── */}
+                    <div className="flex flex-col gap-1.5 pt-3 border-t border-[#E6E1D8]">
 
-                    {/* Totales */}
-                    <div className="flex flex-col gap-2 pt-2 border-t border-[#E6E1D8]">
-                      <div className="flex justify-between text-xs font-sans text-[#3A3A37]">
-                        <span>Subtotal</span>
+                      {/* Subtotal + pills de ahorro inline */}
+                      <div className="flex justify-between items-center text-xs font-sans">
+                        <span className="text-[#3A3A37] flex items-center gap-1.5 flex-wrap">
+                          Subtotal
+                          {/* Bundle pill */}
+                          {bundleDiscount > 0 && bundleName && (
+                            <span className="inline-flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-[#0F0F0F] text-white">
+                              BUNDLE −{formatPrice(bundleDiscount, market.currency)}
+                            </span>
+                          )}
+                          {/* Suscripción pill */}
+                          {hasSubs && savings > 0 && (
+                            <span className="inline-flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-[#E6E1D8] text-[#3A3A37]">
+                              SUB −{formatPrice(savings, market.currency)}
+                            </span>
+                          )}
+                        </span>
                         <span className="font-mono font-semibold text-[#0F0F0F]">{formatPrice(total, market.currency)}</span>
                       </div>
 
-                      {/* Línea(s) de descuento de orden */}
+                      {/* Línea(s) de cupón */}
                       <AnimatePresence>
                         {orderCoupons.map((c) => {
                           const amount = Math.round(total * (c.discountPct / 100));
@@ -555,13 +609,15 @@ export default function CartDrawer() {
                         })}
                       </AnimatePresence>
 
-                      <div className="flex justify-between text-xs font-sans text-[#A8A29A]">
-                        <span>Envío</span>
-                        <span className={FREE_SHIPPING || shippingCoupon ? "text-[#0F0F0F] font-semibold" : ""}>
-                          {FREE_SHIPPING ? "GRATIS" : shippingCoupon ? "Gratis al pagar" : "Calculado al pagar"}
+                      {/* Envío */}
+                      <div className="flex justify-between text-xs font-sans">
+                        <span className="text-[#3A3A37]">Envío</span>
+                        <span className={FREE_SHIPPING || shippingCoupon ? "font-mono font-bold text-[#0F0F0F]" : "text-[#A8A29A]"}>
+                          {FREE_SHIPPING ? "GRATIS" : shippingCoupon ? "GRATIS" : "Calculado al pagar"}
                         </span>
                       </div>
 
+                      {/* Total */}
                       <div className="flex justify-between text-base font-sans font-bold text-[#0F0F0F] pt-2 border-t border-[#E6E1D8]">
                         <span>Total</span>
                         <motion.span
