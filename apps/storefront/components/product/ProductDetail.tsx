@@ -2,7 +2,67 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+
+const BUNDLE_UPGRADE_MAP: Record<
+  string,
+  {
+    targetSlug: string;
+    dots: string[];
+    monoLabel: string;
+    headline: string;
+    price: string;
+    originalPrice: string;
+    ctaText: string;
+  }
+> = {
+  energy: {
+    targetSlug: "pack-trio-vitalidad",
+    dots: ["#83B5F4", "#1EB1BC", "#4E82BC"],
+    monoLabel: "ENERGY · SLEEP · ZEN",
+    headline: "Un parche para tu día, uno para bajar el ritmo, uno para la noche. Completa el ritual.",
+    price: "$1,800",
+    originalPrice: "$2,250",
+    ctaText: "CONOCE EL PACK VITALIDAD 360",
+  },
+  sleep: {
+    targetSlug: "pack-trio-vitalidad",
+    dots: ["#83B5F4", "#1EB1BC", "#4E82BC"],
+    monoLabel: "ENERGY · SLEEP · ZEN",
+    headline: "Un parche para tu día, uno para bajar el ritmo, uno para la noche. Completa el ritual.",
+    price: "$1,800",
+    originalPrice: "$2,250",
+    ctaText: "CONOCE EL PACK VITALIDAD 360",
+  },
+  zen: {
+    targetSlug: "pack-calma-sueno",
+    dots: ["#4E82BC", "#1EB1BC"],
+    monoLabel: "ZEN · SLEEP",
+    headline: "Un parche para encontrar calma de día, uno para descansar de noche. Equilibra tu rutina.",
+    price: "$1,275",
+    originalPrice: "$1,500",
+    ctaText: "CONOCE EL PACK CALMA & SUEÑO",
+  },
+  glow: {
+    targetSlug: "pack-glow-balance",
+    dots: ["#F25C54", "#C693C4"],
+    monoLabel: "GLOW · WOMAN",
+    headline: "Un parche para cuidar tu piel desde adentro, uno para acompañar tu equilibrio diario.",
+    price: "$1,275",
+    originalPrice: "$1,500",
+    ctaText: "CONOCE EL PACK GLOW & BALANCE",
+  },
+  woman: {
+    targetSlug: "pack-glow-balance",
+    dots: ["#F25C54", "#C693C4"],
+    monoLabel: "GLOW · WOMAN",
+    headline: "Un parche para cuidar tu piel desde adentro, uno para acompañar tu equilibrio diario.",
+    price: "$1,275",
+    originalPrice: "$1,500",
+    ctaText: "CONOCE EL PACK GLOW & BALANCE",
+  },
+};
 import { useUser } from "@clerk/nextjs";
 import { useCart } from "@/contexts/CartContext";
 import { trackMeta } from "@/lib/meta";
@@ -972,6 +1032,58 @@ export default function ProductDetail({
             {product.description}
           </p>
 
+          {/* ── Banner Upgrade a Bundle (Variante Híbrida Ritual + Fondo Claro + Botón Outline) ── */}
+          {(() => {
+            const upgrade = BUNDLE_UPGRADE_MAP[product.slug];
+            if (!upgrade) return null;
+            return (
+              <div className="mt-4 p-4 sm:p-5 rounded-2xl bg-white border border-[#E6E1D8] flex flex-col gap-3 shadow-2xs">
+                {/* Header: micro-dots + productos */}
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5">
+                    {upgrade.dots.map((dotColor, idx) => (
+                      <span
+                        key={idx}
+                        className="w-2.5 h-2.5 rounded-full inline-block shrink-0"
+                        style={{ backgroundColor: dotColor }}
+                      />
+                    ))}
+                  </div>
+                  <span className="font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-[#3A3A37]">
+                    {upgrade.monoLabel}
+                  </span>
+                </div>
+
+                {/* Headline ritual */}
+                <p className="text-sm font-sans font-semibold text-[#0F0F0F] leading-snug">
+                  {upgrade.headline}
+                </p>
+
+                {/* Footer: Precios + Botón claro con hover de marco */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+                  <div className="flex items-baseline gap-2 font-mono">
+                    <span className="text-base font-bold text-[#0F0F0F]">
+                      {upgrade.price}
+                    </span>
+                    <span className="text-xs font-medium text-[#A8A29A] line-through">
+                      {upgrade.originalPrice}
+                    </span>
+                  </div>
+
+                  <Link
+                    href={`/tienda/${upgrade.targetSlug}`}
+                    className="shrink-0 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-[11px] font-sans font-medium uppercase tracking-[0.12em] bg-white border border-[#E6E1D8] text-[#0F0F0F] hover:border-[#0F0F0F] rounded-full transition-all duration-200 shadow-2xs cursor-pointer text-center"
+                  >
+                    {upgrade.ctaText}
+                    <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                </div>
+              </div>
+            );
+          })()}
+
           <div className="mt-4 flex flex-wrap items-center gap-2">
             {/* Solid Ink Badge Protagonista según Brand Kit v3 */}
             <span className="rounded-full px-3.5 py-1.5 text-[11px] font-sans font-semibold uppercase tracking-[0.12em] bg-[#0F0F0F] border border-[#0F0F0F] text-white shadow-2xs flex items-center gap-1.5">
@@ -1143,7 +1255,7 @@ export default function ProductDetail({
               height: { duration: 0.4, ease: [0.4, 0, 0.2, 1] },
               opacity: { duration: 0.25, ease: "easeOut" },
             }}
-            className="overflow-hidden border-y border-[#E6E1D8] bg-[#FAF8F5]"
+            className="hidden sm:block overflow-hidden border-y border-[#E6E1D8] bg-[#FAF8F5]"
           >
             <motion.div
               initial={{ y: -6 }}
