@@ -1005,12 +1005,15 @@ export default function CheckoutPage() {
 
           const cartSubtotal1 = workingCart.subtotal ?? workingCart.total;
           // Prefer bundle_discount from Medusa cart metadata (authoritative) over local state.
-          // The metadata is written in the cart.update() call above (bundle_discount field).
           const authorBundleDiscount =
             typeof (workingCart as any).metadata?.bundle_discount === "number"
               ? (workingCart as any).metadata.bundle_discount
               : totals.bundleDiscount;
-          chargedTotal = Math.max(0, (cartSubtotal1 - authorBundleDiscount) - couponDiscount);
+          // Idempotency guard: If workingCart.subtotal already reflects the bundle discount,
+          // do not subtract authorBundleDiscount again.
+          const effectiveBundleDiscount1 =
+            cartSubtotal1 <= totals.total + 5 ? 0 : authorBundleDiscount;
+          chargedTotal = Math.max(0, (cartSubtotal1 - effectiveBundleDiscount1) - couponDiscount);
           setConfirmedTotal(chargedTotal);
 
           // ── Verify eager coupons (applied during preload) are still on cart ──
@@ -1053,7 +1056,9 @@ export default function CheckoutPage() {
               typeof (updatedCart as any).metadata?.bundle_discount === "number"
                 ? (updatedCart as any).metadata.bundle_discount
                 : totals.bundleDiscount;
-            chargedTotal = Math.max(0, (cartSubtotal2 - authorBundleDiscount2) - couponDiscount);
+            const effectiveBundleDiscount2 =
+              cartSubtotal2 <= totals.total + 5 ? 0 : authorBundleDiscount2;
+            chargedTotal = Math.max(0, (cartSubtotal2 - effectiveBundleDiscount2) - couponDiscount);
             setConfirmedTotal(chargedTotal);
           }
         }
