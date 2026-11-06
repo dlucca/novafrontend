@@ -6,7 +6,8 @@ import Image from "next/image";
 import { Link } from "@/lib/i18n-navigation";
 import type { Product } from "@/lib/commerce";
 import { formatPrice } from "@/lib/format";
-import { PRODUCT_META, BUNDLE_ORIGINAL_PRICES } from "@/lib/product-meta";
+import { PRODUCT_META } from "@/lib/product-meta";
+import { bundleOriginalFromOnce } from "@/lib/bundles";
 import { useCart } from "@/contexts/CartContext";
 
 // ─── UI metadata por producto ───────────────────────────────────────────────
@@ -195,11 +196,14 @@ function ProductCard({
                 <span className="truncate sm:whitespace-normal">{product.title}</span>
               </h3>
               <div className="flex items-baseline gap-1.5 flex-wrap">
-                {BUNDLE_ORIGINAL_PRICES[product.slug] && (
-                  <span className="text-[11px] sm:text-xs font-mono font-medium text-stone-400 line-through">
-                    {formatPrice(BUNDLE_ORIGINAL_PRICES[product.slug], currency)}
-                  </span>
-                )}
+                {(() => {
+                  const original = bundleOriginalFromOnce(product.slug, product.price);
+                  return original ? (
+                    <span className="text-[11px] sm:text-xs font-mono font-medium text-stone-400 line-through">
+                      {formatPrice(original, currency)}
+                    </span>
+                  ) : null;
+                })()}
                 <span className="text-sm sm:text-base font-mono font-bold text-[#0F0F0F]">
                   {formatPrice(product.price, currency)}
                 </span>

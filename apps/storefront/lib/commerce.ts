@@ -8,6 +8,14 @@
 
 import { medusa } from "@/lib/medusa";
 import { PRODUCT_META, PRODUCT_ORDER } from "@/lib/product-meta";
+import {
+  isBundleSlug,
+  bundleOncePrice,
+  bundleOriginalPrice,
+  bundleSubPrice,
+  bundleMemberCount,
+  DEFAULT_SINGLE_PRICE,
+} from "@/lib/bundles";
 
 export type Product = {
   id: string;
@@ -130,8 +138,27 @@ export async function getProducts(regionId?: string, currencyCode?: string): Pro
     const currency = (currencyCode ?? "mxn").toLowerCase();
     // Reordenar según PRODUCT_ORDER cuando sea posible
     const mapped = medusaProducts.map((p) => medusaToProduct(p, currency));
+
+    // Region-aware single prices, used to derive the frontend-only bundle prices
+    // (bundles are not Medusa products, so they must track the region single
+    // price × the bundle discount instead of a hardcoded MXN amount).
+    const singlePriceBySlug: Record<string, number> = {};
+    for (const pr of mapped) {
+      if (!isBundleSlug(pr.slug)) singlePriceBySlug[pr.slug] = pr.price;
+    }
+    const singleBase =
+      singlePriceBySlug["energy"] ??
+      Object.values(singlePriceBySlug)[0] ??
+      DEFAULT_SINGLE_PRICE;
+
     const ordered = PRODUCT_ORDER
       .map((slug) => {
+        if (isBundleSlug(slug)) {
+          const once = bundleOncePrice(slug, singlePriceBySlug, singleBase);
+          const base = FALLBACK_PRODUCTS.find((f) => f.slug === slug);
+          if (!base) return undefined;
+          return once !== null ? { ...base, price: once } : base;
+        }
         const found = mapped.find((p) => p.slug === slug);
         if (found) return found;
         return FALLBACK_PRODUCTS.find((f) => f.slug === slug);
@@ -175,6 +202,11 @@ export type ProductDetail = {
   basePrice: number;      // precio regular (compra única)
   images: string[];       // galería; [0] es la principal
   options: PurchaseOption[];
+  /**
+   * Región: precio de un parche suelto (compra única) en la moneda activa.
+   * Para bundles permite derivar precio original/descuento sin hardcodear MXN.
+   */
+  singleBasePrice?: number;
 };
 
 const TIER_DEFS: { tier: PurchaseTier; label: string; freq: 30 | 60 | 90 | null; discountPct: number }[] = [
@@ -236,6 +268,67 @@ function fallbackDetail(slug: string): ProductDetail | null {
     basePrice,
     images,
     options,
+    singleBasePrice: basePrice,
+  };
+}
+
+/**
+ * Detalle de un bundle (pack). Los bundles no existen en Medusa, así que sus
+ * precios se derivan del precio por región de los parches sueltos que lo
+ * componen. Así Argentina (ARS) y México (MXN) salen correctos sin hardcodear.
+ */
+async function bundleDetail(
+  slug: string,
+  regionId?: string,
+  currencyCode?: string
+): Promise<ProductDetail | null> {
+  const meta = PRODUCT_META[slug];
+  if (!meta) return null;
+
+  // Precios por región de los parches sueltos
+  const priceBySlug: Record<string, number> = {};
+  let singleBase = DEFAULT_SINGLE_PRICE;
+  try {
+    const products = await getProducts(regionId, currencyCode);
+    for (const p of products) {
+      if (!isBundleSlug(p.slug)) priceBySlug[p.slug] = p.price;
+    }
+    singleBase =
+      priceBySlug["energy"] ?? Object.values(priceBySlug)[0] ?? DEFAULT_SINGLE_PRICE;
+  } catch {
+    // sin backend: se queda con el default MXN
+  }
+
+  const original =
+    bundleOriginalPrice(slug, priceBySlug, singleBase) ??
+    bundleMemberCount(slug) * singleBase;
+
+  const options: PurchaseOption[] = TIER_DEFS.map((t) => {
+    const price =
+      t.freq === null
+        ? bundleOncePrice(slug, priceBySlug, singleBase) ?? original
+        : bundleSubPrice(slug, singleBase, t.discountPct) ?? original;
+    return {
+      tier: t.tier,
+      label: t.label,
+      freq: t.freq,
+      price,
+      discountPct: t.discountPct,
+      variantId: undefined,
+    };
+  });
+
+  const images = BUNDLE_IMAGES[slug] ?? [meta.imgSrc ?? `/products/${slug}_45.webp`];
+
+  return {
+    id: slug,
+    slug,
+    title: meta.name,
+    description: meta.description,
+    basePrice: original,
+    images,
+    options,
+    singleBasePrice: singleBase,
   };
 }
 
@@ -249,6 +342,9 @@ export async function getProductDetail(
   regionId?: string,
   currencyCode?: string
 ): Promise<ProductDetail | null> {
+  if (isBundleSlug(handle)) {
+    return bundleDetail(handle, regionId, currencyCode);
+  }
   const resolvedRegionId = regionId || REGION_ID;
   const currency = (currencyCode ?? "mxn").toLowerCase();
   try {
@@ -319,6 +415,7 @@ export async function getProductDetail(
       basePrice,
       images,
       options,
+      singleBasePrice: basePrice,
     };
   } catch {
     return fallbackDetail(handle);
