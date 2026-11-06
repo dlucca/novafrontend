@@ -67,6 +67,13 @@ import { useUser } from "@clerk/nextjs";
 import { useCart } from "@/contexts/CartContext";
 import { trackMeta } from "@/lib/meta";
 import { formatPrice } from "@/lib/format";
+import {
+  isBundleSlug,
+  bundleOriginalFromOnce,
+  bundleOncePrice,
+  bundleOriginalPrice,
+  DEFAULT_SINGLE_PRICE,
+} from "@/lib/bundles";
 import type { ProductDetail as ProductDetailData, PurchaseOption } from "@/lib/commerce";
 import {
   PRODUCT_META,
@@ -265,13 +272,6 @@ function Gallery({
     </div>
   );
 }
-
-const BUNDLE_ORIGINAL_PRICES: Record<string, number> = {
-  "pack-dia-noche": 1500,
-  "pack-calma-sueno": 1500,
-  "pack-glow-balance": 1500,
-  "pack-trio-vitalidad": 2250,
-};
 
 const BUNDLE_PATCH_COUNTS: Record<string, string> = {
   "pack-dia-noche": "60 parches en total (30 Energy + 30 Sleep) · 15% OFF INCLUIDO",
@@ -621,7 +621,9 @@ function TierSelector({
   bg: string;
   slug?: string;
 }) {
-  const originalPrice = BUNDLE_ORIGINAL_PRICES[slug ?? ""] ?? null;
+  const onceOption = options.find((o) => o.freq === null);
+  const originalPrice =
+    slug && onceOption ? bundleOriginalFromOnce(slug, onceOption.price) : null;
   const isBundle = Boolean(originalPrice);
 
   return (
@@ -1006,7 +1008,7 @@ export default function ProductDetail({
 
           {/* Precio y Ahorro en PDP */}
           {(() => {
-            const originalPrice = BUNDLE_ORIGINAL_PRICES[product.slug] ?? product.basePrice;
+            const originalPrice = product.basePrice;
             const hasSavings = originalPrice > selected.price;
             const savingsAmount = originalPrice - selected.price;
             return (
@@ -1062,12 +1064,22 @@ export default function ProductDetail({
                 {/* Footer: Precios + Botón claro con hover de marco */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
                   <div className="flex items-baseline gap-2 font-mono">
-                    <span className="text-base font-bold text-[#0F0F0F]">
-                      {upgrade.price}
-                    </span>
-                    <span className="text-xs font-medium text-[#A8A29A] line-through">
-                      {upgrade.originalPrice}
-                    </span>
+                    {(() => {
+                      const singleBase =
+                        product.singleBasePrice ?? product.basePrice ?? DEFAULT_SINGLE_PRICE;
+                      const price = bundleOncePrice(upgrade.targetSlug, {}, singleBase);
+                      const orig = bundleOriginalPrice(upgrade.targetSlug, {}, singleBase);
+                      return (
+                        <>
+                          <span className="text-base font-bold text-[#0F0F0F]">
+                            {price !== null ? formatPrice(price, currency) : upgrade.price}
+                          </span>
+                          <span className="text-xs font-medium text-[#A8A29A] line-through">
+                            {orig !== null ? formatPrice(orig, currency) : upgrade.originalPrice}
+                          </span>
+                        </>
+                      );
+                    })()}
                   </div>
 
                   <Link
@@ -1167,7 +1179,7 @@ export default function ProductDetail({
             {ctaLabel}
           </button>
           {(() => {
-            const origPrice = BUNDLE_ORIGINAL_PRICES[product.slug];
+            const origPrice = isBundleSlug(product.slug) ? product.basePrice : undefined;
             if (origPrice) {
               const savings = origPrice - selected.price;
               if (selected.freq === null) {
